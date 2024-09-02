@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+
+  db-garantias-api:
+    image: postgres
+    container_name: db-garantias-api
+    hostname: db-garantias-api
+    restart: unless-stopped
+    volumes:
+      - ./volumes/PostgresSQL:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"  
+    networks:
+      - hm-gestao-garantias-network
+
+  garantias-api:
+    build: .
+    restart: always
+    container_name: garantias-api
+    ports:
+      - "8080:8080"
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dockerlocal
+    networks:
+      - hm-gestao-garantias-network  
+
+  garantias-mail:
+    image: haravich/fake-smtp-server
+    container_name: srv-mail
+    build:
+      context: ./services/mailcatcher
+      dockerfile: Dockerfile  
+    restart: on-failure
+    ports:
+      - 1080:1080
+      - 1025:1025
+    networks:
+      - hm-gestao-garantias-network      
+
+networks: 
+  hm-gestao-garantias-network:
+    driver: bridge
