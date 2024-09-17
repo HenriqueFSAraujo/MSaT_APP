@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+
+  db-postgres-gestao-garantias:
+    image: postgres
+    container_name: db-postgres-gestao-garantias
+    hostname: db-postgres-gestao-garantias
+    restart: unless-stopped
+    volumes:
+      - ./volumes/PostgresSQL:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"  
+    networks:
+      - hm-gestao-garantias-network
+
+  garantias-api:
+    build: .
+    restart: always
+    container_name: garantias-api
+    ports:
+      - "8080:8080"
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - hm-gestao-garantias-network  
+
+
+networks: 
+  hm-gestao-garantias-network:
+    driver: bridge

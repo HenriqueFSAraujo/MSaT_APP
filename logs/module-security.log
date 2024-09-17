@@ -1,0 +1,946 @@
+2024-08-22T05:58:09.520-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/api/v1/auth/login", parameters={}
+2024-08-22T05:58:09.639-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleException(Exception, WebRequest)
+2024-08-22T05:58:09.649-03:00  WARN 28652 --- [http-nio-8082-exec-2] o.s.web.servlet.PageNotFound             : Request method 'GET' is not supported
+2024-08-22T05:58:09.761-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/problem+json;q=0.8', given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7] and supported [application/problem+json]
+2024-08-22T05:58:09.818-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ProblemDetail[type='about:blank', title='Method Not Allowed', status=405, detail='Method 'GET' is no (truncated)...]
+2024-08-22T05:58:09.823-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2024-08-22T05:58:09.823-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 405 METHOD_NOT_ALLOWED
+2024-08-22T05:58:47.239-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/api/v1/auth/login", parameters={}
+2024-08-22T05:58:47.241-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleException(Exception, WebRequest)
+2024-08-22T05:58:47.241-03:00  WARN 28652 --- [http-nio-8082-exec-4] o.s.web.servlet.PageNotFound             : Request method 'GET' is not supported
+2024-08-22T05:58:47.243-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/problem+json;q=0.8', given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7] and supported [application/problem+json]
+2024-08-22T05:58:47.244-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ProblemDetail[type='about:blank', title='Method Not Allowed', status=405, detail='Method 'GET' is no (truncated)...]
+2024-08-22T05:58:47.246-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2024-08-22T05:58:47.246-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 405 METHOD_NOT_ALLOWED
+2024-08-22T06:14:49.053-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:14:49.054-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:14:49.075-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=ULxm4tkUwdDd27CAD9YTiw==, password=FZ4XqgUMHyfvrzeGr9LvDQ==)]
+2024-08-22T06:14:49.254-03:00 ERROR 28652 --- [http-nio-8082-exec-9] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsdsd
+2024-08-22T06:14:49.365-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:14:49.381-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:14:49.381-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@7c47be92]
+2024-08-22T06:14:49.381-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:14:49.381-03:00 DEBUG 28652 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:14:50.414-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:14:50.414-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:14:50.415-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=ULxm4tkUwdDd27CAD9YTiw==, password=FZ4XqgUMHyfvrzeGr9LvDQ==)]
+2024-08-22T06:14:50.422-03:00 ERROR 28652 --- [http-nio-8082-exec-10] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsdsd
+2024-08-22T06:14:50.511-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:14:50.511-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:14:50.511-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@2cce7282]
+2024-08-22T06:14:50.511-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:14:50.542-03:00 DEBUG 28652 --- [http-nio-8082-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:14:52.565-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:14:52.565-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:14:52.584-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=ULxm4tkUwdDd27CAD9YTiw==, password=FZ4XqgUMHyfvrzeGr9LvDQ==)]
+2024-08-22T06:14:52.617-03:00 ERROR 28652 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsdsd
+2024-08-22T06:14:52.856-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:14:52.857-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:14:52.857-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@16acd88a]
+2024-08-22T06:14:52.860-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:14:52.860-03:00 DEBUG 28652 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:14:56.335-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:14:56.335-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:14:56.335-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=ULxm4tkUwdDd27CAD9YTiw==, password=FZ4XqgUMHyfvrzeGr9LvDQ==)]
+2024-08-22T06:14:56.363-03:00 ERROR 28652 --- [http-nio-8082-exec-2] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsdsd
+2024-08-22T06:14:56.571-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:14:56.571-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:14:56.571-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@62acef2f]
+2024-08-22T06:14:56.586-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:14:56.587-03:00 DEBUG 28652 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:15:38.908-03:00 DEBUG 28652 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:15:38.908-03:00 DEBUG 28652 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:15:38.911-03:00 DEBUG 28652 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T06:15:39.009-03:00  INFO 28652 --- [http-nio-8082-exec-3] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T06:15:39.157-03:00 DEBUG 28652 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:15:39.157-03:00 DEBUG 28652 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Writing [JwtResponseDTO(accessToken=m9XlA0A3VCliXuxIlmwEYuZ7t6YBjrIc2byLAbW+Zvg+pB4q2OWPKy3BerdRBPVCKb5fUwyA7 (truncated)...]
+2024-08-22T06:15:39.158-03:00 DEBUG 28652 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T06:19:52.894-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:19:52.895-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:19:52.896-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=+5mxi3K3r6mf5Jb6w39pKw==, password=HPFqiI4gNSt2gaCvQVLeNw==)]
+2024-08-22T06:19:52.908-03:00 ERROR 28652 --- [http-nio-8082-exec-4] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsd
+2024-08-22T06:19:52.992-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:19:52.992-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:19:52.993-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@5082505f]
+2024-08-22T06:19:52.993-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:19:52.993-03:00 DEBUG 28652 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:19:54.006-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:19:54.007-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:19:54.007-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=+5mxi3K3r6mf5Jb6w39pKw==, password=HPFqiI4gNSt2gaCvQVLeNw==)]
+2024-08-22T06:19:54.017-03:00 ERROR 28652 --- [http-nio-8082-exec-5] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsd
+2024-08-22T06:19:54.097-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:19:54.098-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:19:54.098-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@2b394989]
+2024-08-22T06:19:54.099-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:19:54.099-03:00 DEBUG 28652 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:19:56.130-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:19:56.131-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:19:56.132-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=+5mxi3K3r6mf5Jb6w39pKw==, password=HPFqiI4gNSt2gaCvQVLeNw==)]
+2024-08-22T06:19:56.138-03:00 ERROR 28652 --- [http-nio-8082-exec-6] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsd
+2024-08-22T06:19:56.234-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:19:56.249-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:19:56.250-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@1c56a994]
+2024-08-22T06:19:56.250-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:19:56.251-03:00 DEBUG 28652 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:19:59.270-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:19:59.271-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:19:59.272-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=+5mxi3K3r6mf5Jb6w39pKw==, password=HPFqiI4gNSt2gaCvQVLeNw==)]
+2024-08-22T06:19:59.279-03:00 ERROR 28652 --- [http-nio-8082-exec-7] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsd
+2024-08-22T06:19:59.354-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:19:59.354-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:19:59.354-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@91f6404]
+2024-08-22T06:19:59.356-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2024-08-22T06:19:59.357-03:00 DEBUG 28652 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:20:08.676-03:00 DEBUG 28652 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:20:08.677-03:00 DEBUG 28652 --- [http-nio-8082-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:20:08.678-03:00 DEBUG 28652 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T06:20:08.690-03:00  INFO 28652 --- [http-nio-8082-exec-8] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T06:20:08.788-03:00 DEBUG 28652 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:20:08.789-03:00 DEBUG 28652 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Writing [JwtResponseDTO(accessToken=m9XlA0A3VCliXuxIlmwEYuZ7t6YBjrIc2byLAbW+Zvg+pB4q2OWPKy3BerdRBPVCKb5fUwyA7 (truncated)...]
+2024-08-22T06:20:08.790-03:00 DEBUG 28652 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T06:26:46.615-03:00  INFO 28652 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T06:26:46.646-03:00  INFO 28652 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T06:26:46.656-03:00  INFO 28652 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T06:26:53.749-03:00  INFO 13024 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 13024 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T06:26:53.764-03:00  INFO 13024 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T06:26:55.080-03:00  INFO 13024 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T06:26:55.239-03:00  INFO 13024 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 133 ms. Found 2 JPA repository interfaces.
+2024-08-22T06:26:57.040-03:00  INFO 13024 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T06:26:57.071-03:00  INFO 13024 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T06:26:57.071-03:00  INFO 13024 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T06:26:57.276-03:00  INFO 13024 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T06:26:57.276-03:00  INFO 13024 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3390 ms
+2024-08-22T06:26:57.568-03:00  INFO 13024 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T06:26:58.298-03:00  INFO 13024 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@aa61e4e
+2024-08-22T06:26:58.312-03:00  INFO 13024 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T06:27:01.134-03:00  INFO 13024 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T06:27:05.820-03:00  INFO 13024 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T06:27:06.522-03:00  INFO 13024 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T06:27:08.314-03:00  WARN 13024 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T06:27:08.881-03:00 DEBUG 13024 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T06:27:09.212-03:00 DEBUG 13024 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T06:27:09.341-03:00  INFO 13024 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@75dc995f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@51c660c8, org.springframework.security.web.context.SecurityContextHolderFilter@2daf650b, org.springframework.security.web.header.HeaderWriterFilter@77035caa, org.springframework.web.filter.CorsFilter@498102a4, org.springframework.security.web.authentication.logout.LogoutFilter@678db8be, com.montreal.oauth.configurations.JwtAuthFilter@6e43c01f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5f1d270a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7d14efc, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@8829ecd, org.springframework.security.web.session.SessionManagementFilter@63c07eaf, org.springframework.security.web.access.ExceptionTranslationFilter@aec9672, org.springframework.security.web.access.intercept.AuthorizationFilter@19203ff3]
+2024-08-22T06:27:09.644-03:00 DEBUG 13024 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T06:27:09.753-03:00 DEBUG 13024 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T06:27:10.948-03:00  INFO 13024 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T06:27:10.988-03:00  INFO 13024 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 18.105 seconds (process running for 18.882)
+2024-08-22T06:27:29.004-03:00  INFO 13024 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T06:27:29.004-03:00  INFO 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T06:27:29.004-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T06:27:29.004-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T06:27:29.004-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T06:27:29.009-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@27bfa57f
+2024-08-22T06:27:29.009-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@6cd31e5f
+2024-08-22T06:27:29.009-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T06:27:29.009-03:00  INFO 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+2024-08-22T06:27:29.497-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:27:29.503-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:27:29.766-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:27:30.265-03:00 ERROR 13024 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:27:30.270-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:27:30.336-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:27:30.341-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@289643e9]
+2024-08-22T06:27:30.378-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:27:30.378-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:27:31.421-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:27:31.422-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:27:31.425-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:27:31.439-03:00 ERROR 13024 --- [http-nio-8082-exec-2] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:27:31.440-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:27:31.441-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:27:31.442-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@3b67b710]
+2024-08-22T06:27:31.444-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:27:31.445-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:27:33.502-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:27:33.503-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:27:33.506-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:27:33.572-03:00 ERROR 13024 --- [http-nio-8082-exec-3] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:27:33.573-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:27:33.576-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:27:33.577-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@c5a3d94]
+2024-08-22T06:27:33.583-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:27:33.585-03:00 DEBUG 13024 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:27:37.328-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:27:37.328-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:27:37.330-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:27:37.338-03:00 ERROR 13024 --- [http-nio-8082-exec-4] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:27:37.339-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:27:37.340-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:27:37.340-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@631b4535]
+2024-08-22T06:27:37.341-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:27:37.342-03:00 DEBUG 13024 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:29:35.583-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:29:35.584-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:29:35.585-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:29:35.597-03:00 ERROR 13024 --- [http-nio-8082-exec-5] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:29:35.599-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:29:35.600-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:29:35.600-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@5d65e1ef]
+2024-08-22T06:29:35.602-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:29:35.603-03:00 DEBUG 13024 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:29:37.328-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:29:37.328-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:29:37.339-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:29:37.349-03:00 ERROR 13024 --- [http-nio-8082-exec-6] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:29:37.350-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:29:37.351-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:29:37.352-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@694f4c16]
+2024-08-22T06:29:37.353-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:29:37.354-03:00 DEBUG 13024 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:29:39.580-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:29:39.580-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:29:39.581-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:29:39.593-03:00 ERROR 13024 --- [http-nio-8082-exec-7] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:29:39.594-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:29:39.596-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:29:39.597-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@6b1ce0e0]
+2024-08-22T06:29:39.601-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:29:39.602-03:00 DEBUG 13024 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:29:43.311-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:29:43.311-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:29:43.311-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:29:43.329-03:00 ERROR 13024 --- [http-nio-8082-exec-8] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:29:43.330-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:29:43.330-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:29:43.330-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@4cabda48]
+2024-08-22T06:29:43.331-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:29:43.332-03:00 DEBUG 13024 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:29:54.731-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:29:54.731-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:29:54.732-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:30:02.183-03:00 ERROR 13024 --- [http-nio-8082-exec-9] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:30:04.269-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:30:04.269-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:30:04.269-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@2410d113]
+2024-08-22T06:30:04.269-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:30:04.269-03:00 DEBUG 13024 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:30:05.322-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:30:05.323-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:30:05.323-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:30:12.860-03:00 ERROR 13024 --- [http-nio-8082-exec-10] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:30:12.860-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:30:12.861-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:30:12.861-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@447cfd3c]
+2024-08-22T06:30:12.861-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:30:12.862-03:00 DEBUG 13024 --- [http-nio-8082-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:30:15.323-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:30:15.323-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:30:15.323-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:30:15.332-03:00 ERROR 13024 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:30:15.333-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:30:15.334-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:30:15.334-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@3fbb4ff5]
+2024-08-22T06:30:15.335-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:30:15.336-03:00 DEBUG 13024 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T06:30:19.318-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T06:30:19.318-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T06:30:19.318-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T06:30:19.336-03:00 ERROR 13024 --- [http-nio-8082-exec-2] c.m.o.helpers.UserDetailsServiceImpl     : Username not found: dsds
+2024-08-22T06:30:19.336-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T06:30:19.336-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T06:30:19.336-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@6ec61c3c]
+2024-08-22T06:30:19.337-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.security.authentication.InternalAuthenticationServiceException: Acesso Negado]
+2024-08-22T06:30:19.337-03:00 DEBUG 13024 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:00:44.943-03:00  INFO 13024 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:00:44.954-03:00  INFO 13024 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:00:44.961-03:00  INFO 13024 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:00:53.301-03:00  INFO 24340 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 24340 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:00:53.316-03:00  INFO 24340 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:00:54.458-03:00  INFO 24340 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:00:54.553-03:00  INFO 24340 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 81 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:00:56.231-03:00  INFO 24340 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:00:56.251-03:00  INFO 24340 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:00:56.251-03:00  INFO 24340 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:00:56.408-03:00  INFO 24340 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:00:56.408-03:00  INFO 24340 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2972 ms
+2024-08-22T07:00:56.598-03:00  INFO 24340 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:00:57.059-03:00  INFO 24340 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@aa61e4e
+2024-08-22T07:00:57.061-03:00  INFO 24340 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:00:58.036-03:00  INFO 24340 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:01:00.264-03:00  INFO 24340 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:01:00.986-03:00  INFO 24340 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:01:02.714-03:00  WARN 24340 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:01:03.207-03:00 DEBUG 24340 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:01:03.490-03:00 DEBUG 24340 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:01:03.615-03:00  INFO 24340 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1985f8e3, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7ba70b3b, org.springframework.security.web.context.SecurityContextHolderFilter@5180f430, org.springframework.security.web.header.HeaderWriterFilter@6789b471, org.springframework.web.filter.CorsFilter@3a72b2c9, org.springframework.security.web.authentication.logout.LogoutFilter@1014c825, com.montreal.oauth.configurations.JwtAuthFilter@6e43c01f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@786e2c5e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@75452b01, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@269a37bc, org.springframework.security.web.session.SessionManagementFilter@4d7a4317, org.springframework.security.web.access.ExceptionTranslationFilter@761d679f, org.springframework.security.web.access.intercept.AuthorizationFilter@498102a4]
+2024-08-22T07:01:03.886-03:00 DEBUG 24340 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:01:04.021-03:00 DEBUG 24340 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:01:04.890-03:00  INFO 24340 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:01:04.922-03:00  INFO 24340 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 12.512 seconds (process running for 13.38)
+2024-08-22T07:01:18.309-03:00  INFO 24340 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:01:18.310-03:00  INFO 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:01:18.310-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:01:18.310-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:01:18.310-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:01:18.311-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@41a3656f
+2024-08-22T07:01:18.312-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@36d8ddc5
+2024-08-22T07:01:18.312-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:01:18.312-03:00  INFO 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2024-08-22T07:01:18.376-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:01:18.376-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:01:18.502-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:01:18.758-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:01:18.760-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@2bd31bdb]
+2024-08-22T07:01:18.796-03:00 DEBUG 24340 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2024-08-22T07:01:19.811-03:00 DEBUG 24340 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:01:19.812-03:00 DEBUG 24340 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:01:19.813-03:00 DEBUG 24340 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:01:19.823-03:00 DEBUG 24340 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:01:19.823-03:00 DEBUG 24340 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@43951a49]
+2024-08-22T07:01:19.824-03:00 DEBUG 24340 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2024-08-22T07:01:21.844-03:00 DEBUG 24340 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:01:21.844-03:00 DEBUG 24340 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:01:21.844-03:00 DEBUG 24340 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:01:21.866-03:00 DEBUG 24340 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:01:21.867-03:00 DEBUG 24340 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@7452c88]
+2024-08-22T07:01:21.870-03:00 DEBUG 24340 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2024-08-22T07:01:24.895-03:00 DEBUG 24340 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:01:24.895-03:00 DEBUG 24340 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:01:24.897-03:00 DEBUG 24340 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:01:24.904-03:00 DEBUG 24340 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:01:24.905-03:00 DEBUG 24340 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@1573d05e]
+2024-08-22T07:01:24.906-03:00 DEBUG 24340 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2024-08-22T07:03:45.036-03:00  INFO 24340 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:03:45.054-03:00  INFO 24340 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:03:45.064-03:00  INFO 24340 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:03:51.069-03:00  INFO 15444 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 15444 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:03:51.069-03:00  INFO 15444 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:03:52.270-03:00  INFO 15444 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:03:52.365-03:00  INFO 15444 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 83 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:03:54.252-03:00  INFO 15444 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:03:54.284-03:00  INFO 15444 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:03:54.284-03:00  INFO 15444 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:03:54.425-03:00  INFO 15444 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:03:54.425-03:00  INFO 15444 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3248 ms
+2024-08-22T07:03:54.613-03:00  INFO 15444 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:03:54.979-03:00  INFO 15444 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@36c7cbe1
+2024-08-22T07:03:54.979-03:00  INFO 15444 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:03:56.013-03:00  INFO 15444 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:03:57.868-03:00  INFO 15444 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:03:58.443-03:00  INFO 15444 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:03:59.427-03:00  WARN 15444 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:03:59.692-03:00 DEBUG 15444 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:03:59.914-03:00 DEBUG 15444 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:03:59.997-03:00  INFO 15444 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@38cbbd0b, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@56a34c0e, org.springframework.security.web.context.SecurityContextHolderFilter@40bac624, org.springframework.security.web.header.HeaderWriterFilter@6ba8859b, org.springframework.web.filter.CorsFilter@16750a5e, org.springframework.security.web.authentication.logout.LogoutFilter@6d5b160, com.montreal.oauth.configurations.JwtAuthFilter@4dd28982, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1c8746a0, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@613d42ab, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@436867c3, org.springframework.security.web.session.SessionManagementFilter@19984625, org.springframework.security.web.access.ExceptionTranslationFilter@76cf849f, org.springframework.security.web.access.intercept.AuthorizationFilter@4540aade]
+2024-08-22T07:04:00.272-03:00 DEBUG 15444 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:04:00.355-03:00 DEBUG 15444 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:04:00.907-03:00  INFO 15444 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:04:00.922-03:00  INFO 15444 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 10.605 seconds (process running for 11.395)
+2024-08-22T07:08:31.568-03:00  INFO 15444 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:08:31.587-03:00  INFO 15444 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:08:31.593-03:00  INFO 15444 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:08:37.710-03:00  INFO 30388 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 30388 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:08:37.726-03:00  INFO 30388 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:08:39.029-03:00  INFO 30388 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:08:39.139-03:00  INFO 30388 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 100 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:08:40.941-03:00  INFO 30388 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:08:40.973-03:00  INFO 30388 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:08:40.973-03:00  INFO 30388 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:08:41.135-03:00  INFO 30388 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:08:41.135-03:00  INFO 30388 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3291 ms
+2024-08-22T07:08:41.324-03:00  INFO 30388 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:08:41.724-03:00  INFO 30388 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@733e6df7
+2024-08-22T07:08:41.727-03:00  INFO 30388 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:08:42.812-03:00  INFO 30388 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:08:44.443-03:00  INFO 30388 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:08:44.980-03:00  INFO 30388 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:08:45.899-03:00  WARN 30388 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:08:46.153-03:00 DEBUG 30388 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:08:46.310-03:00 DEBUG 30388 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:08:46.388-03:00  INFO 30388 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7ba70b3b, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3a72b2c9, org.springframework.security.web.context.SecurityContextHolderFilter@4e7d77ec, org.springframework.security.web.header.HeaderWriterFilter@1eb3a6a3, org.springframework.web.filter.CorsFilter@269a37bc, org.springframework.security.web.authentication.logout.LogoutFilter@5acc6ca1, com.montreal.oauth.configurations.JwtAuthFilter@6567de86, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@75452b01, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@23b260ed, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@106e816c, org.springframework.security.web.session.SessionManagementFilter@5f1d270a, org.springframework.security.web.access.ExceptionTranslationFilter@a824f87, org.springframework.security.web.access.intercept.AuthorizationFilter@8829ecd]
+2024-08-22T07:08:46.560-03:00 DEBUG 30388 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:08:46.624-03:00 DEBUG 30388 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:08:47.102-03:00  INFO 30388 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:08:47.118-03:00  INFO 30388 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 10.227 seconds (process running for 11.015)
+2024-08-22T07:08:57.283-03:00  INFO 30388 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:08:57.284-03:00  INFO 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:08:57.284-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:08:57.284-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:08:57.284-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:08:57.285-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5086e144
+2024-08-22T07:08:57.285-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@112d8c18
+2024-08-22T07:08:57.286-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:08:57.286-03:00  INFO 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2024-08-22T07:08:57.421-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:08:57.426-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:08:57.753-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:08:58.026-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:08:58.028-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@2673ebee]
+2024-08-22T07:08:58.062-03:00 DEBUG 30388 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 401 UNAUTHORIZED
+2024-08-22T07:08:59.075-03:00 DEBUG 30388 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:08:59.076-03:00 DEBUG 30388 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:08:59.077-03:00 DEBUG 30388 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:08:59.084-03:00 DEBUG 30388 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:08:59.084-03:00 DEBUG 30388 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@60c85329]
+2024-08-22T07:08:59.086-03:00 DEBUG 30388 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 401 UNAUTHORIZED
+2024-08-22T07:09:01.107-03:00 DEBUG 30388 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:09:01.108-03:00 DEBUG 30388 --- [http-nio-8082-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:09:01.112-03:00 DEBUG 30388 --- [http-nio-8082-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:09:01.124-03:00 DEBUG 30388 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:09:01.124-03:00 DEBUG 30388 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@3b531a13]
+2024-08-22T07:09:01.127-03:00 DEBUG 30388 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 401 UNAUTHORIZED
+2024-08-22T07:09:04.145-03:00 DEBUG 30388 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:09:04.146-03:00 DEBUG 30388 --- [http-nio-8082-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:09:04.147-03:00 DEBUG 30388 --- [http-nio-8082-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=IMwIdbXNMF6S4r6y2QNp/g==, password=IMwIdbXNMF6S4r6y2QNp/g==)]
+2024-08-22T07:09:04.158-03:00 DEBUG 30388 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:09:04.159-03:00 DEBUG 30388 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@1573d05e]
+2024-08-22T07:09:04.161-03:00 DEBUG 30388 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 401 UNAUTHORIZED
+2024-08-22T07:09:33.627-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:09:33.628-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:09:33.629-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:09:33.777-03:00  INFO 30388 --- [http-nio-8082-exec-3] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:09:34.044-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:09:34.052-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:09:34.052-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@48813b5f]
+2024-08-22T07:09:34.052-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.ClassCastException: class com.montreal.oauth.dtos.JwtResponseDTO cannot be cast to class java.util.List (com.montreal.oauth.dtos.JwtResponseDTO is in unnamed module of loader 'app'; java.util.List is in module java.base of loader 'bootstrap')]
+2024-08-22T07:09:34.062-03:00 DEBUG 30388 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:09:35.077-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:09:35.077-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:09:35.078-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:09:35.095-03:00  INFO 30388 --- [http-nio-8082-exec-4] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:09:35.196-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:09:35.197-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:09:35.197-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@6288f2c1]
+2024-08-22T07:09:35.198-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.ClassCastException: class com.montreal.oauth.dtos.JwtResponseDTO cannot be cast to class java.util.List (com.montreal.oauth.dtos.JwtResponseDTO is in unnamed module of loader 'app'; java.util.List is in module java.base of loader 'bootstrap')]
+2024-08-22T07:09:35.199-03:00 DEBUG 30388 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:09:37.217-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:09:37.218-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:09:37.219-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:09:37.231-03:00  INFO 30388 --- [http-nio-8082-exec-7] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:09:37.325-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:09:37.326-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:09:37.326-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@262597ad]
+2024-08-22T07:09:37.327-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.ClassCastException: class com.montreal.oauth.dtos.JwtResponseDTO cannot be cast to class java.util.List (com.montreal.oauth.dtos.JwtResponseDTO is in unnamed module of loader 'app'; java.util.List is in module java.base of loader 'bootstrap')]
+2024-08-22T07:09:37.328-03:00 DEBUG 30388 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:09:40.343-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:09:40.343-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:09:40.344-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:09:40.361-03:00  INFO 30388 --- [http-nio-8082-exec-8] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:09:40.455-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:09:40.456-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:09:40.456-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@6233db25]
+2024-08-22T07:09:40.458-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.ClassCastException: class com.montreal.oauth.dtos.JwtResponseDTO cannot be cast to class java.util.List (com.montreal.oauth.dtos.JwtResponseDTO is in unnamed module of loader 'app'; java.util.List is in module java.base of loader 'bootstrap')]
+2024-08-22T07:09:40.459-03:00 DEBUG 30388 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:15:59.050-03:00  INFO 30388 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:15:59.050-03:00  INFO 30388 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:15:59.063-03:00  INFO 30388 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:16:04.920-03:00  INFO 26964 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 26964 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:16:04.920-03:00  INFO 26964 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:16:06.149-03:00  INFO 26964 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:16:06.282-03:00  INFO 26964 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 105 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:16:07.952-03:00  INFO 26964 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:16:07.983-03:00  INFO 26964 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:16:07.983-03:00  INFO 26964 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:16:08.157-03:00  INFO 26964 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:16:08.157-03:00  INFO 26964 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3123 ms
+2024-08-22T07:16:08.389-03:00  INFO 26964 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:16:08.748-03:00  INFO 26964 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@76f2dad9
+2024-08-22T07:16:08.748-03:00  INFO 26964 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:16:09.801-03:00  INFO 26964 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:16:11.766-03:00  INFO 26964 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:16:12.327-03:00  INFO 26964 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:16:13.307-03:00  WARN 26964 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:16:13.633-03:00 DEBUG 26964 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:16:13.863-03:00 DEBUG 26964 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:16:13.948-03:00  INFO 26964 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@678db8be, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@77b7a4b2, org.springframework.security.web.context.SecurityContextHolderFilter@18ac2dfe, org.springframework.security.web.header.HeaderWriterFilter@289fff3c, org.springframework.web.filter.CorsFilter@56739ee9, org.springframework.security.web.authentication.logout.LogoutFilter@7a6ade2c, com.montreal.oauth.configurations.JwtAuthFilter@3e866323, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@a824f87, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6789b471, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1a56cb99, org.springframework.security.web.session.SessionManagementFilter@aec9672, org.springframework.security.web.access.ExceptionTranslationFilter@57d6f569, org.springframework.security.web.access.intercept.AuthorizationFilter@54eea16c]
+2024-08-22T07:16:14.136-03:00 DEBUG 26964 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:16:14.215-03:00 DEBUG 26964 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:16:14.762-03:00  INFO 26964 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:16:14.778-03:00  INFO 26964 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 10.591 seconds (process running for 11.468)
+2024-08-22T07:16:28.045-03:00  INFO 26964 --- [http-nio-8082-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:16:28.046-03:00  INFO 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:16:28.047-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:16:28.047-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:16:28.047-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:16:28.048-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@4832813d
+2024-08-22T07:16:28.048-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@99ace98
+2024-08-22T07:16:28.049-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:16:28.049-03:00  INFO 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2024-08-22T07:16:28.096-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:16:28.098-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:16:28.205-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:16:28.490-03:00  INFO 26964 --- [http-nio-8082-exec-2] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:16:28.746-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:16:28.746-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@4daa3183]
+2024-08-22T07:16:28.771-03:00 DEBUG 26964 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T07:22:42.779-03:00  INFO 26964 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:22:42.779-03:00  INFO 26964 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:22:42.788-03:00  INFO 26964 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:22:48.541-03:00  INFO 19656 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 19656 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:22:48.551-03:00  INFO 19656 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:22:49.873-03:00  INFO 19656 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:22:49.998-03:00  INFO 19656 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 104 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:22:51.804-03:00  INFO 19656 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:22:51.835-03:00  INFO 19656 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:22:51.835-03:00  INFO 19656 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:22:51.978-03:00  INFO 19656 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:22:51.978-03:00  INFO 19656 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3296 ms
+2024-08-22T07:22:52.168-03:00  INFO 19656 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:22:52.544-03:00  INFO 19656 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1283ca23
+2024-08-22T07:22:52.544-03:00  INFO 19656 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:22:53.623-03:00  INFO 19656 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:22:56.057-03:00  INFO 19656 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:22:56.640-03:00  INFO 19656 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:22:58.048-03:00  WARN 19656 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:22:58.354-03:00 DEBUG 19656 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:22:58.550-03:00 DEBUG 19656 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:22:58.669-03:00  INFO 19656 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@8829ecd, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1985f8e3, org.springframework.security.web.context.SecurityContextHolderFilter@7d14efc, org.springframework.security.web.header.HeaderWriterFilter@a824f87, org.springframework.web.filter.CorsFilter@7ba70b3b, org.springframework.security.web.authentication.logout.LogoutFilter@1a56cb99, com.montreal.oauth.configurations.JwtAuthFilter@56dae6, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4e7d77ec, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@786e2c5e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3a72b2c9, org.springframework.security.web.session.SessionManagementFilter@2daf650b, org.springframework.security.web.access.ExceptionTranslationFilter@18ac2dfe, org.springframework.security.web.access.intercept.AuthorizationFilter@51c660c8]
+2024-08-22T07:22:58.920-03:00 DEBUG 19656 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:22:59.035-03:00 DEBUG 19656 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:22:59.922-03:00  INFO 19656 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:22:59.990-03:00  INFO 19656 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 12.216 seconds (process running for 12.973)
+2024-08-22T07:23:05.966-03:00  INFO 19656 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:23:05.966-03:00  INFO 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:23:05.966-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:23:05.966-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:23:05.966-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:23:05.967-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@1b6daf20
+2024-08-22T07:23:05.968-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@420d123d
+2024-08-22T07:23:05.968-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:23:05.969-03:00  INFO 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2024-08-22T07:23:06.026-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:23:06.028-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:23:06.219-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:23:06.706-03:00  INFO 19656 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:23:07.087-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:23:07.099-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@3c4b4d64]
+2024-08-22T07:23:07.137-03:00 DEBUG 19656 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T07:25:24.029-03:00  INFO 19656 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:25:24.041-03:00  INFO 19656 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:25:24.055-03:00  INFO 19656 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:25:29.344-03:00  INFO 19792 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 19792 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:25:29.361-03:00  INFO 19792 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:25:30.651-03:00  INFO 19792 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:25:30.759-03:00  INFO 19792 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:25:32.551-03:00  INFO 19792 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:25:32.584-03:00  INFO 19792 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:25:32.584-03:00  INFO 19792 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:25:32.742-03:00  INFO 19792 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:25:32.742-03:00  INFO 19792 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3257 ms
+2024-08-22T07:25:32.947-03:00  INFO 19792 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:25:33.331-03:00  INFO 19792 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@55c57422
+2024-08-22T07:25:33.347-03:00  INFO 19792 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:25:34.557-03:00  INFO 19792 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:25:36.848-03:00  INFO 19792 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:25:37.400-03:00  INFO 19792 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:25:38.907-03:00  WARN 19792 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:25:39.395-03:00 DEBUG 19792 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:25:39.681-03:00 DEBUG 19792 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:25:39.821-03:00  INFO 19792 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5acc6ca1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@100235c7, org.springframework.security.web.context.SecurityContextHolderFilter@30f0b75, org.springframework.security.web.header.HeaderWriterFilter@718198db, org.springframework.web.filter.CorsFilter@3ca43e5d, org.springframework.security.web.authentication.logout.LogoutFilter@38cbbd0b, com.montreal.oauth.configurations.JwtAuthFilter@5c168f98, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@316987c4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@32eca9f4, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@a479c0c, org.springframework.security.web.session.SessionManagementFilter@a824f87, org.springframework.security.web.access.ExceptionTranslationFilter@19984625, org.springframework.security.web.access.intercept.AuthorizationFilter@1a56cb99]
+2024-08-22T07:25:40.169-03:00 DEBUG 19792 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:25:40.280-03:00 DEBUG 19792 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:25:41.089-03:00  INFO 19792 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:25:41.119-03:00  INFO 19792 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 12.583 seconds (process running for 13.302)
+2024-08-22T07:25:47.852-03:00  INFO 19792 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:25:47.852-03:00  INFO 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:25:47.852-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:25:47.852-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:25:47.852-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:25:47.854-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@6a434cdd
+2024-08-22T07:25:47.854-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@ab5d5c8
+2024-08-22T07:25:47.855-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:25:47.855-03:00  INFO 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2024-08-22T07:25:47.896-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:25:47.896-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:25:47.997-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:25:48.377-03:00  INFO 19792 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:25:48.629-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:25:48.637-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@8363b7e]
+2024-08-22T07:25:48.662-03:00 DEBUG 19792 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T07:32:54.833-03:00  INFO 19792 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:32:54.833-03:00  INFO 19792 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:32:54.842-03:00  INFO 19792 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:33:00.914-03:00  INFO 15028 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 15028 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:33:00.926-03:00  INFO 15028 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:33:02.330-03:00  INFO 15028 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:33:02.440-03:00  INFO 15028 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 90 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:33:04.353-03:00  INFO 15028 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:33:04.368-03:00  INFO 15028 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:33:04.368-03:00  INFO 15028 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:33:04.571-03:00  INFO 15028 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:33:04.571-03:00  INFO 15028 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3535 ms
+2024-08-22T07:33:04.838-03:00  INFO 15028 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:33:05.252-03:00  INFO 15028 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@794f11cd
+2024-08-22T07:33:05.258-03:00  INFO 15028 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:33:06.306-03:00  INFO 15028 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:33:08.154-03:00  INFO 15028 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:33:08.817-03:00  INFO 15028 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:33:10.005-03:00  WARN 15028 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:33:10.287-03:00 DEBUG 15028 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:33:10.495-03:00 DEBUG 15028 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:33:10.589-03:00  INFO 15028 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@436867c3, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@262ea940, org.springframework.security.web.context.SecurityContextHolderFilter@613d42ab, org.springframework.security.web.header.HeaderWriterFilter@1fcef7, org.springframework.web.filter.CorsFilter@6aa152b7, org.springframework.security.web.authentication.logout.LogoutFilter@6314e967, com.montreal.oauth.configurations.JwtAuthFilter@6db64abf, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2c78771b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@aec9672, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@54b88247, org.springframework.security.web.session.SessionManagementFilter@40bac624, org.springframework.security.web.access.ExceptionTranslationFilter@2c841ac4, org.springframework.security.web.access.intercept.AuthorizationFilter@56a34c0e]
+2024-08-22T07:33:10.763-03:00 DEBUG 15028 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:33:10.812-03:00 DEBUG 15028 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:33:11.324-03:00  INFO 15028 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:33:11.339-03:00  INFO 15028 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 11.254 seconds (process running for 12.021)
+2024-08-22T07:33:13.856-03:00  INFO 15028 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:33:13.856-03:00  INFO 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:33:13.856-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:33:13.856-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:33:13.856-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:33:13.857-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@7280785f
+2024-08-22T07:33:13.857-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@75b5d09
+2024-08-22T07:33:13.857-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:33:13.857-03:00  INFO 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2024-08-22T07:33:13.893-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:33:13.893-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:33:13.985-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:33:14.246-03:00  INFO 15028 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:33:14.511-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:33:14.541-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:33:14.545-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@54dc082]
+2024-08-22T07:33:14.561-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException]
+2024-08-22T07:33:14.563-03:00 DEBUG 15028 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:33:15.586-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:33:15.587-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:33:15.588-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:33:15.603-03:00  INFO 15028 --- [http-nio-8082-exec-2] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:33:15.715-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:33:15.716-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:33:15.716-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@5351d3a1]
+2024-08-22T07:33:15.717-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException]
+2024-08-22T07:33:15.718-03:00 DEBUG 15028 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:33:18.317-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:33:18.317-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:33:18.317-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:33:18.330-03:00  INFO 15028 --- [http-nio-8082-exec-3] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:33:18.398-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:33:18.399-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:33:18.399-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@c95feee]
+2024-08-22T07:33:18.399-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException]
+2024-08-22T07:33:18.399-03:00 DEBUG 15028 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:33:22.329-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:33:22.329-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:33:22.330-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:33:22.342-03:00  INFO 15028 --- [http-nio-8082-exec-4] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:33:22.411-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler com.montreal.core.controllers.exceptionhandler.ApiExceptionHandler#handleUncaught(Exception, WebRequest)
+2024-08-22T07:33:22.412-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:33:22.412-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.controllers.exceptionhandler.Problem@751c0273]
+2024-08-22T07:33:22.412-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.UnsupportedOperationException]
+2024-08-22T07:33:22.413-03:00 DEBUG 15028 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+2024-08-22T07:41:28.230-03:00  INFO 15028 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:41:28.230-03:00  INFO 15028 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T07:41:28.250-03:00  INFO 15028 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T07:41:34.097-03:00  INFO 3732 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 3732 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T07:41:34.097-03:00  INFO 3732 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T07:41:35.339-03:00  INFO 3732 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T07:41:35.466-03:00  INFO 3732 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 112 ms. Found 2 JPA repository interfaces.
+2024-08-22T07:41:37.253-03:00  INFO 3732 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T07:41:37.269-03:00  INFO 3732 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T07:41:37.269-03:00  INFO 3732 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T07:41:37.411-03:00  INFO 3732 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T07:41:37.411-03:00  INFO 3732 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3197 ms
+2024-08-22T07:41:37.617-03:00  INFO 3732 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T07:41:38.007-03:00  INFO 3732 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@733e6df7
+2024-08-22T07:41:38.007-03:00  INFO 3732 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T07:41:39.062-03:00  INFO 3732 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T07:41:40.954-03:00  INFO 3732 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T07:41:41.503-03:00  INFO 3732 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T07:41:42.521-03:00  WARN 3732 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T07:41:42.837-03:00 DEBUG 3732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T07:41:43.149-03:00 DEBUG 3732 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T07:41:43.263-03:00  INFO 3732 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7ba70b3b, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3a72b2c9, org.springframework.security.web.context.SecurityContextHolderFilter@4e7d77ec, org.springframework.security.web.header.HeaderWriterFilter@1eb3a6a3, org.springframework.web.filter.CorsFilter@269a37bc, org.springframework.security.web.authentication.logout.LogoutFilter@5acc6ca1, com.montreal.oauth.configurations.JwtAuthFilter@6567de86, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@75452b01, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@23b260ed, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@106e816c, org.springframework.security.web.session.SessionManagementFilter@5f1d270a, org.springframework.security.web.access.ExceptionTranslationFilter@a824f87, org.springframework.security.web.access.intercept.AuthorizationFilter@8829ecd]
+2024-08-22T07:41:43.566-03:00 DEBUG 3732 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T07:41:43.690-03:00 DEBUG 3732 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T07:41:44.527-03:00  INFO 3732 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T07:41:44.559-03:00  INFO 3732 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 11.235 seconds (process running for 11.933)
+2024-08-22T07:41:47.588-03:00  INFO 3732 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T07:41:47.589-03:00  INFO 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T07:41:47.589-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T07:41:47.589-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T07:41:47.589-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T07:41:47.590-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5086e144
+2024-08-22T07:41:47.590-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@112d8c18
+2024-08-22T07:41:47.591-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T07:41:47.592-03:00  INFO 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2024-08-22T07:41:47.633-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:41:47.633-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:41:47.709-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:41:47.965-03:00  INFO 3732 --- [http-nio-8082-exec-1] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:41:48.236-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:41:48.239-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@7fcc715d]
+2024-08-22T07:41:48.258-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T07:43:06.671-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T07:43:06.673-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T07:43:06.674-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T07:43:06.693-03:00  INFO 3732 --- [http-nio-8082-exec-2] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T07:43:06.792-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T07:43:06.793-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@3050cbff]
+2024-08-22T07:43:06.794-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T11:34:19.652-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T11:34:19.667-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T11:34:19.720-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T11:34:19.897-03:00  INFO 3732 --- [http-nio-8082-exec-3] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T11:34:20.042-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T11:34:20.044-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@7ffdbfb8]
+2024-08-22T11:34:20.052-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T11:42:38.023-03:00 DEBUG 3732 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T11:42:38.025-03:00 DEBUG 3732 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T11:42:38.029-03:00 DEBUG 3732 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T11:42:38.058-03:00  INFO 3732 --- [http-nio-8082-exec-4] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T11:42:38.174-03:00 DEBUG 3732 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T11:42:38.175-03:00 DEBUG 3732 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@21084532]
+2024-08-22T11:42:38.176-03:00 DEBUG 3732 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T12:34:55.967-03:00 DEBUG 3732 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T12:34:55.974-03:00 DEBUG 3732 --- [http-nio-8082-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T12:34:55.997-03:00 DEBUG 3732 --- [http-nio-8082-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T12:34:56.105-03:00  INFO 3732 --- [http-nio-8082-exec-5] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T12:34:56.237-03:00 DEBUG 3732 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T12:34:56.238-03:00 DEBUG 3732 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@57f92db5]
+2024-08-22T12:34:56.253-03:00 DEBUG 3732 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T12:49:58.694-03:00 DEBUG 3732 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T12:49:58.695-03:00 DEBUG 3732 --- [http-nio-8082-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T12:49:58.700-03:00 DEBUG 3732 --- [http-nio-8082-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T12:49:58.742-03:00  INFO 3732 --- [http-nio-8082-exec-6] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T12:49:58.850-03:00 DEBUG 3732 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T12:49:58.851-03:00 DEBUG 3732 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@650c95eb]
+2024-08-22T12:49:58.851-03:00 DEBUG 3732 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T12:50:36.642-03:00 DEBUG 3732 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T12:50:36.642-03:00 DEBUG 3732 --- [http-nio-8082-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T12:50:36.642-03:00 DEBUG 3732 --- [http-nio-8082-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T12:50:36.666-03:00  INFO 3732 --- [http-nio-8082-exec-7] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T12:50:36.782-03:00 DEBUG 3732 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T12:50:36.783-03:00 DEBUG 3732 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@5da72d79]
+2024-08-22T12:50:36.785-03:00 DEBUG 3732 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T13:04:09.293-03:00 DEBUG 3732 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T13:04:09.294-03:00 DEBUG 3732 --- [http-nio-8082-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T13:04:09.297-03:00 DEBUG 3732 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T13:04:09.362-03:00  INFO 3732 --- [http-nio-8082-exec-8] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T13:04:09.481-03:00 DEBUG 3732 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T13:04:09.482-03:00 DEBUG 3732 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@2cdc72fe]
+2024-08-22T13:04:09.486-03:00 DEBUG 3732 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T13:12:04.283-03:00 DEBUG 3732 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T13:12:04.283-03:00 DEBUG 3732 --- [http-nio-8082-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T13:12:04.283-03:00 DEBUG 3732 --- [http-nio-8082-exec-9] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T13:12:04.320-03:00  INFO 3732 --- [http-nio-8082-exec-9] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T13:12:04.427-03:00 DEBUG 3732 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T13:12:04.427-03:00 DEBUG 3732 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@262597ad]
+2024-08-22T13:12:04.429-03:00 DEBUG 3732 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T13:20:21.582-03:00 DEBUG 3732 --- [http-nio-8082-exec-10] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/login", parameters={}
+2024-08-22T13:20:21.583-03:00 DEBUG 3732 --- [http-nio-8082-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#AuthenticateAndGetToken(AuthRequestDTO)
+2024-08-22T13:20:21.591-03:00 DEBUG 3732 --- [http-nio-8082-exec-10] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [AuthRequestDTO(username=6+j1lvnBlhqG5KKuhQEVtw==, password=rw8T8d7mzBTuwsCuIm/+Xg==)]
+2024-08-22T13:20:21.609-03:00  INFO 3732 --- [http-nio-8082-exec-10] c.m.o.helpers.UserDetailsServiceImpl     : User Authenticated Successfully..!!!
+2024-08-22T13:20:21.723-03:00 DEBUG 3732 --- [http-nio-8082-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T13:20:21.723-03:00 DEBUG 3732 --- [http-nio-8082-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@274c54f7]
+2024-08-22T13:20:21.725-03:00 DEBUG 3732 --- [http-nio-8082-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T13:53:04.313-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T13:53:04.314-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T13:53:04.514-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T13:53:04.847-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T13:53:04.847-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@3f1cf0f4]
+2024-08-22T13:53:04.864-03:00 DEBUG 3732 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2024-08-22T13:55:12.027-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T13:55:12.028-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T13:55:12.030-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T13:55:12.046-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T13:55:12.047-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@4899ba48]
+2024-08-22T13:55:12.048-03:00 DEBUG 3732 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2024-08-22T13:56:15.076-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T13:56:15.077-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T13:56:15.078-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T13:56:55.648-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T13:56:55.648-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@38ecdfa8]
+2024-08-22T13:56:55.648-03:00 DEBUG 3732 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2024-08-22T13:56:55.770-03:00  INFO 3732 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T13:56:55.786-03:00  INFO 3732 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T13:56:55.799-03:00  INFO 3732 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T14:00:02.573-03:00  INFO 18216 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 18216 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T14:00:02.573-03:00  INFO 18216 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T14:00:04.075-03:00  INFO 18216 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T14:00:04.217-03:00  INFO 18216 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 122 ms. Found 2 JPA repository interfaces.
+2024-08-22T14:00:06.334-03:00  INFO 18216 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T14:00:06.381-03:00  INFO 18216 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T14:00:06.381-03:00  INFO 18216 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T14:00:06.602-03:00  INFO 18216 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T14:00:06.602-03:00  INFO 18216 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3870 ms
+2024-08-22T14:00:06.807-03:00  INFO 18216 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T14:00:07.288-03:00  INFO 18216 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@794f11cd
+2024-08-22T14:00:07.288-03:00  INFO 18216 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T14:00:10.367-03:00  INFO 18216 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T14:00:15.850-03:00  INFO 18216 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T14:00:17.149-03:00  INFO 18216 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T14:00:19.259-03:00  WARN 18216 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T14:00:19.855-03:00 DEBUG 18216 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T14:00:20.384-03:00 DEBUG 18216 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T14:00:20.639-03:00  INFO 18216 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@436867c3, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@262ea940, org.springframework.security.web.context.SecurityContextHolderFilter@613d42ab, org.springframework.security.web.header.HeaderWriterFilter@1fcef7, org.springframework.web.filter.CorsFilter@6aa152b7, org.springframework.security.web.authentication.logout.LogoutFilter@6314e967, com.montreal.oauth.configurations.JwtAuthFilter@6db64abf, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2c78771b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@aec9672, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@54b88247, org.springframework.security.web.session.SessionManagementFilter@40bac624, org.springframework.security.web.access.ExceptionTranslationFilter@2c841ac4, org.springframework.security.web.access.intercept.AuthorizationFilter@56a34c0e]
+2024-08-22T14:00:21.100-03:00 DEBUG 18216 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T14:00:21.243-03:00 DEBUG 18216 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T14:00:22.606-03:00  INFO 18216 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T14:00:22.637-03:00  INFO 18216 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 20.958 seconds (process running for 21.737)
+2024-08-22T14:00:25.533-03:00  INFO 18216 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T14:00:25.533-03:00  INFO 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T14:00:25.533-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T14:00:25.533-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T14:00:25.533-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T14:00:25.533-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@7280785f
+2024-08-22T14:00:25.533-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@75b5d09
+2024-08-22T14:00:25.533-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T14:00:25.533-03:00  INFO 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2024-08-22T14:00:25.575-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:00:25.575-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:00:25.664-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:00:50.330-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:00:50.330-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@51b5bad6]
+2024-08-22T14:00:50.357-03:00 DEBUG 18216 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:01:25.812-03:00 DEBUG 18216 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:01:25.814-03:00 DEBUG 18216 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:01:25.814-03:00 DEBUG 18216 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:01:32.098-03:00 DEBUG 18216 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:01:32.098-03:00 DEBUG 18216 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@1649dc6b]
+2024-08-22T14:01:32.099-03:00 DEBUG 18216 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:05:42.930-03:00 DEBUG 18216 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:05:42.932-03:00 DEBUG 18216 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:05:42.934-03:00 DEBUG 18216 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:05:43.098-03:00 DEBUG 18216 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:05:43.098-03:00 DEBUG 18216 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@4b95a006]
+2024-08-22T14:05:43.102-03:00 DEBUG 18216 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:06:01.063-03:00 DEBUG 18216 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:06:01.064-03:00 DEBUG 18216 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:06:01.064-03:00 DEBUG 18216 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:06:01.144-03:00 DEBUG 18216 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:06:01.144-03:00 DEBUG 18216 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@3d06ecf5]
+2024-08-22T14:06:01.147-03:00 DEBUG 18216 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:07:05.068-03:00  INFO 18216 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T14:07:05.074-03:00  INFO 18216 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T14:07:05.082-03:00  INFO 18216 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T14:07:10.228-03:00  INFO 27020 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 27020 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T14:07:10.244-03:00  INFO 27020 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T14:07:11.509-03:00  INFO 27020 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T14:07:11.619-03:00  INFO 27020 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 98 ms. Found 2 JPA repository interfaces.
+2024-08-22T14:07:13.616-03:00  INFO 27020 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T14:07:13.647-03:00  INFO 27020 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T14:07:13.647-03:00  INFO 27020 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T14:07:13.789-03:00  INFO 27020 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T14:07:13.789-03:00  INFO 27020 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3409 ms
+2024-08-22T14:07:13.979-03:00  INFO 27020 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T14:07:14.379-03:00  INFO 27020 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4b56b031
+2024-08-22T14:07:14.379-03:00  INFO 27020 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T14:07:15.450-03:00  INFO 27020 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T14:07:17.362-03:00  INFO 27020 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T14:07:17.853-03:00  INFO 27020 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T14:07:18.771-03:00  WARN 27020 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T14:07:19.031-03:00 DEBUG 27020 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T14:07:19.259-03:00 DEBUG 27020 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T14:07:19.369-03:00  INFO 27020 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@75dc995f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@51c660c8, org.springframework.security.web.context.SecurityContextHolderFilter@2daf650b, org.springframework.security.web.header.HeaderWriterFilter@77035caa, org.springframework.web.filter.CorsFilter@498102a4, org.springframework.security.web.authentication.logout.LogoutFilter@678db8be, com.montreal.oauth.configurations.JwtAuthFilter@470fc16c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5f1d270a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7d14efc, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@8829ecd, org.springframework.security.web.session.SessionManagementFilter@63c07eaf, org.springframework.security.web.access.ExceptionTranslationFilter@aec9672, org.springframework.security.web.access.intercept.AuthorizationFilter@19203ff3]
+2024-08-22T14:07:19.639-03:00 DEBUG 27020 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T14:07:19.702-03:00 DEBUG 27020 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T14:07:20.921-03:00  INFO 27020 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T14:07:20.966-03:00  INFO 27020 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 11.47 seconds (process running for 12.251)
+2024-08-22T14:07:22.754-03:00  INFO 27020 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T14:07:22.759-03:00  INFO 27020 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T14:07:22.772-03:00  INFO 27020 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T14:07:31.951-03:00  INFO 26976 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 26976 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T14:07:31.951-03:00  INFO 26976 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T14:07:34.027-03:00  INFO 26976 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T14:07:34.214-03:00  INFO 26976 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 158 ms. Found 2 JPA repository interfaces.
+2024-08-22T14:07:37.034-03:00  INFO 26976 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T14:07:37.081-03:00  INFO 26976 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T14:07:37.081-03:00  INFO 26976 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T14:07:37.382-03:00  INFO 26976 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T14:07:37.382-03:00  INFO 26976 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5242 ms
+2024-08-22T14:07:37.680-03:00  INFO 26976 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T14:07:38.274-03:00  INFO 26976 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@499ee966
+2024-08-22T14:07:38.274-03:00  INFO 26976 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T14:07:39.881-03:00  INFO 26976 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T14:07:42.445-03:00  INFO 26976 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T14:07:43.364-03:00  INFO 26976 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T14:07:44.884-03:00  WARN 26976 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T14:07:45.310-03:00 DEBUG 26976 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T14:07:45.592-03:00 DEBUG 26976 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T14:07:45.719-03:00  INFO 26976 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7d96618, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@678db8be, org.springframework.security.web.context.SecurityContextHolderFilter@77035caa, org.springframework.security.web.header.HeaderWriterFilter@5854e526, org.springframework.web.filter.CorsFilter@77b7a4b2, org.springframework.security.web.authentication.logout.LogoutFilter@1967c032, com.montreal.oauth.configurations.JwtAuthFilter@7018636a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@761d679f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@a824f87, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@56739ee9, org.springframework.security.web.session.SessionManagementFilter@2c78771b, org.springframework.security.web.access.ExceptionTranslationFilter@2940eec0, org.springframework.security.web.access.intercept.AuthorizationFilter@54b88247]
+2024-08-22T14:07:46.065-03:00 DEBUG 26976 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T14:07:46.175-03:00 DEBUG 26976 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T14:07:47.010-03:00  INFO 26976 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T14:07:47.043-03:00  INFO 26976 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 16.425 seconds (process running for 17.663)
+2024-08-22T14:13:46.956-03:00  INFO 26976 --- [http-nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-22T14:13:46.956-03:00  INFO 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-22T14:13:46.956-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2024-08-22T14:13:46.956-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2024-08-22T14:13:46.956-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2024-08-22T14:13:46.964-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5565d718
+2024-08-22T14:13:46.965-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@38950138
+2024-08-22T14:13:46.965-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-08-22T14:13:46.965-03:00  INFO 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 9 ms
+2024-08-22T14:13:47.022-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:13:47.032-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:13:47.148-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:13:47.798-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:13:47.805-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@ea73cd5]
+2024-08-22T14:13:47.850-03:00 DEBUG 26976 --- [http-nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:14:05.490-03:00 DEBUG 26976 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:14:05.490-03:00 DEBUG 26976 --- [http-nio-8082-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:14:05.491-03:00 DEBUG 26976 --- [http-nio-8082-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:14:05.553-03:00 DEBUG 26976 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:14:05.554-03:00 DEBUG 26976 --- [http-nio-8082-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@369d1525]
+2024-08-22T14:14:05.556-03:00 DEBUG 26976 --- [http-nio-8082-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:15:27.318-03:00 DEBUG 26976 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:15:27.322-03:00 DEBUG 26976 --- [http-nio-8082-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:15:27.324-03:00 DEBUG 26976 --- [http-nio-8082-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:15:27.384-03:00 DEBUG 26976 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:15:27.385-03:00 DEBUG 26976 --- [http-nio-8082-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@424fbe36]
+2024-08-22T14:15:27.388-03:00 DEBUG 26976 --- [http-nio-8082-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:17:40.019-03:00 DEBUG 26976 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:17:40.019-03:00 DEBUG 26976 --- [http-nio-8082-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:17:40.019-03:00 DEBUG 26976 --- [http-nio-8082-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:17:40.083-03:00 DEBUG 26976 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:17:40.083-03:00 DEBUG 26976 --- [http-nio-8082-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@1649dc6b]
+2024-08-22T14:17:40.085-03:00 DEBUG 26976 --- [http-nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:18:18.890-03:00 DEBUG 26976 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:18:18.891-03:00 DEBUG 26976 --- [http-nio-8082-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:18:18.893-03:00 DEBUG 26976 --- [http-nio-8082-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:18:18.955-03:00 DEBUG 26976 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:18:18.956-03:00 DEBUG 26976 --- [http-nio-8082-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@431b03ee]
+2024-08-22T14:18:18.958-03:00 DEBUG 26976 --- [http-nio-8082-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:18:52.579-03:00 DEBUG 26976 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:18:52.582-03:00 DEBUG 26976 --- [http-nio-8082-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:18:52.584-03:00 DEBUG 26976 --- [http-nio-8082-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:18:52.645-03:00 DEBUG 26976 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:18:52.645-03:00 DEBUG 26976 --- [http-nio-8082-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@406b2361]
+2024-08-22T14:18:52.646-03:00 DEBUG 26976 --- [http-nio-8082-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:19:10.379-03:00 DEBUG 26976 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:19:10.379-03:00 DEBUG 26976 --- [http-nio-8082-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:19:10.382-03:00 DEBUG 26976 --- [http-nio-8082-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:19:10.436-03:00 DEBUG 26976 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:19:10.437-03:00 DEBUG 26976 --- [http-nio-8082-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@2377f00b]
+2024-08-22T14:19:10.439-03:00 DEBUG 26976 --- [http-nio-8082-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:19:30.344-03:00 DEBUG 26976 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:19:30.345-03:00 DEBUG 26976 --- [http-nio-8082-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:19:30.346-03:00 DEBUG 26976 --- [http-nio-8082-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:19:30.402-03:00 DEBUG 26976 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:19:30.402-03:00 DEBUG 26976 --- [http-nio-8082-exec-8] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@2c0ed9ba]
+2024-08-22T14:19:30.405-03:00 DEBUG 26976 --- [http-nio-8082-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:19:44.744-03:00 DEBUG 26976 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/auth/password-recovery", parameters={}
+2024-08-22T14:19:44.745-03:00 DEBUG 26976 --- [http-nio-8082-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.montreal.oauth.controllers.UserController#passwordRecovery(CheckEmailDTO)
+2024-08-22T14:19:44.746-03:00 DEBUG 26976 --- [http-nio-8082-exec-9] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CheckEmailDTO(email=G3vcGMP7qL/kIac1d8qQPg==)]
+2024-08-22T14:19:44.811-03:00 DEBUG 26976 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2024-08-22T14:19:44.811-03:00 DEBUG 26976 --- [http-nio-8082-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.montreal.core.models.messages.Message@71552d13]
+2024-08-22T14:19:44.813-03:00 DEBUG 26976 --- [http-nio-8082-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2024-08-22T14:59:45.327-03:00  INFO 26976 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T14:59:45.338-03:00  INFO 26976 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T14:59:45.347-03:00  INFO 26976 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-08-22T15:00:08.074-03:00  INFO 33552 --- [main] com.montreal.GarantiasApplication        : Starting GarantiasApplication using Java 17.0.11 with PID 33552 (C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND\target\classes started by wellt in C:\PROJETO\RELEASE2\MONTREAL-GESTAO-GARANTIAS-BACKEND)
+2024-08-22T15:00:08.088-03:00  INFO 33552 --- [main] com.montreal.GarantiasApplication        : The following 1 profile is active: "local"
+2024-08-22T15:00:10.863-03:00  INFO 33552 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-08-22T15:00:11.127-03:00  INFO 33552 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 226 ms. Found 2 JPA repository interfaces.
+2024-08-22T15:00:15.648-03:00  INFO 33552 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2024-08-22T15:00:15.750-03:00  INFO 33552 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-22T15:00:15.752-03:00  INFO 33552 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-08-22T15:00:16.203-03:00  INFO 33552 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-22T15:00:16.205-03:00  INFO 33552 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 7823 ms
+2024-08-22T15:00:16.596-03:00  INFO 33552 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-08-22T15:00:17.458-03:00  INFO 33552 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4b56b031
+2024-08-22T15:00:17.469-03:00  INFO 33552 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-08-22T15:00:20.578-03:00  INFO 33552 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-08-22T15:00:26.673-03:00  INFO 33552 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T15:00:27.682-03:00  INFO 33552 --- [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-08-22T15:00:29.848-03:00  WARN 33552 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-22T15:00:30.645-03:00 DEBUG 33552 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 11 mappings in 'requestMappingHandlerMapping'
+2024-08-22T15:00:31.078-03:00 DEBUG 33552 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2024-08-22T15:00:31.231-03:00  INFO 33552 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@498102a4, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@8829ecd, org.springframework.security.web.context.SecurityContextHolderFilter@5f1d270a, org.springframework.security.web.header.HeaderWriterFilter@761d679f, org.springframework.web.filter.CorsFilter@1985f8e3, org.springframework.security.web.authentication.logout.LogoutFilter@56739ee9, com.montreal.oauth.configurations.JwtAuthFilter@56dae6, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5180f430, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4e7d77ec, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7ba70b3b, org.springframework.security.web.session.SessionManagementFilter@67e7fe73, org.springframework.security.web.access.ExceptionTranslationFilter@77035caa, org.springframework.security.web.access.intercept.AuthorizationFilter@75dc995f]
+2024-08-22T15:00:31.614-03:00 DEBUG 33552 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-08-22T15:00:31.795-03:00 DEBUG 33552 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-08-22T15:00:33.291-03:00  INFO 33552 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path ''
+2024-08-22T15:00:33.327-03:00  INFO 33552 --- [main] com.montreal.GarantiasApplication        : Started GarantiasApplication in 27.491 seconds (process running for 29.444)
+2024-08-22T15:05:57.670-03:00  INFO 33552 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-08-22T15:05:57.676-03:00  INFO 33552 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-08-22T15:05:57.684-03:00  INFO 33552 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
