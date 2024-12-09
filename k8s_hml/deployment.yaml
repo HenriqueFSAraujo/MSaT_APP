@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestao-garantias-frontend-hml
+  namespace: gestao-garantias-hml
+spec:
+  selector:
+    matchLabels:
+      app: gestao-garantias-frontend-hml
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gestao-garantias-frontend-hml
+    spec:
+      containers:
+        - name: gestao-garantias-frontend-hml
+          image: mimontreal/k8s_gestao_garantias_frontend_hml:TAGIMG
+          resources:
+            requests:
+              memory: '10Mi'
+              cpu: '10m'
+            limits:
+              memory: '1Gi'
+              cpu: '1'
+          env:
+            - name: VITE_API_URL
+              value: https://homol-msiav-mg-api.montreal.com.br/
