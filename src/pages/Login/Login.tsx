@@ -246,7 +246,7 @@ const Login: React.FC = () => {
       </FormContainer>
 
       <ImageContainer>
-        <img src={imgcarsblue} alt="carros" />
+
       </ImageContainer>
     </LoginContainer>
   );

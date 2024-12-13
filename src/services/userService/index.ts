@@ -23,23 +23,49 @@ export interface Role {
 
 // Interface que define a estrutura completa de um Usuário
 export interface User {
+  phone: string;
   id: number;
   username: string;
   fullName: string;
-  cpf: string;
-  phone: string;
   email: string;
-  link: string;
-  resetAt: string;
-  roles: Role[];
-  companyId: string;
-  enabled: boolean;
-  reset: boolean;
-  passwordChangedByUser: boolean;
-  createdByAdmin: boolean;
-  tokenLogin: boolean;
-  password?: string;
+  cpf: string;
+  gender: string; // Gênero
+  cpfCandidato: string; // CPF do(a) candidato(a)
+  birthDate: string; // Data de nascimento
+  isDisabled:  string; // Pessoa com deficiência
+  educacenso?: string; // Número Educacenso (opcional)
+
+  // Informações do Genitor 1
+  parentName1: string; // Nome completo do Genitor 1
+  parentMaritalStatus1: string; // Estado civil do Genitor 1
+  parentCpf1: string; // CPF do Genitor 1
+  parentPhone1: string; // Telefone de contato do Genitor 1
+
+  // Informações do Genitor 2
+  parentName2: string; // Nome completo do Genitor 2
+  parentMaritalStatus2: string; // Estado civil do Genitor 2
+  parentCpf2: string; // CPF do Genitor 2
+  parentPhone2: string; // Telefone de contato do Genitor 2
+
+  // Residência
+  residesWithParents: string; // O(a) candidato(a) reside com os dois genitores? (Sim/Não)
+
+  // Endereço
+  address: {
+    street: string; // Nome da rua/quadra/avenida e número da casa/apto
+    neighborhood: string; // Bairro
+    city: string; // Cidade
+    state: string; // Estado
+    zipCode: string; // CEP
+    referencePoint: string; // Ponto de referência do endereço
+  };
+
+  roles: Role[]; // Perfis de usuário
+  enabled: boolean; // Usuário está habilitado?
+  companyId: string; // ID da empresa associada
 }
+
+
 
 // Interface para filtros de busca de usuários
 export interface UserFilters {

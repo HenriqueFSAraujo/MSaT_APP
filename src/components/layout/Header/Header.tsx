@@ -15,7 +15,7 @@ import {
   LogoBoxLogin,
 } from './styles';
 import MenuComponent from '@/components/layout/Menu/menu';
-import Logo from '@/assets/logo.svg';
+
 
 interface HeaderProps {
   shouldRender: boolean;
@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
   //   setAnchorEl(event.currentTarget);
   // };
 
-  const handleClick = () => {};
+  const handleClick = () => { };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -61,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
         <StyledToolbar>
           <LeftSection>
             <LogoBoxLogin>
-              <img src={Logo} alt="Logo" />
+
             </LogoBoxLogin>
           </LeftSection>
 
@@ -79,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
         <LeftSection>
           <MenuComponent />
           <LogoBox onClick={() => navigate('/dashboard')}>
-            <img src={Logo} alt="Logo" />
+
           </LogoBox>
         </LeftSection>
 

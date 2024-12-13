@@ -15,6 +15,23 @@ export const SectionTitle = styled(Typography)`
   }
 `;
 
+
+
+
+export const UploadButton = styled(Button)`
+  max-width: 30%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const UploadFieldContainer = styled.div`
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
 export const SectionContainer = styled.div`
   margin-top: 30px;
   padding: 0px 16px;
@@ -38,11 +55,11 @@ export const FormGroup = styled.div`
 `;
 
 export const HalfWidthField = styled(TextField)`
-  flex: 1;
-  min-width: calc(50% - 10px);
+  flex: 1; /* Faz com que os campos tenham a mesma largura */
+  min-width: calc(50% - 10px); /* Cada campo ocupa 50% da linha menos o espaço entre eles */
 
   @media (max-width: 768px) {
-    min-width: 100%;
+    min-width: 100%; /* Para telas pequenas, ocupa a largura completa */
   }
 `;
 
@@ -71,11 +88,12 @@ export const StyledButton = styled(Button)`
   }
 `;
 
+
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
   width: 100%;
   padding: 0px 16px 20px;
+  flex-direction: column;
   gap: 40px;
 
   @media (max-width: 768px) {
@@ -89,8 +107,8 @@ export const CardContainerRow = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 15px;
-  margin-top: 10px;
 
+  margin-top: 10px;
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 10px;
@@ -160,10 +178,11 @@ export const InputComponet = styled(TextField)`
 
   @media (max-width: 768px) {
     & .MuiInputBase-root {
-      height: 40px;
+      height: 40px; // Aumentando um pouco para melhor toque em mobile
     }
   }
 `;
+
 
 export const CancelButton = styled(Button)`
   width: 89px;

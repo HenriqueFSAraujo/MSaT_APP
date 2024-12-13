@@ -36,14 +36,14 @@ interface CustomTableProps {
 }
 
 export const roleMapping: { [key: string]: string } = {
-  ROLE_USER: 'Usuário',
+  ROLE_USER: 'Aluno',
   ROLE_MODERATOR: 'Moderador',
   ROLE_ADMIN: 'Administrador',
-  ROLE_ESCOBS: 'Escrivão ESCOBS',
-  ROLE_AGENTE_OFICIAL: 'Agente Oficial',
-  ROLE_LOCALIZADOR: 'Localizador',
-  ROLE_GUINCHO: 'Guincho',
-  ROLE_PATIO: 'Pátio',
+  ROLE_ESCOBS: 'Responsável legal',
+  ROLE_AGENTE_OFICIAL: 'Responsavel Legal',
+  ROLE_LOCALIZADOR: 'Pai',
+  ROLE_GUINCHO: 'Coordenador',
+  ROLE_PATIO: 'Aluno',
 };
 
 const CustomTable: React.FC<CustomTableProps> = ({ filters }) => {
