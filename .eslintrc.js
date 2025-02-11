@@ -12,4 +12,12 @@ module.exports = {
   rules: {
     // Você pode adicionar regras personalizadas aqui
   },
+  settings: {
+    'import/resolver': {
+      typescript: {},
+      node: {
+        paths: ['src'],
+      },
+    },
+  },
 };
