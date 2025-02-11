@@ -16,86 +16,85 @@ export interface TabComponentProps {
 }
 
 const TabMandatarios: React.FC<TabComponentProps> = ({ vehicleDetails }) => {
-  const permission = defineAbilitiesFor(localStorage.getItem("@garantias:role")!)
-
+  const permission = defineAbilitiesFor(localStorage.getItem('@garantias:role')!);
 
   return (
     <Container>
       {permission.can('Get', 'Mandatarios') ? (
-      <CardComponet title="Dados Escritório de Cobrança">
-        <CardContainerRow>
-          <ContainerField>
-            <TitleField>Empresa</TitleField>
-            <ContainerValueField>
-              <span>
-                {vehicleDetails?.empresas.find(
-                  (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
-                )?.name || 'Não Associado'}
-              </span>
-            </ContainerValueField>
-          </ContainerField>
-
-          <ContainerField>
-            <TitleField>E-mail</TitleField>
-            <ContainerValueField>
-              <span>
-                {vehicleDetails?.empresas.find(
-                  (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
-                )?.email || 'Não Associado'}
-              </span>
-            </ContainerValueField>
-          </ContainerField>
-
-          <ContainerField>
-            <TitleField>CPF / CNPJ</TitleField>
-            <ContainerValueField>
-              <span>
-                {vehicleDetails?.empresas.find(
-                  (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
-                )?.document || 'Não Associado'}
-              </span>
-            </ContainerValueField>
-          </ContainerField>
-
-          <ContainerField>
-            <TitleField>Telefone</TitleField>
-            <ContainerValueField>
-              <span>
-                {vehicleDetails?.empresas.find(
-                  (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
-                )?.phone || 'Não Associado'}
-              </span>
-            </ContainerValueField>
-          </ContainerField>
-        </CardContainerRow>
-        <CardContainerRow>
-          <ContainerField>
-            <TitleField>Endereço</TitleField>
-            <ContainerValueField>
-              <span>
-                {vehicleDetails?.empresas.find(
-                  (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
-                )?.address || 'Não Associado'}
-              </span>
-            </ContainerValueField>
-          </ContainerField>
-
-          <CardContainerGroup>
+        <CardComponet title="Dados Escritório de Cobrança">
+          <CardContainerRow>
             <ContainerField>
-              <TitleField>Nome do Responsável</TitleField>
+              <TitleField>Empresa</TitleField>
               <ContainerValueField>
                 <span>
                   {vehicleDetails?.empresas.find(
                     (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
-                  )?.nameResponsible || 'Não Associado'}
+                  )?.name || 'Não Associado'}
                 </span>
               </ContainerValueField>
             </ContainerField>
 
-            <ContainerField></ContainerField>
-          </CardContainerGroup>
-        </CardContainerRow>
-      </CardComponet>
+            <ContainerField>
+              <TitleField>E-mail</TitleField>
+              <ContainerValueField>
+                <span>
+                  {vehicleDetails?.empresas.find(
+                    (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
+                  )?.email || 'Não Associado'}
+                </span>
+              </ContainerValueField>
+            </ContainerField>
+
+            <ContainerField>
+              <TitleField>CPF / CNPJ</TitleField>
+              <ContainerValueField>
+                <span>
+                  {vehicleDetails?.empresas.find(
+                    (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
+                  )?.document || 'Não Associado'}
+                </span>
+              </ContainerValueField>
+            </ContainerField>
+
+            <ContainerField>
+              <TitleField>Telefone</TitleField>
+              <ContainerValueField>
+                <span>
+                  {vehicleDetails?.empresas.find(
+                    (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
+                  )?.phone || 'Não Associado'}
+                </span>
+              </ContainerValueField>
+            </ContainerField>
+          </CardContainerRow>
+          <CardContainerRow>
+            <ContainerField>
+              <TitleField>Endereço</TitleField>
+              <ContainerValueField>
+                <span>
+                  {vehicleDetails?.empresas.find(
+                    (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
+                  )?.address || 'Não Associado'}
+                </span>
+              </ContainerValueField>
+            </ContainerField>
+
+            <CardContainerGroup>
+              <ContainerField>
+                <TitleField>Nome do Responsável</TitleField>
+                <ContainerValueField>
+                  <span>
+                    {vehicleDetails?.empresas.find(
+                      (item) => item.company_type === 'DADOS_ESCRITORIO_COBRANCA'
+                    )?.nameResponsible || 'Não Associado'}
+                  </span>
+                </ContainerValueField>
+              </ContainerField>
+
+              <ContainerField></ContainerField>
+            </CardContainerGroup>
+          </CardContainerRow>
+        </CardComponet>
       ) : null}
 
       <CardComponet title="Dados Localizador">

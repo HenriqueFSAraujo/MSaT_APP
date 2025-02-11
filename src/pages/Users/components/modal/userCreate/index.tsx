@@ -1,5 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Snackbar, Alert, FormGroup, FormControl, FormHelperText, InputLabel, Select } from '@mui/material';
+import {
+  Snackbar,
+  Alert,
+  FormGroup,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Select,
+} from '@mui/material';
 import {
   ButtonContainer,
   CancelButton,
@@ -274,7 +282,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   )}
                 />
               </ContainerInput>
-
             </CardContainerRow>
 
             <CardContainerRow>
@@ -284,12 +291,8 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="gender"
                   control={control}
                   render={({ field }) => (
-                    <InputComponet
-                      {...field}
-                      select
-                      disabled={loading}
-                    >
-                      {["Masculino", "Feminino", "Outro"].map((option) => (
+                    <InputComponet {...field} select disabled={loading}>
+                      {['Masculino', 'Feminino', 'Outro'].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
@@ -303,12 +306,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                 <Controller
                   name="cpfCandidato"
                   control={control}
-                  render={({ field }) => (
-                    <InputComponet
-                      {...field}
-
-                    />
-                  )}
+                  render={({ field }) => <InputComponet {...field} />}
                 />
               </ContainerInput>
               <ContainerInput>
@@ -316,13 +314,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                 <Controller
                   name="birthDate"
                   control={control}
-                  render={({ field }) => (
-                    <InputComponet
-                      {...field}
-                      type="date"
-
-                    />
-                  )}
+                  render={({ field }) => <InputComponet {...field} type="date" />}
                 />
               </ContainerInput>
               <ContainerInput>
@@ -331,11 +323,8 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="isDisabled"
                   control={control}
                   render={({ field }) => (
-                    <InputComponet
-                      {...field}
-                      select
-                    >
-                      {["Sim", "Não"].map((option) => (
+                    <InputComponet {...field} select>
+                      {['Sim', 'Não'].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
@@ -349,33 +338,20 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                 <Controller
                   name="educacenso"
                   control={control}
-                  render={({ field }) => (
-                    <InputComponet
-                      {...field}
-
-                      disabled={loading}
-                    />
-                  )}
+                  render={({ field }) => <InputComponet {...field} disabled={loading} />}
                 />
               </ContainerInput>
             </CardContainerRow>
           </CardComponet>
 
-
-
           <CardComponet title="Dados dos Genitores">
             <SectionContainer>
               <FormGroup>
-
                 <Controller
                   name="parentName1"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Nome completo do Genitor 1"
-
-                    />
+                    <HalfWidthField {...field} label="Nome completo do Genitor 1" />
                   )}
                 />
 
@@ -383,13 +359,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                 <Controller
                   name="parentCpf1"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="CPF do Genitor 1"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="CPF do Genitor 1" />}
                 />
 
                 {/* Telefone de contato do Genitor 1 */}
@@ -397,11 +367,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="parentPhone1"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Telefone de contato do Genitor 1"
-
-                    />
+                    <HalfWidthField {...field} label="Telefone de contato do Genitor 1" />
                   )}
                 />
 
@@ -419,7 +385,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                         <MenuItem value="Viúvo">Viúvo</MenuItem>
                         <MenuItem value="Outro">Outro</MenuItem>
                       </Select>
-
                     </FormControl>
                   )}
                 />
@@ -433,7 +398,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                       {...field}
                       label="Nome completo do Genitor 2"
                       helperText="Digite o nome completo e sem abreviações"
-
                     />
                   )}
                 />
@@ -442,13 +406,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                 <Controller
                   name="parentCpf2"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="CPF do Genitor 2"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="CPF do Genitor 2" />}
                 />
 
                 {/* Telefone de contato do Genitor 2 */}
@@ -456,11 +414,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="parentPhone2"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Telefone de contato do Genitor 2"
-
-                    />
+                    <HalfWidthField {...field} label="Telefone de contato do Genitor 2" />
                   )}
                 />
 
@@ -469,7 +423,7 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="parentMaritalStatus2"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth >
+                    <FormControl fullWidth>
                       <InputLabel>Estado Civil do Genitor 2</InputLabel>
                       <Select {...field}>
                         <MenuItem value="Solteiro">Solteiro</MenuItem>
@@ -478,7 +432,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                         <MenuItem value="Viúvo">Viúvo</MenuItem>
                         <MenuItem value="Outro">Outro</MenuItem>
                       </Select>
-
                     </FormControl>
                   )}
                 />
@@ -494,7 +447,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                         <MenuItem value="Sim">Sim</MenuItem>
                         <MenuItem value="Não">Não</MenuItem>
                       </Select>
-
                     </FormControl>
                   )}
                 />
@@ -510,74 +462,44 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="address.street"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Rua/Quadra/Avenida e número"
-
-                    />
+                    <HalfWidthField {...field} label="Rua/Quadra/Avenida e número" />
                   )}
                 />
                 <Controller
                   name="address.neighborhood"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Bairro"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="Bairro" />}
                 />
                 <Controller
                   name="address.city"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Cidade"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="Cidade" />}
                 />
                 <Controller
                   name="address.cep"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="CEP"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="CEP" />}
                 />
 
                 <Controller
                   name="address.referencePoint"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Ponto de referência do endereço"
-
-                    />
+                    <HalfWidthField {...field} label="Ponto de referência do endereço" />
                   )}
                 />
                 <Controller
                   name="address.reside"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="O(a) candidato(a) reside:"
-
-                    />
+                    <HalfWidthField {...field} label="O(a) candidato(a) reside:" />
                   )}
                 />
                 <Controller
                   name="address.transporte"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth >
+                    <FormControl fullWidth>
                       <InputLabel>Utiliza transporte para chegar a Unidade Educacional?</InputLabel>
                       <Select
                         {...field}
@@ -587,7 +509,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                         <MenuItem value="Sim">Sim</MenuItem>
                         <MenuItem value="Não">Não</MenuItem>
                       </Select>
-
                     </FormControl>
                   )}
                 />
@@ -599,7 +520,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                     <HalfWidthField
                       {...field}
                       label="Tempo habitual gasto de deslocamento de sua casa até a Unidade Educacional"
-
                     />
                   )}
                 />
@@ -607,8 +527,10 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                   name="address.participaAtividades"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth >
-                      <InputLabel>O(a) candidato(a) participa de atividades no contraturno escolar?</InputLabel>
+                    <FormControl fullWidth>
+                      <InputLabel>
+                        O(a) candidato(a) participa de atividades no contraturno escolar?
+                      </InputLabel>
                       <Select
                         {...field}
                         label="O(a) candidato(a) participa de atividades no contraturno escolar?"
@@ -624,40 +546,22 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
             </SectionContainer>
 
             <SectionContainer>
-              <SectionTitle >Contato</SectionTitle>
+              <SectionTitle>Contato</SectionTitle>
               <FormGroup>
                 <Controller
                   name="contact.telefoneResidencial"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Telefone residencial"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="Telefone residencial" />}
                 />
                 <Controller
                   name="contact.telefoneTrabalho"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Telefone do trabalho"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="Telefone do trabalho" />}
                 />
                 <Controller
                   name="contact.telefoneCelular"
                   control={control}
-                  render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Telefone celular"
-
-                    />
-                  )}
+                  render={({ field }) => <HalfWidthField {...field} label="Telefone celular" />}
                 />
                 <Controller
                   name="contact.email"
@@ -681,7 +585,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
                     <HalfWidthField
                       {...field}
                       label="Responsável legal do(a) candidato(a) bolsista"
-
                     />
                   )}
                 />
@@ -689,24 +592,17 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
             </SectionContainer>
 
             <SectionContainer>
-
               <FormGroup>
                 <Controller
                   name="academic.segmento2025"
                   control={control}
                   render={({ field }) => (
-                    <HalfWidthField
-                      {...field}
-                      label="Segmento que estudará em 2025"
-
-                    />
+                    <HalfWidthField {...field} label="Segmento que estudará em 2025" />
                   )}
                 />
               </FormGroup>
             </SectionContainer>
           </CardComponet>
-
-
         </Content>
       </form>
 

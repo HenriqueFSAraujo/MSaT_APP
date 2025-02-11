@@ -79,7 +79,6 @@ const UsersDetail: React.FC<UsersDetailPropos> = ({ user }) => {
               <span>{user?.email}</span>
             </ContainerValueField>
           </ContainerField>
-
         </CardContainerRow>
 
         <CardContainerRow>
@@ -89,13 +88,8 @@ const UsersDetail: React.FC<UsersDetailPropos> = ({ user }) => {
               <span>{user?.email}</span>
             </ContainerValueField>
           </ContainerField>
-
         </CardContainerRow>
-
-
       </CardComponet>
-
-
 
       <CardComponet title="Dados de acesso login">
         <CardContainerRow>
