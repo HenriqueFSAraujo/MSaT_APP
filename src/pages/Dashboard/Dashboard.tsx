@@ -1,27 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { memo, useEffect, useState } from 'react';
+
 import {
-  Box,
-  Typography,
-  Button,
-  Paper,
   Snackbar,
   Alert,
   MenuItem,
-  Skeleton,
   FormControl,
   FormHelperText,
   InputLabel,
   Select,
-  TextField,
   FormControlLabel,
   RadioGroup,
   Radio,
 } from '@mui/material';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useNavigate } from 'react-router-dom';
-import { defineAbilitiesFor } from '@/hooks/permission';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,7 +30,6 @@ import {
 import {
   ButtonContainer,
   CancelButton,
-  CardContainerGroup,
   CardContainerRow,
   Container,
   ContainerInput,
@@ -54,8 +45,6 @@ import {
   UploadFieldContainer,
 } from './styles';
 import CardComponet from '@/components/common/card/card';
-import { roleMapping } from '../Users/components/table/ConstomTable';
-import { DownloadButton } from '../Consulta/components/tabs/tabconsulta/styles';
 
 const DEFAULT_PASSWORD = '+103cEz)inNq';
 
@@ -252,9 +241,6 @@ const UsersForm: React.FC<UsersFormProps> = ({ user, mode, onClose, recharge, se
     setOpenSnackbar(false);
   };
 
-  function downloadPdfFromBase64(certidao_busca_apreensao: any, arg1: string): void {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <Container>
