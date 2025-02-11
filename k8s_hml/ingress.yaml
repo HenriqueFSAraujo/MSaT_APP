@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gestao-garantias-frontend-hml
+  namespace: gestao-garantias-hml
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: gestao-garantias-frontend.hml.k8s.montreal.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gestao-garantias-frontend-hml
+                port:
+                  number: 80
