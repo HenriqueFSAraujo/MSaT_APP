@@ -26,7 +26,7 @@ export const LoginAppBar = styled(StyledAppBar)`
 export const StyledToolbar = styled(Toolbar)`
   height: 100%;
   justify-content: space-between;
-  background-color: #0d181c;
+  background-color:rgb(11, 89, 172);
   padding-right: 22px !important;
 
   div {

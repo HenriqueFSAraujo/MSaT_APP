@@ -7,12 +7,12 @@ import {
   StyledAppBar,
   StyledToolbar,
   LeftSection,
-  LogoBox,
   RightSection,
   AdminText,
   TransparentIconButton,
   PageTitle,
   LogoBoxLogin,
+  LogoBox,
 } from './styles';
 import MenuComponent from '@/components/layout/Menu/menu';
 

@@ -266,6 +266,17 @@ const CustomTable: React.FC<CustomTableProps> = ({ filters }) => {
           </NewUser>
         </ContainerButons>
 
+        <ContainerButons>
+          <NewUser
+            variant="contained"
+            color="success"
+            onClick={() => handleOpenModal(null, 'create')}
+            disabled={isLoading}
+          >
+            Relatório Alunos
+          </NewUser>
+        </ContainerButons>
+
         <TableWrapper>
           {isLoading && <LoadingOverlay />}
           <Table>

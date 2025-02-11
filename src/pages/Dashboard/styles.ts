@@ -22,6 +22,8 @@ export const UploadButton = styled(Button)`
   max-width: 30%;
   display: flex;
   align-items: center;
+  background-color:rgb(15, 48, 121);
+
   gap: 8px;
 `;
 

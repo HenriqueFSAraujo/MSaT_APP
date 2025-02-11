@@ -11,7 +11,7 @@ import { ContainerButtonClose, DrawerContent, ListItemComponet, MenuButton } fro
 import { defineAbilitiesFor } from '@/hooks/permission';
 import CloseIcon from '@mui/icons-material/Close';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+
 import DomainIcon from '@mui/icons-material/Domain';
 import PersonIcon from '@mui/icons-material/Person';
 import Button from '@mui/material/Button';
@@ -46,16 +46,6 @@ export default function Menu() {
           </ListItemComponet>
         ) : null}
 
-        {permission.can('Get', 'Cadastros') ? (
-          <ListItemComponet disablePadding onClick={() => navigate('/dashboard/consulta')}>
-            <ListItemButton>
-              <ListItemIcon>
-                <DirectionsCarIcon />
-              </ListItemIcon>
-              <ListItemText primary="Cadastros" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
 
         {permission.can('Get', 'User') ? (
           <ListItemComponet disablePadding onClick={() => navigate('/dashboard/users')}>
