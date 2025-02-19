@@ -3,7 +3,6 @@
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "experimentalImportResolution": "node",
     "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
