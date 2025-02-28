@@ -1,28 +1,23 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
-import InputMask from 'react-input-mask';
+import { useFormContext, FieldError } from 'react-hook-form';
+import MaskedInput from 'react-text-mask';
 import { Input } from '@/components/ui/input';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../ui/form';
+import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 
 interface FormInputProps {
   name: string;
   label: string;
-  required?: boolean;
   type?: string;
-  description?: string;
+  required?: boolean;
+  error?: string | FieldError;
   mask?: 'cpf' | 'telefone';
+  description?: string;
+  [key: string]: unknown;
 }
 
 const maskPatterns = {
-  cpf: '999.999.999-99',
-  telefone: '(99) 99999-9999',
+  cpf: ['1', '1', '1', '.', '1', '1', '1', '.', '1', '1', '1', '-', '1', '1'],
+  telefone: ['(', '1', '1', ')', ' ', '1', '1', '1', '1', '1', '-', '1', '1', '1', '1'],
 };
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -32,38 +27,39 @@ const FormInput: React.FC<FormInputProps> = ({
   type = 'text',
   description,
   mask,
-}) => {
+}: FormInputProps) => {
   const { control } = useFormContext();
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
-        <FormItem className="relative flex flex-col w-full">
+      render={({ field, fieldState }) => (
+        <FormItem className="relative flex flex-col w-full min-h-[80px]">
           <FormLabel className="text-sm md:text-base font-medium text-gray-700">
             {label} {required && '*'}
           </FormLabel>
-          <FormControl>
-            {mask ? (
-              <InputMask
-                {...field}
-                mask={maskPatterns[mask]}
-                maskChar=""
-                className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-              />
-            ) : (
-              <Input
-                {...field}
-                type={type}
-                className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-              />
-            )}
-          </FormControl>
-          {description && (
-            <FormDescription className="text-gray-500 text-xs mt-1 ">{description}</FormDescription>
+          {mask ? (
+            <MaskedInput
+              {...field}
+              mask={maskPatterns[mask]}
+              className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+            />
+          ) : (
+            <Input
+              {...field}
+              type={type}
+              className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+            />
           )}
-          <FormMessage className="text-red-500 text-xs mt-1" />
+          {description && (
+            <FormDescription className="text-gray-500 text-xs mt-1">{description}</FormDescription>
+          )}
+          {fieldState?.error && (
+            <FormMessage className="block text-red-500 text-xs mt-1">
+              {fieldState.error?.message || 'Erro desconhecido'}
+            </FormMessage>
+          )}
         </FormItem>
       )}
     />

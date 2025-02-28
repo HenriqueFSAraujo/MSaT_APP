@@ -22,6 +22,7 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) =>
   const minYear = 1900;
   const maxYear = new Date().getFullYear();
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i).reverse();
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   return (
     <FormField
@@ -48,6 +49,7 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) =>
             <PopoverContent
               className="w-64 p-2 shadow-lg rounded-lg flex flex-col items-center"
               align="start"
+              side="top"
             >
               <div className="p-3 border-b bg-blue-300 flex items-center justify-between rounded-t-lg">
                 <Button
@@ -87,8 +89,13 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) =>
                 }}
                 fromYear={minYear}
                 toYear={maxYear}
-                month={new Date(currentYear, 0, 1)}
-                onMonthChange={(date) => setCurrentYear(date.getFullYear())}
+                month={currentDate}
+                onMonthChange={(date) => {
+                  const newMonth = date.getMonth();
+                  const newYear = date.getFullYear();
+
+                  setCurrentDate(new Date(newYear, newMonth, 1));
+                }}
                 initialFocus
               />
             </PopoverContent>

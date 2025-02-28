@@ -26,23 +26,41 @@ const PersonalDataForm: React.FC = () => {
     resolver: zodResolver(schema),
   });
 
+  const { errors } = methods.formState; // Pegando os erros diretamente
+
   const onSubmit = (data: FieldValues) => {
-    console.log(data);
+    console.log('onSubmit foi chamado');
+    console.log('Dados do formulário:', data);
   };
 
   return (
     <FormProvider {...methods}>
-      <div className="max-w-6xl mx-auto bg-white ">
-        <h1 className="text-2xl font-semibold p-6 text-gray-700 text-center mb-6">
-          Dados Pessoais
-        </h1>
+      <div className="max-w-6xl mx-auto bg-white p-6">
+        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">Dados Pessoais</h1>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FormInput name="username" label="Nome completo" required />
-            <FormInput name="login" label="Login" required />
-            <FormInput name="email" label="E-mail" type="email" required />
-            <FormInput name="cpf" label="CPF" mask="cpf" required />
-            <FormInput name="telefone" label="Telefone" mask="telefone" required />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            <FormInput
+              name="username"
+              label="Nome completo"
+              required
+              error={errors.username?.message}
+            />
+            <FormInput name="login" label="Login" required error={errors.login?.message} />
+            <FormInput
+              name="email"
+              label="E-mail"
+              type="email"
+              required
+              error={errors.email?.message}
+            />
+            <FormInput name="cpf" label="CPF" mask="cpf" required error={errors.cpf?.message} />
+            <FormInput
+              name="telefone"
+              label="Telefone"
+              mask="telefone"
+              required
+              error={errors.telefone?.message}
+            />
             <FormSelect
               name="genero"
               label="Escolha seu Gênero"
@@ -53,9 +71,15 @@ const PersonalDataForm: React.FC = () => {
                 { value: 'F', label: 'Feminino' },
                 { value: 'O', label: 'Outro' },
               ]}
+              error={errors.genero?.message}
             />
             <FormInput name="cpfBolsista" label="CPF do(a) candidato(a) bolsista" mask="cpf" />
-            <FormDate name="dataNascimento" label="Data de Nascimento" required />
+            <FormDate
+              name="dataNascimento"
+              label="Data de Nascimento"
+              required
+              error={errors.dataNascimento?.message}
+            />
             <FormSelect
               name="deficiencia"
               label="Pessoa com deficiência"
@@ -65,6 +89,7 @@ const PersonalDataForm: React.FC = () => {
                 { value: 'S', label: 'Sim' },
                 { value: 'N', label: 'Não' },
               ]}
+              error={errors.deficiencia?.message}
             />
             <FormInput
               name="educacenso"
