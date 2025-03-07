@@ -91,7 +91,7 @@ const PersonalDataForm = () => {
             <FormInput
               {...methods.register('phone')}
               name="phone"
-              label="phone"
+              label="Telefone"
               mask="phone"
               required
               error={errors.phone?.message}
