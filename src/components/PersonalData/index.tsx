@@ -16,20 +16,39 @@ const schema = z.object({
   telefone: z.string().min(1, 'Telefone é obrigatório'),
   genero: z.string().min(1, 'Gênero é obrigatório'),
   cpfBolsista: z.string().optional(),
-  dataNascimento: z.string().min(1, 'Data de nascimento é obrigatória'),
+  dataNascimento: z
+    .date({
+      required_error: 'Data de nascimento é obrigatória',
+      invalid_type_error: 'Formato inválido de data',
+    })
+    .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
   deficiencia: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
   educacenso: z.string().optional(),
 });
 
-const PersonalDataForm: React.FC = () => {
+const PersonalDataForm = () => {
   const methods = useForm({
+    mode: 'onSubmit',
     resolver: zodResolver(schema),
+    defaultValues: {
+      username: '',
+      login: '',
+      email: '',
+      cpf: '',
+      cpfBolsista: '',
+      telefone: '',
+      dataNascimento: '',
+      genero: '',
+      deficiencia: '',
+      educacenso: '',
+    },
   });
 
-  const { errors } = methods.formState; // Pegando os erros diretamente
+  const { errors } = methods.formState;
 
-  const onSubmit = (data: FieldValues) => {
-    console.log('onSubmit foi chamado');
+  const onSubmit = async (data: FieldValues) => {
+    const isValid = await methods.trigger();
+    if (!isValid) return;
     console.log('Dados do formulário:', data);
   };
 
@@ -37,24 +56,40 @@ const PersonalDataForm: React.FC = () => {
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
         <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">Dados Pessoais</h1>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             <FormInput
+              {...methods.register('username')}
               name="username"
               label="Nome completo"
               required
               error={errors.username?.message}
             />
-            <FormInput name="login" label="Login" required error={errors.login?.message} />
             <FormInput
+              {...methods.register('login')}
+              name="login"
+              label="Login"
+              required
+              error={errors.login?.message}
+            />
+            <FormInput
+              {...methods.register('email')}
               name="email"
               label="E-mail"
               type="email"
               required
               error={errors.email?.message}
             />
-            <FormInput name="cpf" label="CPF" mask="cpf" required error={errors.cpf?.message} />
             <FormInput
+              {...methods.register('cpf')}
+              name="cpf"
+              label="CPF"
+              mask="cpf"
+              required
+              error={errors.cpf?.message}
+            />
+            <FormInput
+              {...methods.register('telefone')}
               name="telefone"
               label="Telefone"
               mask="telefone"
@@ -73,7 +108,12 @@ const PersonalDataForm: React.FC = () => {
               ]}
               error={errors.genero?.message}
             />
-            <FormInput name="cpfBolsista" label="CPF do(a) candidato(a) bolsista" mask="cpf" />
+            <FormInput
+              {...methods.register('cpfBolsista')}
+              name="cpfBolsista"
+              label="CPF do(a) candidato(a) bolsista"
+              mask="cpf"
+            />
             <FormDate
               name="dataNascimento"
               label="Data de Nascimento"
@@ -92,6 +132,7 @@ const PersonalDataForm: React.FC = () => {
               error={errors.deficiencia?.message}
             />
             <FormInput
+              {...methods.register('educacenso')}
               name="educacenso"
               label="Número Educacenso"
               description="Caso não possua, deixe em branco."
