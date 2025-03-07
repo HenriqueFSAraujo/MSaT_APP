@@ -46,7 +46,6 @@ export default function Menu() {
           </ListItemComponet>
         ) : null}
 
-
         {permission.can('Get', 'User') ? (
           <ListItemComponet disablePadding onClick={() => navigate('/dashboard/users')}>
             <ListItemButton>

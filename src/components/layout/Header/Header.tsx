@@ -16,7 +16,6 @@ import {
 } from './styles';
 import MenuComponent from '@/components/layout/Menu/menu';
 
-
 interface HeaderProps {
   shouldRender: boolean;
 }
@@ -31,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
   //   setAnchorEl(event.currentTarget);
   // };
 
-  const handleClick = () => { };
+  const handleClick = () => {};
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -60,9 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
       <StyledAppBar position="static">
         <StyledToolbar>
           <LeftSection>
-            <LogoBoxLogin>
-
-            </LogoBoxLogin>
+            <LogoBoxLogin></LogoBoxLogin>
           </LeftSection>
 
           <Box />
@@ -78,9 +75,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
       <StyledToolbar>
         <LeftSection>
           <MenuComponent />
-          <LogoBox onClick={() => navigate('/dashboard')}>
-
-          </LogoBox>
+          <LogoBox onClick={() => navigate('/dashboard')}></LogoBox>
         </LeftSection>
 
         <PageTitle variant="h3">{getPageTitle()}</PageTitle>
