@@ -10,14 +10,14 @@ interface FormInputProps {
   type?: string;
   required?: boolean;
   error?: string;
-  mask?: 'cpf' | 'telefone';
+  mask?: 'cpf' | 'phone';
   description?: string;
   [key: string]: unknown;
 }
 
 const maskPatterns = {
   cpf: [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
-  telefone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
+  phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
 };
 
 const FormInput: React.FC<FormInputProps> = ({

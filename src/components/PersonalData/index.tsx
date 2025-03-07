@@ -13,16 +13,16 @@ const schema = z.object({
   login: z.string().min(1, 'Login é obrigatório'),
   email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
   cpf: z.string().min(1, 'CPF é obrigatório'),
-  telefone: z.string().min(1, 'Telefone é obrigatório'),
-  genero: z.string().min(1, 'Gênero é obrigatório'),
-  cpfBolsista: z.string().optional(),
-  dataNascimento: z
+  phone: z.string().min(1, 'phone é obrigatório'),
+  gender: z.string().min(1, 'Gênero é obrigatório'),
+  cpfScholarship: z.string().optional(),
+  dateBirth: z
     .date({
       required_error: 'Data de nascimento é obrigatória',
       invalid_type_error: 'Formato inválido de data',
     })
     .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
-  deficiencia: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
+  deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
   educacenso: z.string().optional(),
 });
 
@@ -35,11 +35,11 @@ const PersonalDataForm = () => {
       login: '',
       email: '',
       cpf: '',
-      cpfBolsista: '',
-      telefone: '',
-      dataNascimento: '',
-      genero: '',
-      deficiencia: '',
+      cpfScholarship: '',
+      phone: '',
+      dateBirth: '',
+      gender: '',
+      deficiency: '',
       educacenso: '',
     },
   });
@@ -89,15 +89,15 @@ const PersonalDataForm = () => {
               error={errors.cpf?.message}
             />
             <FormInput
-              {...methods.register('telefone')}
-              name="telefone"
-              label="Telefone"
-              mask="telefone"
+              {...methods.register('phone')}
+              name="phone"
+              label="phone"
+              mask="phone"
               required
-              error={errors.telefone?.message}
+              error={errors.phone?.message}
             />
             <FormSelect
-              name="genero"
+              name="gender"
               label="Escolha seu Gênero"
               required
               description="Selecione uma das opções abaixo."
@@ -106,22 +106,22 @@ const PersonalDataForm = () => {
                 { value: 'F', label: 'Feminino' },
                 { value: 'O', label: 'Outro' },
               ]}
-              error={errors.genero?.message}
+              error={errors.gender?.message}
             />
             <FormInput
-              {...methods.register('cpfBolsista')}
-              name="cpfBolsista"
+              {...methods.register('cpfScholarship')}
+              name="cpfScholarship"
               label="CPF do(a) candidato(a) bolsista"
               mask="cpf"
             />
             <FormDate
-              name="dataNascimento"
+              name="dateBirth"
               label="Data de Nascimento"
               required
-              error={errors.dataNascimento?.message}
+              error={errors.dateBirth?.message}
             />
             <FormSelect
-              name="deficiencia"
+              name="deficiency"
               label="Pessoa com deficiência"
               required
               description="Selecione uma das opções abaixo."
@@ -129,7 +129,7 @@ const PersonalDataForm = () => {
                 { value: 'S', label: 'Sim' },
                 { value: 'N', label: 'Não' },
               ]}
-              error={errors.deficiencia?.message}
+              error={errors.deficiency?.message}
             />
             <FormInput
               {...methods.register('educacenso')}
