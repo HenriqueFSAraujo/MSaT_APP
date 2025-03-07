@@ -32,7 +32,7 @@ export interface User {
   gender: string; // Gênero
   cpfCandidato: string; // CPF do(a) candidato(a)
   birthDate: string; // Data de nascimento
-  isDisabled:  string; // Pessoa com deficiência
+  isDisabled: string; // Pessoa com deficiência
   educacenso?: string; // Número Educacenso (opcional)
 
   // Informações do Genitor 1
@@ -64,8 +64,6 @@ export interface User {
   enabled: boolean; // Usuário está habilitado?
   companyId: string; // ID da empresa associada
 }
-
-
 
 // Interface para filtros de busca de usuários
 export interface UserFilters {

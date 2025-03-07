@@ -1,7 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const consultaSubject = z.tuple([
-    // z.union([
-          
-    // ])
-])
+  // z.union([
+  // ])
+]);

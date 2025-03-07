@@ -27,7 +27,6 @@ import { SeizureDate, seizureDateService } from '@/services/seizureDateService';
 export interface TabComponentProps {
   vehicleDetails: VehicleDetails;
   selectedVehicule: Vehicle | null;
-
 }
 
 const stageMapping: { [key: string]: string } = {
@@ -176,9 +175,7 @@ const TabConsulta: React.FC<TabComponentProps> = ({ vehicleDetails, selectedVehi
           <ContainerField>
             <TitleField>Localização do veículo</TitleField>
             <ContainerValueField>
-              <span>
-                {vehicleDetails?.historicos?.[0]?.adress?.street || 'Não disponível'}
-              </span>
+              <span>{vehicleDetails?.historicos?.[0]?.adress?.street || 'Não disponível'}</span>
             </ContainerValueField>
           </ContainerField>
 
@@ -289,7 +286,9 @@ const TabConsulta: React.FC<TabComponentProps> = ({ vehicleDetails, selectedVehi
               <TitleField>Ano de fabricação</TitleField>
               <ContainerValueField>
                 <span>
-                  {vehicleDetails?.veiculos[0].ano_fabricacao ? vehicleDetails?.veiculos[0].ano_fabricacao : 'Vazio'}
+                  {vehicleDetails?.veiculos[0].ano_fabricacao
+                    ? vehicleDetails?.veiculos[0].ano_fabricacao
+                    : 'Vazio'}
                 </span>
               </ContainerValueField>
             </ContainerField>
@@ -298,7 +297,9 @@ const TabConsulta: React.FC<TabComponentProps> = ({ vehicleDetails, selectedVehi
               <TitleField>Ano Modelo</TitleField>
               <ContainerValueField>
                 <span>
-                  {vehicleDetails?.veiculos[0].ano_modelo ? vehicleDetails?.veiculos[0].ano_modelo : 'Vazio'}
+                  {vehicleDetails?.veiculos[0].ano_modelo
+                    ? vehicleDetails?.veiculos[0].ano_modelo
+                    : 'Vazio'}
                 </span>
               </ContainerValueField>
             </ContainerField>

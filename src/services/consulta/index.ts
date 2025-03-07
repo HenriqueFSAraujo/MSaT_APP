@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // services/consulta.ts
 
-
 import { api } from '../api';
 
 export interface VehicleResponse {
@@ -71,8 +70,8 @@ export interface Veiculo {
   cor: string;
   registro_detran: string;
   possui_gps: string;
-  ano_modelo:string;
-  ano_fabricacao:string;
+  ano_modelo: string;
+  ano_fabricacao: string;
 }
 
 export interface Contrato {

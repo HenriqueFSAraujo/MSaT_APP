@@ -15,14 +15,11 @@ export const SectionTitle = styled(Typography)`
   }
 `;
 
-
-
-
 export const UploadButton = styled(Button)`
   max-width: 30%;
   display: flex;
   align-items: center;
-  background-color:rgb(15, 48, 121);
+  background-color: rgb(15, 48, 121);
 
   gap: 8px;
 `;
@@ -89,7 +86,6 @@ export const StyledButton = styled(Button)`
     height: 38px;
   }
 `;
-
 
 export const Container = styled.div`
   display: flex;
@@ -184,7 +180,6 @@ export const InputComponet = styled(TextField)`
     }
   }
 `;
-
 
 export const CancelButton = styled(Button)`
   width: 89px;

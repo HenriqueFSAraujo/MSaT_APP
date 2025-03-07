@@ -245,9 +245,7 @@ const Login: React.FC = () => {
         )}
       </FormContainer>
 
-      <ImageContainer>
-
-      </ImageContainer>
+      <ImageContainer></ImageContainer>
     </LoginContainer>
   );
 };

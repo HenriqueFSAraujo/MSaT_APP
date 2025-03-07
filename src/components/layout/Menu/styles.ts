@@ -14,7 +14,7 @@ export const ContainerButtonClose = styled.div`
 export const DrawerContent = styled(Box)`
   width: 250px;
   height: 100vh;
-  background-color:rgb(15, 48, 121);
+  background-color: rgb(15, 48, 121);
 
   svg {
     fill: ${({ theme }) => theme.palette.bgColor.white};

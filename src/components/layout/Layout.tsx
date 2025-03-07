@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import AppContainer from '@/components/common/container/Container.tsx';
+import AppContainer from '@/components/common/container/Container';
 import { Header } from '@/components/layout/Header/Header';
 import {} from './styles';
 
