@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/Button';
 import { Calendar } from '@/components/ui/calendar';
@@ -7,14 +6,31 @@ import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/for
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
+import { FieldError, Merge, FieldErrorsImpl, useFormContext } from 'react-hook-form';
 
 interface FormDateProps {
   name: string;
   label: string;
   required?: boolean;
+  description?: string;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>>;
 }
 
-const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) => {
+const getErrorMessage = (
+  error: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>> | undefined
+): string => {
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  if (error && 'message' in error) {
+    return error.message || 'Erro desconhecido';
+  }
+
+  return 'Erro desconhecido';
+};
+
+const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, error }) => {
   const { control, setValue } = useFormContext();
   const [open, setOpen] = useState(false);
   const [showYearSelector, setShowYearSelector] = useState(false);
@@ -28,7 +44,7 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) =>
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem className="flex flex-col">
           <FormLabel className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm md:text-base font-medium text-gray-700">
             {label} {required && '*'}
@@ -70,6 +86,7 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) =>
                       variant="ghost"
                       onClick={() => {
                         setCurrentYear(year);
+                        setCurrentDate(new Date(year, currentDate.getMonth(), 1));
                         setShowYearSelector(false);
                       }}
                       className={`w-full py-1 ${year === currentYear ? 'bg-blue-500 text-white' : ''}`}
@@ -94,13 +111,19 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false }) =>
                   const newMonth = date.getMonth();
                   const newYear = date.getFullYear();
 
+                  setCurrentYear(newYear);
                   setCurrentDate(new Date(newYear, newMonth, 1));
                 }}
                 initialFocus
               />
             </PopoverContent>
           </Popover>
-          <FormMessage />
+
+          {fieldState.error && (
+            <FormMessage className="block text-red-500 text-xs mt-1">
+              {getErrorMessage(error)}
+            </FormMessage>
+          )}
         </FormItem>
       )}
     />

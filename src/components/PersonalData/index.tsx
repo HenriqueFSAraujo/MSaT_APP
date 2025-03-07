@@ -13,23 +13,42 @@ const schema = z.object({
   login: z.string().min(1, 'Login é obrigatório'),
   email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
   cpf: z.string().min(1, 'CPF é obrigatório'),
-  telefone: z.string().min(1, 'Telefone é obrigatório'),
-  genero: z.string().min(1, 'Gênero é obrigatório'),
-  cpfBolsista: z.string().optional(),
-  dataNascimento: z.string().min(1, 'Data de nascimento é obrigatória'),
-  deficiencia: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
+  phone: z.string().min(1, 'phone é obrigatório'),
+  gender: z.string().min(1, 'Gênero é obrigatório'),
+  cpfScholarship: z.string().optional(),
+  dateBirth: z
+    .date({
+      required_error: 'Data de nascimento é obrigatória',
+      invalid_type_error: 'Formato inválido de data',
+    })
+    .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
+  deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
   educacenso: z.string().optional(),
 });
 
-const PersonalDataForm: React.FC = () => {
+const PersonalDataForm = () => {
   const methods = useForm({
+    mode: 'onSubmit',
     resolver: zodResolver(schema),
+    defaultValues: {
+      username: '',
+      login: '',
+      email: '',
+      cpf: '',
+      cpfScholarship: '',
+      phone: '',
+      dateBirth: '',
+      gender: '',
+      deficiency: '',
+      educacenso: '',
+    },
   });
 
-  const { errors } = methods.formState; // Pegando os erros diretamente
+  const { errors } = methods.formState;
 
-  const onSubmit = (data: FieldValues) => {
-    console.log('onSubmit foi chamado');
+  const onSubmit = async (data: FieldValues) => {
+    const isValid = await methods.trigger();
+    if (!isValid) return;
     console.log('Dados do formulário:', data);
   };
 
@@ -37,32 +56,48 @@ const PersonalDataForm: React.FC = () => {
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
         <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">Dados Pessoais</h1>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             <FormInput
+              {...methods.register('username')}
               name="username"
               label="Nome completo"
               required
               error={errors.username?.message}
             />
-            <FormInput name="login" label="Login" required error={errors.login?.message} />
             <FormInput
+              {...methods.register('login')}
+              name="login"
+              label="Login"
+              required
+              error={errors.login?.message}
+            />
+            <FormInput
+              {...methods.register('email')}
               name="email"
               label="E-mail"
               type="email"
               required
               error={errors.email?.message}
             />
-            <FormInput name="cpf" label="CPF" mask="cpf" required error={errors.cpf?.message} />
             <FormInput
-              name="telefone"
-              label="Telefone"
-              mask="telefone"
+              {...methods.register('cpf')}
+              name="cpf"
+              label="CPF"
+              mask="cpf"
               required
-              error={errors.telefone?.message}
+              error={errors.cpf?.message}
+            />
+            <FormInput
+              {...methods.register('phone')}
+              name="phone"
+              label="phone"
+              mask="phone"
+              required
+              error={errors.phone?.message}
             />
             <FormSelect
-              name="genero"
+              name="gender"
               label="Escolha seu Gênero"
               required
               description="Selecione uma das opções abaixo."
@@ -71,17 +106,22 @@ const PersonalDataForm: React.FC = () => {
                 { value: 'F', label: 'Feminino' },
                 { value: 'O', label: 'Outro' },
               ]}
-              error={errors.genero?.message}
+              error={errors.gender?.message}
             />
-            <FormInput name="cpfBolsista" label="CPF do(a) candidato(a) bolsista" mask="cpf" />
+            <FormInput
+              {...methods.register('cpfScholarship')}
+              name="cpfScholarship"
+              label="CPF do(a) candidato(a) bolsista"
+              mask="cpf"
+            />
             <FormDate
-              name="dataNascimento"
+              name="dateBirth"
               label="Data de Nascimento"
               required
-              error={errors.dataNascimento?.message}
+              error={errors.dateBirth?.message}
             />
             <FormSelect
-              name="deficiencia"
+              name="deficiency"
               label="Pessoa com deficiência"
               required
               description="Selecione uma das opções abaixo."
@@ -89,9 +129,10 @@ const PersonalDataForm: React.FC = () => {
                 { value: 'S', label: 'Sim' },
                 { value: 'N', label: 'Não' },
               ]}
-              error={errors.deficiencia?.message}
+              error={errors.deficiency?.message}
             />
             <FormInput
+              {...methods.register('educacenso')}
               name="educacenso"
               label="Número Educacenso"
               description="Caso não possua, deixe em branco."
