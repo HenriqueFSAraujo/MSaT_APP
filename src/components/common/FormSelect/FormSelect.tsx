@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { FieldError, Merge, FieldErrorsImpl, useFormContext } from 'react-hook-form';
 import {
   Select,
   SelectContent,
@@ -16,16 +16,29 @@ interface FormSelectProps {
   description?: string;
   options: { value: string; label: string }[];
   className?: string;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>>;
 }
 
-const FormSelect: React.FC<FormSelectProps> = ({ name, label, options, required = false }) => {
+const FormSelect = ({ name, label, options, required = false, error }: FormSelectProps) => {
   const { control } = useFormContext();
+
+  const getErrorMessage = (
+    error: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>> | undefined
+  ): string => {
+    if (typeof error === 'string') {
+      return error;
+    }
+    if (error && 'message' in error) {
+      return error.message || 'Erro desconhecido';
+    }
+    return 'Erro desconhecido';
+  };
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem className="w-full">
           <FormLabel className="text-sm md:text-base font-medium text-gray-700">
             {label} {required && '*'}
@@ -48,7 +61,11 @@ const FormSelect: React.FC<FormSelectProps> = ({ name, label, options, required 
               </SelectContent>
             </Select>
           </FormControl>
-          <FormMessage className="text-red-500 text-xs mt-1" />
+          {(error || fieldState.error) && (
+            <FormMessage className="text-red-500 text-xs mt-1">
+              {getErrorMessage(error)}
+            </FormMessage>
+          )}
         </FormItem>
       )}
     />

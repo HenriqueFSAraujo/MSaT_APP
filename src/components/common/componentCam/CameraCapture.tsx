@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/CameraCapture/index.tsx
-import { useRef, useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import Webcam from 'react-webcam';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 import { biometricService } from '@/services/biometricService';
@@ -40,7 +40,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
   onSuccess,
   onError,
 }) => {
-  const webcamRef = useRef<Webcam | null>(null);
+  const webcamRef = ref<Webcam | null>(null);
   const [capturedImage, setCapturedImage] = useState<string>('');
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -383,3 +383,6 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
 };
 
 export default memo(CameraCapture);
+function ref<T>(arg0: null) {
+  throw new Error('Function not implemented.');
+}
