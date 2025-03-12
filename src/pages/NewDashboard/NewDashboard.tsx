@@ -1,10 +1,12 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PersonalData from '@/components/PersonalData';
+import ParentalData from '@/components/ParentalData';
+import AddressResidence from '@/components/AddressResidence';
 
 const NewDashboard: React.FC = () => {
   return (
-    <div className="mt-6 w-full max-w-5xl mx-auto flex flex-col shadow-lg border border-neutral-300 bg-white rounded-lg overflow-hidden">
+    <div className="mt-6 w-full max-w-7xl flex flex-col shadow-lg border border-neutral-300 bg-white rounded-lg overflow-hidden">
       <Tabs defaultValue="personal_data" className="w-full p-4">
         <TabsList className="flex overflow-x-auto md:overflow-visible space-x-3 md:justify-center bg-gray-100 md:p-2 rounded-lg">
           <TabsTrigger
@@ -37,10 +39,10 @@ const NewDashboard: React.FC = () => {
             <PersonalData />
           </TabsContent>
           <TabsContent value="parents_data">
-            <p className="text-gray-600">Dados dos Genitores</p>
+            <ParentalData />
           </TabsContent>
           <TabsContent value="address_info">
-            <p className="text-gray-600">Informações de Endereço e Residência</p>
+            <AddressResidence />
           </TabsContent>
           <TabsContent value="required_documents">
             <p className="text-gray-600">Documentos Obrigatórios</p>

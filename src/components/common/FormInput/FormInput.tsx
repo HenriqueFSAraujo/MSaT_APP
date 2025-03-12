@@ -1,4 +1,3 @@
-import React from 'react';
 import MaskedInput from 'react-text-mask';
 import { Input } from '@/components/ui/input';
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
@@ -12,6 +11,7 @@ interface FormInputProps {
   error?: string;
   mask?: 'cpf' | 'phone';
   description?: string;
+  withMarginTop?: boolean;
   [key: string]: unknown;
 }
 
@@ -20,7 +20,7 @@ const maskPatterns = {
   phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
 };
 
-const FormInput: React.FC<FormInputProps> = ({
+const FormInput = ({
   name,
   label,
   required = false,
@@ -28,6 +28,7 @@ const FormInput: React.FC<FormInputProps> = ({
   description,
   mask,
   error,
+  withMarginTop = false,
 }: FormInputProps) => {
   const { control } = useFormContext();
 
@@ -36,7 +37,9 @@ const FormInput: React.FC<FormInputProps> = ({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="relative flex flex-col w-full min-h-[80px]">
+        <FormItem
+          className={`relative flex flex-col w-full min-h-[80px] ${withMarginTop ? 'mt-6' : ''}`}
+        >
           <FormLabel className="text-sm md:text-base font-medium text-gray-700">
             {label} {required && '*'}
           </FormLabel>

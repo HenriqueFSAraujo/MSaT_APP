@@ -22,27 +22,27 @@ export function defineAbilitiesFor(role: string) {
   });
   // console.log(role, "role")
 
-  if (role.includes('ROLE_ADMIN')) {
-    can('Get', 'Dashboard');
-    can('Get', 'Consulta');
-    can('Get', 'Sair');
-    can('Get', 'Mandatarios');
-    can('Get', 'Cadastros');
-    can('Get', 'User');
-    can('Get', 'Menu');
-  } else if (role.includes('ROLE_AGENTE_OFICIAL')) {
-    can('Get', 'Dashboard');
-    can('Get', 'Cadastros');
-    can('Get', 'Sair');
-  } else {
-    can('Get', 'Dashboard');
-    can('Get', 'Consulta');
-    can('Get', 'Sair');
-    can('Get', 'Mandatarios');
-    can('Get', 'Cadastros');
-    can('Get', 'User');
-    can('Get', 'Menu');
-  }
+  // if (role.includes('ROLE_ADMIN')) {
+  //   can('Get', 'Dashboard');
+  //   can('Get', 'Consulta');
+  //   can('Get', 'Sair');
+  //   can('Get', 'Mandatarios');
+  //   can('Get', 'Cadastros');
+  //   can('Get', 'User');
+  //   can('Get', 'Menu');
+  // } else if (role.includes('ROLE_AGENTE_OFICIAL')) {
+  //   can('Get', 'Dashboard');
+  //   can('Get', 'Cadastros');
+  //   can('Get', 'Sair');
+  // } else {
+  can('Get', 'Dashboard');
+  can('Get', 'Consulta');
+  can('Get', 'Sair');
+  can('Get', 'Mandatarios');
+  can('Get', 'Cadastros');
+  can('Get', 'User');
+  can('Get', 'Menu');
+  // }
 
   return build();
 }

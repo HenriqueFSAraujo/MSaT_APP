@@ -5,6 +5,7 @@ export const ContainerComponet = styled.div`
   flex-direction: column;
   margin-left: 2rem;
   margin-right: 2rem;
+  align-items: center;
 
   @media (max-width: 900px) {
     margin-left: 1rem;

@@ -9,20 +9,21 @@ import { Layout } from '@/components/layout/Layout';
 import Users from '@/pages/Users/Users';
 import CadastroSenha from '@/pages/Cadastro/Senha/CadastroSenha';
 import ConsultaEmpresa from '@/pages/Empresa/Consulta/ConsultaEmpresa';
+import NewDashboard from '@/pages/NewDashboard/NewDashboard';
 
 const AppRoutes: React.FC = () => {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<NewDashboard />} />
         <Route path="/login" element={<Login />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/consulta" element={<Consulta />} />
-          <Route path="/dashboard/users" element={<Users />} />
-          <Route path="/empresa/consulta" element={<ConsultaEmpresa />} />
-        </Route>
+        {/* <Route element={<ProtectedRoute />}> */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/consulta" element={<Consulta />} />
+        <Route path="/dashboard/users" element={<Users />} />
+        <Route path="/empresa/consulta" element={<ConsultaEmpresa />} />
+        {/* </Route> */}
         <Route path="/cadastrarSenha/:id" element={<CadastroSenha />} />
 
         <Route path="*" element={<NotFoundPage />} />
