@@ -14,7 +14,7 @@ import { AbilityBuilder, createMongoAbility, subject } from '@casl/ability';
 
 // ])
 
-export function defineAbilitiesFor(role: string) {
+export function defineAbilitiesFor() {
   const { can, build } = new AbilityBuilder(createMongoAbility);
 
   subject('Vehicles', {
