@@ -67,3 +67,16 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+@layer components {
+  .file-card {
+    @apply border-2 border-gray-300 rounded-lg p-4 cursor-pointer transition-colors;
+    @apply hover:border-blue-500 hover:bg-blue-50;
+  }
+  .file-uploaded {
+    @apply text-green-600 font-medium;
+  }
+  .file-empty {
+    @apply text-blue-600;
+  }
+}

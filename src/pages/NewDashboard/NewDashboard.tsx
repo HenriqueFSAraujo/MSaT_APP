@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PersonalData from '@/components/PersonalData';
 import ParentalData from '@/components/ParentalData';
 import AddressResidence from '@/components/AddressResidence';
+import { DocumentForm } from '@/components/DocumentData/DocumentData';
 
 const NewDashboard: React.FC = () => {
   return (
@@ -45,7 +46,7 @@ const NewDashboard: React.FC = () => {
             <AddressResidence />
           </TabsContent>
           <TabsContent value="required_documents">
-            <p className="text-gray-600">Documentos Obrigatórios</p>
+            <DocumentForm />
           </TabsContent>
         </div>
       </Tabs>
