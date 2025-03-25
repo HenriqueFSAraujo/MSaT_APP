@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PersonalData from '@/components/PersonalData';
 import ParentalData from '@/components/ParentalData';
 import AddressResidence from '@/components/AddressResidence';
-import { DocumentForm } from '@/components/common/DocumentData/DocumentData';
+import { DocumentForm } from '@/components/DocumentData/DocumentData';
 
 const NewDashboard: React.FC = () => {
   return (

@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import { ChangeEvent } from 'react';
+import { CheckCircle2, UploadCloud, X } from 'lucide-react';
 
 interface InputFileProps {
   name: string;
@@ -8,58 +9,61 @@ interface InputFileProps {
   multiple?: boolean;
 }
 
-export const InputFile = ({
-  name,
-  id,
-  accept = 'image/*,.pdf,.doc,.docx',
-  multiple = false,
-}: InputFileProps) => {
+export const InputFile = ({ name, id, accept }: InputFileProps) => {
   const { register, setValue, watch } = useFormContext();
   const currentValue = watch(name);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setValue(name, file, { shouldValidate: true });
+      setValue(name, file, { shouldValidate: true }); // Força validação imediata
     }
   };
 
+  const handleRemoveFile = () => {
+    setValue(name, null, { shouldValidate: true });
+  };
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1 w-full">
       <input
         type="file"
         id={id}
         accept={accept}
-        multiple={multiple}
         className="hidden"
         {...register(name)}
         onChange={handleFileChange}
       />
 
-      <label
-        htmlFor={id}
-        className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-      >
-        <svg
-          className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
+      {!currentValue ? (
+        <label
+          htmlFor={id}
+          className="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors px-4 py-2"
         >
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
-        {currentValue?.name || 'Selecionar arquivo'}
-      </label>
-
-      {currentValue && (
-        <div className="text-sm text-gray-500 mt-1">
-          <p>Arquivo selecionado: {currentValue.name}</p>
-          <p>Tamanho: {(currentValue.size / 1024).toFixed(2)} KB</p>
+          <div className="flex items-center justify-center gap-2 w-full">
+            <UploadCloud className="w-4 h-4 text-gray-400" />
+            <p className="text-xs text-gray-500 text-center">Clique para enviar ou arraste</p>
+          </div>
+          <p className="text-[10px] text-gray-400 mt-1">PDF, JPG, PNG, DOC (Max. 5MB)</p>
+        </label>
+      ) : (
+        <div className="w-full border border-green-300 bg-green-50 rounded-lg p-2 transition-colors">
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+              <div className="min-w-0 ">
+                <p className="text-sm font-medium text-gray-800 truncate">{currentValue.name}</p>
+                <p className="text-xs text-gray-500">{(currentValue.size / 1024).toFixed(2)} KB</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleRemoveFile}
+              className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>

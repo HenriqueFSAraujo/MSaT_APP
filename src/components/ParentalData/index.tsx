@@ -146,9 +146,9 @@ const ParentalDataForm = () => {
           <div className="flex justify-end w-full">
             <Button
               type="submit"
-              className="mt-4 w-28 bg-blue-400 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all"
+              className="mt-4 w-35 bg-blue-400 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all"
             >
-              Enviar
+              Salvar e continuar
             </Button>
           </div>
         </form>
