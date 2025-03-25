@@ -50,7 +50,7 @@ const ParentalDataForm = () => {
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">
+        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">
           Dados dos Genitores
         </h1>
         <form onSubmit={methods.handleSubmit(onSubmit)}>

@@ -54,7 +54,7 @@ const PersonalDataForm = () => {
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">Dados Pessoais</h1>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">Dados Pessoais</h1>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             <FormInput

@@ -114,9 +114,7 @@ export const DocumentForm = () => {
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">
-          Informações de Endereço e Residência
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center  m-6">Documentos Aluno</h1>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
           <div className="space-y-6">
             {DOCUMENT_GROUPS.map((group, groupIndex) => (
