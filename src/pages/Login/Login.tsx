@@ -46,7 +46,7 @@ export default function LoginPage() {
       // if (userData.tokenLogin) {
       //   setShowtoken(true);
       // } else {
-      navigate('/dashboard');
+      navigate('/formulario-aluno');
       // }
     } catch (error) {
       setError('Erro ao fazer login. Verifique suas credenciais.');

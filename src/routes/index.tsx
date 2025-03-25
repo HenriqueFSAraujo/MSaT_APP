@@ -1,6 +1,6 @@
 import React from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { Route, Routes } from 'react-router-dom';
+// import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login/Login';
 import Dashboard from '@/pages/Dashboard/Dashboard';
 import Consulta from '@/pages/Consulta/Consulta';
@@ -15,8 +15,8 @@ const AppRoutes: React.FC = () => {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<NewDashboard />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/formulario-aluno" element={<NewDashboard />} />
 
         {/* <Route element={<ProtectedRoute />}> */}
         <Route path="/dashboard" element={<Dashboard />} />
