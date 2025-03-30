@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
 import FormDate from '../common/FormDate/FormDate';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 const schema = z.object({
   username: z.string().min(1, 'Nome completo é obrigatório'),

@@ -4,7 +4,7 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 const schema = z.object({
   parent1FullName: z.string().min(1, 'Nome completo do Genitor 1 é obrigatório'),

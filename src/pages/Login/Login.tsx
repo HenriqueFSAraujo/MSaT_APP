@@ -2,12 +2,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input.js';
-import { Button } from '@/components/ui/Button.js';
+import { Button } from '@/components/ui/button.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-// import { userService } from '@/services/userService';
+import { Logins } from '@/utils/logins';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -23,31 +22,20 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
-  // const [showtoken, setShowtoken] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
-  // const handleTokenValidated = () => {
-  //   setShowtoken(false);
-  //   navigate('/dashboard');
-  // };
-
-  const onSubmit = async () => {
+  const onSubmit = async (formData: LoginForm) => {
     setIsPending(true);
+    setError(null);
     try {
-      // Simulação de envio de dados de login
-      // const response = await userService.login(data.email, data.password);
-      // localStorage.setItem('@garantias:session', JSON.stringify(response));
-      // localStorage.setItem('@garantias:id', response.userId);
-
-      // const userData = await userService.getUserById(response.userId);
-      // if (userData.tokenLogin) {
-      //   setShowtoken(true);
-      // } else {
+      const user = Logins.find(
+        (login) => login.user === formData.email && login.password === formData.password
+      );
+      localStorage.setItem('nameUser', user.name);
       navigate('/formulario-aluno');
-      // }
     } catch (error) {
       setError('Erro ao fazer login. Verifique suas credenciais.');
       console.error('Erro ao processar submissão:', error);
@@ -55,39 +43,6 @@ export default function LoginPage() {
       setIsPending(false);
     }
   };
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const data = localStorage.getItem('@garantias:session');
-
-      if (!data) return;
-
-      try {
-        const session = JSON.parse(data) as { accessToken: string };
-        const decodedToken = jwtDecode(session.accessToken);
-
-        if (!decodedToken?.exp) return;
-
-        const currentTime = Math.floor(Date.now() / 1000);
-        const isExpired = decodedToken.exp < currentTime;
-
-        if (isExpired) return;
-
-        // const userId = localStorage.getItem('@garantias:id');
-        // if (userId) {
-        //   const userData = await userService.getUserById(Number(userId));
-        // if (userData.tokenLogin) {
-        //   setShowtoken(true);
-        return navigate('/dashboard');
-        // }
-        // }
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    checkSession();
-  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4">

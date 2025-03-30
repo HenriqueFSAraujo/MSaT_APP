@@ -2,7 +2,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { InputFile } from '../common/InputFile/InputFile';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 type FormValues = {
   cadUnicoRegistration: File | null;

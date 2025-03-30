@@ -17,23 +17,18 @@ import {
 import MenuComponent from '@/components/layout/Menu/menu';
 
 interface HeaderProps {
-  shouldRender: boolean;
+  shouldRender?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleClick = () => {};
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(null);
   };
 
   if (!shouldRender) return null;
@@ -91,15 +86,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
           >
             <PersonIcon />
           </TransparentIconButton>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              'aria-labelledby': 'basic-button',
-            }}
-          >
+          <Menu id="basic-menu" open={open} onClose={handleClose}>
             <MenuItem onClick={handleClose}>Perfil Localizador</MenuItem>
             <MenuItem onClick={handleClose}>Perfil ADM</MenuItem>
             <MenuItem onClick={handleClose}>Perfil Pátio</MenuItem>

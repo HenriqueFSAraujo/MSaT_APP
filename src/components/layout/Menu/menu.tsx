@@ -1,91 +1,68 @@
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
 import { useState } from 'react';
-
-import MenuIcon from '@mui/icons-material/Menu';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { ContainerButtonClose, DrawerContent, ListItemComponet, MenuButton } from './styles';
-
-import { defineAbilitiesFor } from '@/hooks/permission';
-import CloseIcon from '@mui/icons-material/Close';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-
-import DomainIcon from '@mui/icons-material/Domain';
-import PersonIcon from '@mui/icons-material/Person';
-import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Menu, LayoutDashboard, Users } from 'lucide-react';
 
-export default function Menu() {
+export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const closeMenu = () => setOpen(!open);
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
+  const logOut = () => {
+    localStorage.removeItem('nameUser');
+    navigate('/');
+    closeMenu();
   };
 
-  const permission = defineAbilitiesFor(localStorage.getItem('@garantias:role')!);
-
-  const DrawerList = (
-    <DrawerContent role="presentation">
-      <ContainerButtonClose>
-        <Button onClick={toggleDrawer(false)}>
-          <CloseIcon />
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+          <Menu className="h-6 w-6" />
         </Button>
-      </ContainerButtonClose>
-      <List onClick={toggleDrawer(false)}>
-        {permission.can('Get', 'Dashboard') ? (
-          <ListItemComponet disablePadding onClick={() => navigate('/dashboard')}>
-            <ListItemButton>
-              <ListItemIcon>
-                <DashboardIcon />
-              </ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
+      </SheetTrigger>
 
-        {permission.can('Get', 'User') ? (
-          <ListItemComponet disablePadding onClick={() => navigate('/dashboard/users')}>
-            <ListItemButton>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="Usuários" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
+      <SheetContent side="left" className="w-64 p-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4"
+          onClick={closeMenu}
+        />
 
-        {permission.can('Get', 'Sair') ? (
-          <ListItemComponet
-            disablePadding
+        <nav className="mt-8 space-y-4">
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2"
             onClick={() => {
-              localStorage.removeItem('@garantias:session');
-              navigate('/login');
+              navigate('/dashboard');
+              closeMenu();
             }}
           >
-            <ListItemButton>
-              <ListItemIcon>
-                <DomainIcon />
-              </ListItemIcon>
-              <ListItemText primary="Sair" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
-      </List>
-    </DrawerContent>
-  );
+            <LayoutDashboard className="h-5 w-5" /> Dashboard
+          </Button>
 
-  return (
-    <div>
-      <MenuButton onClick={toggleDrawer(true)}>
-        {' '}
-        <MenuIcon />{' '}
-      </MenuButton>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
-    </div>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2"
+            onClick={() => {
+              navigate('/dashboard/users');
+              closeMenu();
+            }}
+          >
+            <Users className="h-5 w-5" /> Usuários
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 text-red-500 h-5 p-5"
+            onClick={logOut}
+          >
+            Sair
+          </Button>
+        </nav>
+      </SheetContent>
+    </Sheet>
   );
 }
