@@ -35,8 +35,8 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
 
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/dashboard':
-        return 'Dashboard';
+      case '/formulario-aluno':
+        return 'Formulário do aluno';
       case '/dashboard/consulta':
         return 'Consulta';
       case '/dashboard/users':
