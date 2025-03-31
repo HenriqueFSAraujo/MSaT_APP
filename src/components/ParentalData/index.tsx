@@ -6,6 +6,7 @@ import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
+import { useTabStore } from '@/store/tabStore';
 
 const schema = z.object({
   parent1FullName: z.string().min(1, 'Nome completo do Genitor 1 é obrigatório'),
@@ -23,7 +24,7 @@ const schema = z.object({
     .min(1, 'É obrigatório informar se o(a) candidato(a) reside com os dois genitores'),
 });
 
-const ParentalDataForm = () => {
+const ParentalDataForm = ({ label }: { label: string }) => {
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(schema),
@@ -42,19 +43,20 @@ const ParentalDataForm = () => {
 
   const { errors } = methods.formState;
 
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+
   const onSubmit = async (data: FieldValues) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
     toast.success('Sucesso!', 'Dados enviados com sucesso!');
     console.log('Dados do formulário:', data);
+    setSelectedTab('address_info');
   };
 
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">
-          Dados dos Genitores
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             <FormInput

@@ -15,7 +15,7 @@ const formSchema = z.object(
   )
 );
 
-export const HousingConditions = () => {
+export const HousingConditions = ({ label }: { label: string }) => {
   const methods = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: Object.fromEntries(radioGroups.map((group) => [group.name, ''])),
@@ -36,9 +36,7 @@ export const HousingConditions = () => {
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">
-          Condições habitacionais
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {radioGroups.map((group) => (

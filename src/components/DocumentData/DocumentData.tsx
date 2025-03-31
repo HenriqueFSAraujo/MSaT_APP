@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from '../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
 import { toast } from '@/utils/toast';
+import { useTabStore } from '@/store/tabStore';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',
@@ -26,7 +27,7 @@ const REQUIRED_DOCUMENTS = [
   // 'governmentProgram',
 ];
 
-export const DocumentForm = () => {
+export const DocumentForm = ({ label }: { label: string }) => {
   const [submitted, setSubmitted] = useState(false);
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -50,6 +51,8 @@ export const DocumentForm = () => {
     },
   });
   const formValues = methods.watch();
+
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   const hasValidFile = (fieldName: string) => {
     const value = formValues[fieldName];
@@ -121,6 +124,7 @@ export const DocumentForm = () => {
       console.log(payload);
 
       toast.success('Sucesso!', 'Documentos enviados com sucesso!');
+      setSelectedTab('housing_conditions');
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
@@ -142,7 +146,7 @@ export const DocumentForm = () => {
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">Documentos Gerais</h1>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
           {DOCUMENT_GROUPS.map((group, groupIndex) => (
             <div key={`group-${groupIndex}`} className="grid grid-cols-1 md:grid-cols-3 gap-6">
