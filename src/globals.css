@@ -121,4 +121,18 @@
   .file-empty {
     color: hsl(221.2 83.2% 53.3%);
   }
+
+  /* Estilo para toasts de erro */
+  [data-sonner-toast][data-type="error"] {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+    color: #991b1b !important;
+  }
+
+  /* Estilo para toasts de sucesso */
+  [data-sonner-toast][data-type="success"] {
+    background: #f0fdf4 !important;
+    border-color: #bbf7d0 !important;
+    color: #166534 !important;
+  }
 }

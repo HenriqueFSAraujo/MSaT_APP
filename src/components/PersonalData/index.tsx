@@ -6,6 +6,7 @@ import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
 import FormDate from '../common/FormDate/FormDate';
 import { Button } from '../ui/button';
+import { toast } from '@/utils/toast';
 
 const schema = z.object({
   username: z.string().min(1, 'Nome completo é obrigatório'),
@@ -48,6 +49,7 @@ const PersonalDataForm = () => {
   const onSubmit = async (data: FieldValues) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
+    toast.success('Sucesso!', 'Dados enviados com sucesso!');
     console.log('Dados do formulário:', data);
   };
 

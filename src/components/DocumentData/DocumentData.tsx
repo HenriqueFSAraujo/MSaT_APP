@@ -4,6 +4,7 @@ import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
+import { toast } from '@/utils/toast';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',
@@ -86,7 +87,8 @@ export const DocumentForm = () => {
       });
 
       if (hasError) {
-        alert('Por favor, complete todos os documentos obrigatórios');
+        toast.error('Documentos incompletos', 'Por favor, complete todos os campos obrigatórios.');
+
         return;
       }
 
@@ -127,10 +129,10 @@ export const DocumentForm = () => {
       //   body: JSON.stringify(payload)
       // });
 
-      alert('Documentos enviados com sucesso!');
+      toast.success('Sucesso!', 'Documentos enviados com sucesso!');
     } catch (error) {
       console.error('Erro no processamento:', error);
-      alert('Ocorreu um erro ao processar os documentos');
+      toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
     }
   };
 

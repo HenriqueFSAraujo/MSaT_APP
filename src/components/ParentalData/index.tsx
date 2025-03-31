@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
+import { toast } from '@/utils/toast';
 
 const schema = z.object({
   parent1FullName: z.string().min(1, 'Nome completo do Genitor 1 é obrigatório'),
@@ -44,6 +45,7 @@ const ParentalDataForm = () => {
   const onSubmit = async (data: FieldValues) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
+    toast.success('Sucesso!', 'Dados enviados com sucesso!');
     console.log('Dados do formulário:', data);
   };
 
