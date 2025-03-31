@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input.js';
 import { Button } from '@/components/ui/button.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Logins } from '@/utils/logins';
 
@@ -43,6 +43,10 @@ export default function LoginPage() {
       setIsPending(false);
     }
   };
+
+  useEffect(() => {
+    localStorage.removeItem('nameUser');
+  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
