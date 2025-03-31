@@ -112,7 +112,7 @@ export const InputFile = ({
   return (
     <div className="w-full space-y-4 p-5 border border-gray-200 rounded-lg bg-white">
       <div className="space-y-2">
-        <div className="flex justify-between items-start">
+        <div>
           <div>
             <Label htmlFor={id} className="text-base font-medium text-gray-800">
               {label}
