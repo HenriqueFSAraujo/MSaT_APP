@@ -3,6 +3,7 @@ import PersonalData from '@/components/PersonalData';
 import ParentalData from '@/components/ParentalData';
 import AddressResidence from '@/components/AddressResidence';
 import { DocumentForm } from '@/components/DocumentData/DocumentData';
+import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 
 const StudentForm = () => {
   return (
@@ -34,6 +35,12 @@ const StudentForm = () => {
             >
               Documentos Obrigatórios
             </TabsTrigger>
+            <TabsTrigger
+              value="housing_conditions"
+              className="md:text-lg font-normal min-w-min md:w-full md:font-medium whitespace-normal md:whitespace-nowrap px-0 sm:px-2 md:px-4 py-1 md:py-2 rounded-lg hover:bg-gray-300 transition-all data-[state=active]:bg-blue-400 data-[state=active]:text-white"
+            >
+              Condições Habitacionais
+            </TabsTrigger>
           </TabsList>
           <div className="p-6 bg-white rounded-b-lg shadow-inner">
             <TabsContent value="personal_data">
@@ -47,6 +54,9 @@ const StudentForm = () => {
             </TabsContent>
             <TabsContent value="required_documents">
               <DocumentForm />
+            </TabsContent>
+            <TabsContent value="housing_conditions">
+              <HousingConditions />
             </TabsContent>
           </div>
         </Tabs>
