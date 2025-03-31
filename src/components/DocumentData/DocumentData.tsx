@@ -69,20 +69,15 @@ export const DocumentForm = () => {
     try {
       setSubmitted(true);
 
-      // Validação corrigida que considera a estrutura atual dos dados
       const hasError = REQUIRED_DOCUMENTS.some((fieldName) => {
         const fieldData = data[fieldName];
 
-        // Se o campo não existir nos dados
         if (!fieldData) return true;
 
-        // Verifica se tem um arquivo válido
         const hasValidFile = fieldData.file?.value instanceof File;
 
-        // Verifica se tem uma opção válida (diferente de 'none')
         const hasValidOption = fieldData.option?.value && fieldData.option.value !== 'none';
 
-        // O campo é inválido se não tiver nem arquivo nem opção válida
         return !(hasValidFile || hasValidOption);
       });
 
@@ -92,16 +87,13 @@ export const DocumentForm = () => {
         return;
       }
 
-      // Processamento do payload (mantido igual ao seu código)
       const payload: Record<string, unknown> = {};
 
       for (const [fieldName, fieldData] of Object.entries(data)) {
         if (!fieldData) continue;
 
-        // Inicializa o objeto do campo
         payload[fieldName] = {};
 
-        // Adiciona informações do arquivo se existir
         if (fieldData.file?.value) {
           payload[fieldName] = {
             mimeType: fieldData.file.mimeType,
@@ -109,9 +101,7 @@ export const DocumentForm = () => {
             value: await convertFileToBase64(fieldData.file.value),
             ...(fieldData.option && { selectedOption: fieldData.option.value }),
           };
-        }
-        // Adiciona informações da opção se não houver arquivo
-        else if (fieldData.option) {
+        } else if (fieldData.option) {
           payload[fieldName] = {
             type: fieldData.option.type,
             value: fieldData.option.value,
@@ -136,13 +126,12 @@ export const DocumentForm = () => {
     }
   };
 
-  // Função auxiliar para converter arquivo para Base64
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        resolve(result.split(',')[1]); // Remove o prefixo data-uri
+        resolve(result.split(',')[1]);
       };
       reader.onerror = () => reject(new Error('Falha na conversão do arquivo'));
       reader.readAsDataURL(file);

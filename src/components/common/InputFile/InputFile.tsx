@@ -110,69 +110,55 @@ export const InputFile = ({
   };
 
   return (
-    <div className="w-full space-y-4">
-      {(label || description || downloadLabel || linkLabel) && (
-        <div className="space-y-2">
-          {label && (
-            <Label htmlFor={id}>
+    <div className="w-full space-y-4 p-5 border border-gray-200 rounded-lg bg-white">
+      <div className="space-y-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <Label htmlFor={id} className="text-base font-medium text-gray-800">
               {label}
               {required && <span className="text-red-500 ml-1">*</span>}
             </Label>
-          )}
-
-          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+            {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+          </div>
 
           {openLink && linkLabel && (
             <a
               href={openLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
             >
               {linkLabel}
               <ExternalLink className="ml-1 h-4 w-4" />
             </a>
           )}
-
-          {downloadLink && downloadLabel && (
-            <a
-              href={downloadLink}
-              download
-              className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              {downloadLabel}
-            </a>
-          )}
         </div>
-      )}
+
+        {downloadLink && downloadLabel && (
+          <a
+            href={downloadLink}
+            download
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            <Download className="mr-1 h-4 w-4" />
+            {downloadLabel}
+          </a>
+        )}
+      </div>
 
       {selectOptions && (
-        <div className="mb-3">
-          <Select onValueChange={handleOptionChange} value={getCurrentOption()} disabled={disabled}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecione uma opção" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[200px] overflow-y-auto">
-              {selectOptions.map((option) => (
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{option.label}</span>
-                    {option.description && (
-                      <span className="text-xs text-muted-foreground mt-1">
-                        {option.description}
-                      </span>
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Select onValueChange={handleOptionChange} value={getCurrentOption()} disabled={disabled}>
+          <SelectTrigger className="w-full bg-gray-50">
+            <SelectValue placeholder="Selecione uma opção" />
+          </SelectTrigger>
+          <SelectContent>
+            {selectOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       )}
 
       <input
@@ -187,62 +173,56 @@ export const InputFile = ({
         disabled={isFileInputDisabled()}
       />
 
+      <div className="mt-2">
+        {currentValue?.option?.type === 'none' ? (
+          <div className="w-full p-4 border border-gray-200 bg-gray-50 rounded-md text-center text-gray-500 text-sm">
+            Documento não é necessário
+          </div>
+        ) : currentValue?.file?.value ? (
+          <div className="w-full p-3 border border-green-200 bg-green-50 rounded-md">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                <div>
+                  <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
+                    {currentValue.file.value.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {(currentValue.file.value.size / 1024).toFixed(2)} KB
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemoveFile}
+                className="text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        ) : shouldShowFileInput() ? (
+          <label
+            htmlFor={id}
+            className={`flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-gray-300 rounded-md cursor-pointer transition-colors ${
+              isFileInputDisabled()
+                ? 'bg-gray-50 cursor-not-allowed'
+                : 'hover:border-blue-400 hover:bg-blue-50'
+            }`}
+          >
+            <UploadCloud className="w-6 h-6 text-gray-400 mb-2" />
+            <p className="text-sm text-gray-600 mb-1">Clique para enviar ou arraste</p>
+            <p className="text-xs text-gray-500">{accept.split(',').join(', ')} (Max. 5MB)</p>
+          </label>
+        ) : (
+          <div className="w-full p-4 border border-gray-200 bg-gray-50 rounded-md text-center text-gray-500 text-sm">
+            Selecione uma opção válida para habilitar o upload
+          </div>
+        )}
+      </div>
+
       {errors[name] && (
         <p className="text-red-500 text-sm mt-1">{errors[name]?.message as string}</p>
-      )}
-
-      {currentValue?.option?.type === 'none' ? (
-        <div className="w-full h-20 border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500 dark:text-gray-400 text-sm">Documento não é necessário</p>
-        </div>
-      ) : currentValue?.file?.value ? (
-        <div className="w-full border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 rounded-lg p-3 transition-colors">
-          <div className="flex justify-between items-center gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400 flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
-                  {currentValue.file.value.name}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {(currentValue.file.value.size / 1024).toFixed(2)} KB
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={handleRemoveFile}
-              className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors flex-shrink-0"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      ) : shouldShowFileInput() ? (
-        <label
-          htmlFor={id}
-          className={`flex flex-col items-center justify-center w-full h-20 border-2 border-dashed rounded-lg cursor-pointer transition-colors px-4 py-2 ${
-            isFileInputDisabled()
-              ? 'border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 cursor-not-allowed'
-              : 'border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-          }`}
-        >
-          <div className="flex items-center justify-center gap-2 w-full">
-            <UploadCloud className="w-4 h-4 text-gray-400" />
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Clique para enviar ou arraste
-            </p>
-          </div>
-          <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
-            {accept.split(',').join(', ')} (Max. 5MB)
-          </p>
-        </label>
-      ) : (
-        <div className="w-full h-20 border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Selecione uma opção válida para habilitar o upload
-          </p>
-        </div>
       )}
     </div>
   );
