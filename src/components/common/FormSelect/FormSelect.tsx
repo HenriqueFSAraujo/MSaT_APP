@@ -41,7 +41,9 @@ const FormSelect = ({ name, label, options, required = false, error }: FormSelec
       render={({ field, fieldState }) => (
         <FormItem className="w-full">
           <FormLabel className="text-sm md:text-base font-medium text-gray-700">
-            {label} {required && '*'}
+            {label}
+
+            {required && <span className="text-red-500 ml-1">*</span>}
           </FormLabel>
           <FormControl>
             <Select onValueChange={field.onChange} defaultValue={field.value}>

@@ -41,7 +41,9 @@ const FormInput = ({
           className={`relative flex flex-col w-full min-h-[80px] ${withMarginTop ? 'mt-6' : ''}`}
         >
           <FormLabel className="text-sm md:text-base font-medium text-gray-700">
-            {label} {required && '*'}
+            {label}
+
+            {required && <span className="text-red-500 ml-1">*</span>}
           </FormLabel>
           {mask ? (
             <MaskedInput
