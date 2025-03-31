@@ -142,7 +142,7 @@ const PersonalDataForm = () => {
           <div className="flex justify-end w-full">
             <Button
               type="submit"
-              className="mt-4 w-28 bg-blue-400 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all"
+              className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
             >
               Salvar e continuar
             </Button>
