@@ -65,6 +65,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
     );
   }
 
+  const nameUser = localStorage.getItem('nameUser');
   return (
     <StyledAppBar position="static">
       <StyledToolbar>
@@ -76,7 +77,9 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
         <PageTitle variant="h3">{getPageTitle()}</PageTitle>
 
         <RightSection>
-          <AdminText>Olá Administrador Montreal!</AdminText>{' '}
+          <AdminText>
+            Bem vindo <strong>{nameUser}!</strong>
+          </AdminText>{' '}
           <TransparentIconButton
             color="inherit"
             onClick={handleClick}
