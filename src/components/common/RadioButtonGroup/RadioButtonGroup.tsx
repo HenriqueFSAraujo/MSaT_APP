@@ -13,6 +13,7 @@ interface RadioButtonGroupProps {
   required?: boolean;
   className?: string;
   orientation?: 'vertical' | 'horizontal';
+  error?: string; // Adicionado para exibir erros
 }
 
 export const RadioButtonGroup = ({
@@ -31,7 +32,7 @@ export const RadioButtonGroup = ({
       name={name}
       render={({ field }) => (
         <FormItem className={`space-y-3 ${className}`}>
-          <FormLabel>
+          <FormLabel htmlFor={name} className='className="text-base font-medium text-gray-800"'>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </FormLabel>
@@ -46,10 +47,15 @@ export const RadioButtonGroup = ({
               {options.map((option) => (
                 <FormItem key={option.value} className="flex items-center space-x-3 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value={option.value} />
+                    <RadioGroupItem id={`${name}-${option.value}`} value={option.value} />
                   </FormControl>
                   <div className="leading-none">
-                    <FormLabel className="font-normal cursor-pointer">{option.label}</FormLabel>
+                    <FormLabel
+                      htmlFor={`${name}-${option.value}`}
+                      className="font-normal cursor-pointer"
+                    >
+                      {option.label}
+                    </FormLabel>
                     {option.description && (
                       <p className="text-sm text-muted-foreground">{option.description}</p>
                     )}

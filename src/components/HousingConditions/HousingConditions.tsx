@@ -36,7 +36,9 @@ export const HousingConditions = () => {
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">Documentos Gerais</h1>
+        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">
+          Condições habitacionais
+        </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {radioGroups.map((group) => (
