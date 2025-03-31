@@ -39,11 +39,8 @@ export const HousingConditions = () => {
         <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">Documentos Gerais</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {radioGroups.map((group, index) => (
-              <div
-                key={group.name}
-                className={`${index < radioGroups.length - 1 ? 'border-b pb-6' : ''}`}
-              >
+            {radioGroups.map((group) => (
+              <div key={group.name} className="border-b pb-6">
                 <RadioButtonGroup
                   name={group.name}
                   label={group.label}
