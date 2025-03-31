@@ -118,6 +118,7 @@ export const DocumentForm = () => {
       //   },
       //   body: JSON.stringify(payload)
       // });
+      console.log(payload);
 
       toast.success('Sucesso!', 'Documentos enviados com sucesso!');
     } catch (error) {

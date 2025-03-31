@@ -110,7 +110,7 @@ export const InputFile = ({
   };
 
   return (
-    <div className="w-full space-y-4 p-5 border border-gray-200 rounded-lg bg-white">
+    <div className="w-full space-y-4 p-5 border border-gray-200 rounded-lg bg-transparent">
       <div className="space-y-2">
         <div>
           <div>
