@@ -83,6 +83,7 @@ const AddressResidence = ({ label }: { label: string }) => {
               label="CEP"
               required
               error={errors.zipCode?.message}
+              mask="cep"
             />
             <FormInput
               {...methods.register('address')}
@@ -152,12 +153,14 @@ const AddressResidence = ({ label }: { label: string }) => {
               name="homePhone"
               label="Telefone residencial"
               error={errors.homePhone?.message}
+              mask="phone"
             />
             <FormInput
               {...methods.register('workPhone')}
               name="workPhone"
               label="Telefone do trabalho"
               error={errors.workPhone?.message}
+              mask="phone"
             />
             <FormInput
               {...methods.register('mobilePhone')}
@@ -165,6 +168,7 @@ const AddressResidence = ({ label }: { label: string }) => {
               label="Telefone celular"
               required
               error={errors.mobilePhone?.message}
+              mask="phone"
             />
             <FormInput
               {...methods.register('email')}
