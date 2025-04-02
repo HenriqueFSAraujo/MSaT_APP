@@ -40,4 +40,9 @@ export const Logins: login[] = [
     name: 'Isabela Cristina',
     password: 'Lily@1201',
   },
+  {
+    user: 'victoriaclementte@gmail.com',
+    name: 'Victória Clemente',
+    password: '123456',
+  },
 ];
