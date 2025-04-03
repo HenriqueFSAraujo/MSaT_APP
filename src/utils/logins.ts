@@ -13,7 +13,7 @@ export const Logins: login[] = [
   {
     user: 'icaropantuzzo@gmail.com',
     name: 'Ícaro Pantuzzo',
-    password: '123456',
+    password: '1234567',
   },
   {
     user: 'henriquefernandes@gmail.com',
