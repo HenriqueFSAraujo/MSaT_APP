@@ -28,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
   const handleClick = () => {};
 
   const handleClose = () => {
-    setOpen(null);
+    setOpen(false);
   };
 
   if (!shouldRender) return null;
@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({ shouldRender }) => {
   const getPageTitle = () => {
     switch (location.pathname) {
       case '/formulario-aluno':
-        return 'Formulário do aluno';
+        return 'Formulário do cadidato a bolsa de estudos';
       case '/dashboard/consulta':
         return 'Consulta';
       case '/dashboard/users':
