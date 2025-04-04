@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, LayoutDashboard, Users } from 'lucide-react';
+import { Menu, Users, Clipboard, ClockAlert } from 'lucide-react';
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -36,11 +36,23 @@ export default function MobileMenu() {
             variant="ghost"
             className="w-full flex justify-start gap-2"
             onClick={() => {
+              navigate('/formulario-aluno');
+              closeMenu();
+            }}
+          >
+            <Clipboard className="h-5 w-5" />
+            Formulário do cadidato
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2"
+            onClick={() => {
               navigate('/dashboard');
               closeMenu();
             }}
           >
-            <LayoutDashboard className="h-5 w-5" /> Dashboard
+            <ClockAlert className="h-5 w-5" />
+            Formulário antigo
           </Button>
 
           <Button
