@@ -83,7 +83,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="p-2 md:p-1.5 sm:p-1 text-white hover:bg-white/10"
+              className="p-2 md:p-1.5 sm:p-1 text-white hover:bg-white"
               aria-controls={open ? 'basic-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
@@ -99,7 +99,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
         </DropdownMenu>
 
         {/* Settings */}
-        <Button variant="ghost" className="p-2 md:p-1.5 sm:p-1 text-white hover:bg-white/10">
+        <Button variant="ghost" className="p-2 md:p-1.5 sm:p-1 text-white hover:bg-white">
           <Settings className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
         </Button>
       </div>
