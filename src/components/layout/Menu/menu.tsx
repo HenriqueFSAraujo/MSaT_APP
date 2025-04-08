@@ -1,91 +1,92 @@
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
 import { useState } from 'react';
-
-import MenuIcon from '@mui/icons-material/Menu';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { ContainerButtonClose, DrawerContent, ListItemComponet, MenuButton } from './styles';
-
-import { defineAbilitiesFor } from '@/hooks/permission';
-import CloseIcon from '@mui/icons-material/Close';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-
-import DomainIcon from '@mui/icons-material/Domain';
-import PersonIcon from '@mui/icons-material/Person';
-import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Menu, Users, Clipboard, ClockAlert, X } from 'lucide-react';
 
-export default function Menu() {
+export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const closeMenu = () => setOpen(!open);
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
+  const logOut = () => {
+    localStorage.removeItem('nameUser');
+    navigate('/');
+    closeMenu();
   };
 
-  const permission = defineAbilitiesFor(localStorage.getItem('@garantias:role')!);
-
-  const DrawerList = (
-    <DrawerContent role="presentation">
-      <ContainerButtonClose>
-        <Button onClick={toggleDrawer(false)}>
-          <CloseIcon />
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" className="group p-2 h-10 w-10">
+          <Menu className="h-6 w-6 text-white group-hover:text-slate-800" />
         </Button>
-      </ContainerButtonClose>
-      <List onClick={toggleDrawer(false)}>
-        {permission.can('Get', 'Dashboard') ? (
-          <ListItemComponet disablePadding onClick={() => navigate('/dashboard')}>
-            <ListItemButton>
-              <ListItemIcon>
-                <DashboardIcon />
-              </ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
+      </SheetTrigger>
 
-        {permission.can('Get', 'User') ? (
-          <ListItemComponet disablePadding onClick={() => navigate('/dashboard/users')}>
-            <ListItemButton>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="Usuários" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
-
-        {permission.can('Get', 'Sair') ? (
-          <ListItemComponet
-            disablePadding
+      <SheetContent
+        side="left"
+        className="w-64 p-4 [&>button:first-of-type]:hidden"
+        style={{ backgroundColor: 'oklch(70.7% 0.022 261.325)' }}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 text-white hover:text-black transition-colors p-1"
+          onClick={closeMenu}
+        >
+          <X className="w-4 h-4" />
+        </Button>
+        <nav className="mt-8 space-y-4">
+          <div className="flex items-center justify-center mb-4">
+            <img
+              src="https://agostinianas.com.br/wp-content/uploads/2020/12/logo-congregacao-branco.svg"
+              alt="Logo"
+              className="h-17 w-auto object-contain cursor-pointer"
+            />
+          </div>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 text-white"
             onClick={() => {
-              localStorage.removeItem('@garantias:session');
-              navigate('/login');
+              navigate('/formulario-aluno');
+              closeMenu();
             }}
           >
-            <ListItemButton>
-              <ListItemIcon>
-                <DomainIcon />
-              </ListItemIcon>
-              <ListItemText primary="Sair" />
-            </ListItemButton>
-          </ListItemComponet>
-        ) : null}
-      </List>
-    </DrawerContent>
-  );
+            <Clipboard className="h-5 w-5" />
+            Formulário do cadidato
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 text-white"
+            onClick={() => {
+              navigate('/dashboard');
+              closeMenu();
+            }}
+          >
+            <ClockAlert className="h-5 w-5" />
+            Formulário antigo
+          </Button>
 
-  return (
-    <div>
-      <MenuButton onClick={toggleDrawer(true)}>
-        {' '}
-        <MenuIcon />{' '}
-      </MenuButton>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
-    </div>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 text-white"
+            onClick={() => {
+              navigate('/dashboard/users');
+              closeMenu();
+            }}
+          >
+            <Users className="h-5 w-5" /> Usuários
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 text-red-700 h-5 p-5"
+            onClick={logOut}
+          >
+            Sair
+          </Button>
+        </nav>
+      </SheetContent>
+    </Sheet>
   );
 }

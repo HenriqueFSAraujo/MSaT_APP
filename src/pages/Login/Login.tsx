@@ -1,253 +1,116 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import { Controller } from 'react-hook-form';
-import { Typography, Button, CircularProgress } from '@mui/material';
-import { jwtDecode } from 'jwt-decode';
-import { useLoginForm } from '@/hooks';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input.js';
+import { Button } from '@/components/ui/button.js';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LockIcon from '@mui/icons-material/Lock';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Logins } from '@/utils/logins';
 
-import {
-  ContainerInput,
-  ForgotPassword,
-  FormContainer,
-  ImageContainer,
-  InputComponet,
-  Label,
-  LoginContainer,
-  StyledForm,
-  StyledPaper,
-} from './styles';
+const loginSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+});
 
-import imgcarsblue from '@/assets/carrosVersaoAzul.svg';
-import TokenRegistration from '@/components/common/TokenRegistration';
-import { userService } from '@/services/userService';
+type LoginForm = z.infer<typeof loginSchema>;
 
-const Login: React.FC = () => {
-  const { form, onSubmit: originalOnSubmit, isPending, error, errors } = useLoginForm();
-  const [showtoken, setShowtoken] = useState(false);
-  // const [loading, setLoading] = useState(false);
+export default function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
-  const handleTokenValidated = () => {
-    setShowtoken(false);
-    navigate('/dashboard');
-  };
-
-  const onSubmit = async (data: any) => {
-    // setLoading(true);
+  const onSubmit = async (formData: LoginForm) => {
+    setIsPending(true);
+    setError(null);
     try {
-      await new Promise((resolve) => {
-        originalOnSubmit(data);
-        const checkInterval = setInterval(() => {
-          const session = localStorage.getItem('@garantias:session');
-          if (session) {
-            clearInterval(checkInterval);
-            resolve(true);
-          }
-        }, 100);
-      });
-
-      const userId = localStorage.getItem('@garantias:id');
-      if (userId) {
-        const userData = await userService.getUserById(Number(userId));
-        if (userData.tokenLogin) {
-          setShowtoken(true);
-        } else {
-          navigate('/dashboard');
-        }
+      const user = Logins.find(
+        (login) => login.user === formData.email && login.password === formData.password
+      );
+      if (user) {
+        localStorage.setItem('nameUser', user.name);
+        navigate('/formulario-aluno');
+      } else {
+        setError('Usuário ou senha inválidos.');
       }
     } catch (error) {
+      setError('Erro ao fazer login. Verifique suas credenciais.');
       console.error('Erro ao processar submissão:', error);
     } finally {
-      // setLoading(false);
+      setIsPending(false);
     }
   };
 
   useEffect(() => {
-    const checkSession = async () => {
-      const data = localStorage.getItem('@garantias:session');
-
-      if (!data) {
-        // setLoading(false);
-        return;
-      }
-
-      try {
-        const session = JSON.parse(data) as {
-          accessToken: string;
-          token: string;
-        };
-
-        const decodedToken = jwtDecode(session.accessToken);
-
-        if (!decodedToken?.exp) {
-          // setLoading(false);
-          return;
-        }
-
-        const currentTime = Math.floor(Date.now() / 1000);
-        const isExpired = decodedToken.exp < currentTime;
-
-        if (isExpired) {
-          // setLoading(false);
-          return;
-        }
-
-        // Verificar se o usuário precisa autenticar token
-        const userId = localStorage.getItem('@garantias:id');
-        if (userId) {
-          const userData = await userService.getUserById(Number(userId));
-          if (userData.tokenLogin) {
-            setShowtoken(true);
-            // setLoading(false);
-            return;
-          }
-        }
-
-        // Só navega para o dashboard se não precisar de token
-        navigate('/dashboard');
-      } catch (error) {
-        console.log('error', error);
-        // setLoading(false);
-      }
-    };
-
-    checkSession();
-  }, [navigate]);
-
-  // if (loading) {
-  //   return (
-  //     <LoginContainer>
-  //       <FormContainer>
-  //         <StyledPaper>
-  //           <Skeleton variant="rectangular" width="100%" height={40} sx={{ mb: 4 }} />
-
-  //           <Skeleton variant="rectangular" width="100%" height={56} sx={{ mb: 3 }} />
-
-  //           <Skeleton variant="rectangular" width="100%" height={20} sx={{ mb: 2 }} />
-
-  //           <Skeleton variant="rectangular" width="100%" height={56} sx={{ mb: 3 }} />
-
-  //           <Skeleton
-  //             variant="rectangular"
-  //             width="100%"
-  //             height={50}
-  //             sx={{ borderRadius: '26px' }}
-  //           />
-  //         </StyledPaper>
-  //       </FormContainer>
-  //       <ImageContainer>
-  //         <Skeleton variant="rectangular" width="90%" height={600} />
-  //       </ImageContainer>
-  //     </LoginContainer>
-  //   );
-  // }
+    localStorage.removeItem('nameUser');
+  }, []);
 
   return (
-    <LoginContainer>
-      <FormContainer>
-        {showtoken ? (
-          <TokenRegistration
-            onTokenValidated={handleTokenValidated}
-            userId={Number(localStorage.getItem('@garantias:id'))}
-          />
-        ) : (
-          <StyledPaper>
-            <Typography
-              variant="h4"
-              component="h2"
-              color="#444F60"
-              gutterBottom
-              sx={{ fontWeight: 'bold', textAlign: 'left', mb: 4 }}
-            >
-              <span style={{ color: '#444F60' }}>Acesse utilizando seu </span>
-              <span style={{ color: '#265769' }}>Cadastro</span>
-            </Typography>
+    <div className="flex items-center bg-blue-600 justify-center min-h-screen px-4">
+      <div className="w-full max-w-4xl bg-blue-600 shadow-2xl rounded-lg overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+        <div className="flex items-center justify-center p-12 bg-gradient-to-r from-blue-600 to-blue-800">
+          <div className="text-center text-white">
+            <img
+              src="/imgs/logo.jpeg"
+              alt="Logo"
+              className="max-h-60 w-auto object-contain mx-auto mb-6 p-3 bg-white"
+            />
+            <h1 className="text-4xl font-bold mb-4">Bem-vindo de Volta</h1>
+            <p className="text-lg">Por favor, insira suas credenciais para acessar sua conta.</p>
+          </div>
+        </div>
 
-            {error && (
-              <Typography color="error" sx={{ mb: 3, textAlign: 'center' }}>
-                {error}
-              </Typography>
-            )}
-
-            <StyledForm onSubmit={form.handleSubmit(onSubmit)}>
-              <ContainerInput>
-                <Label>Login</Label>
-                <Controller
-                  name="username"
-                  control={form.control}
-                  render={({ field }) => (
-                    <InputComponet
-                      {...field}
-                      fullWidth
-                      margin="normal"
-                      variant="outlined"
-                      error={!!errors.username}
-                      helperText={errors.username?.message}
-                      InputProps={{
-                        startAdornment: <AccountCircleIcon sx={{ mr: 1 }} />,
-                      }}
-                      sx={{ mb: 3 }}
-                    />
+        <div className="p-12 flex flex-col justify-center bg-white">
+          <Card className="shadow-none border-0">
+            <CardHeader>
+              <CardTitle className="text-center text-3xl font-bold text-gray-800">Login</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    {...register('email')}
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
                   )}
-                />
-              </ContainerInput>
-              <ContainerInput>
-                <Label>Senha</Label>
-                <Controller
-                  name="password"
-                  control={form.control}
-                  render={({ field }) => (
-                    <InputComponet
-                      {...field}
-                      fullWidth
-                      margin="normal"
-                      type="password"
-                      variant="outlined"
-                      error={!!errors.password}
-                      helperText={errors.password?.message}
-                      InputProps={{ startAdornment: <LockIcon sx={{ mr: 1 }} /> }}
-                      sx={{ mb: 3 }}
-                    />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    {...register('password')}
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
                   )}
-                />
-              </ContainerInput>
-
-              <ForgotPassword variant="body2" color="primary">
-                Esqueci minha senha
-              </ForgotPassword>
-
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                type="submit"
-                sx={{
-                  mt: 2,
-                  borderRadius: '26px',
-                  padding: '14px 0',
-                  backgroundColor: '#3B5C69',
-                  '&:hover': {
-                    backgroundColor: '#2d4752',
-                  },
-                  fontSize: '23px',
-                  lineHeight: '16px',
-                }}
-                disabled={isPending}
-              >
-                {isPending ? <CircularProgress /> : 'Acessar'}
-              </Button>
-            </StyledForm>
-          </StyledPaper>
-        )}
-      </FormContainer>
-
-      <ImageContainer></ImageContainer>
-    </LoginContainer>
+                </div>
+                {error && <p className="text-red-500 text-sm mt-1 text-center">{error}</p>}
+                <Button
+                  type="submit"
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                  disabled={isSubmitting || isPending}
+                >
+                  {isPending ? 'Carregando...' : 'Entrar'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default Login;
+}

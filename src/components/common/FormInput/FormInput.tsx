@@ -9,7 +9,7 @@ interface FormInputProps {
   type?: string;
   required?: boolean;
   error?: string;
-  mask?: 'cpf' | 'phone';
+  mask?: 'cpf' | 'phone' | 'cep';
   description?: string;
   withMarginTop?: boolean;
   [key: string]: unknown;
@@ -18,6 +18,7 @@ interface FormInputProps {
 const maskPatterns = {
   cpf: [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
+  cep: [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
 };
 
 const FormInput = ({
@@ -41,14 +42,16 @@ const FormInput = ({
           className={`relative flex flex-col w-full min-h-[80px] ${withMarginTop ? 'mt-6' : ''}`}
         >
           <FormLabel className="text-sm md:text-base font-medium text-gray-700">
-            {label} {required && '*'}
+            {label}
+
+            {required && <span className="text-red-500 ml-1">*</span>}
           </FormLabel>
           {mask ? (
             <MaskedInput
               {...field}
               mask={maskPatterns[mask]}
               className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-              onChange={(e) => field.onChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value)}
             />
           ) : (
             <Input
