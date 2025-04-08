@@ -15,7 +15,7 @@ interface HeaderProps {
   shouldRender?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ shouldRender = true }) => {
+export const Header = ({ shouldRender = true }: HeaderProps) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
