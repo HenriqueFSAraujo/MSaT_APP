@@ -36,7 +36,7 @@ export default function LoginPage() {
       );
       if (user) {
         localStorage.setItem('nameUser', user.name);
-        navigate('/formulario-aluno');
+        navigate('/dashboard-students');
       } else {
         setError('Usuário ou senha inválidos.');
       }
@@ -53,7 +53,7 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <div className="flex items-center bg-blue-600 justify-center min-h-screen px-4">
+    <div className="flex items-center bg-blue-300 justify-center min-h-screen px-4">
       <div className="w-full max-w-4xl bg-blue-600 shadow-2xl rounded-lg overflow-hidden grid grid-cols-1 lg:grid-cols-2">
         <div className="flex items-center justify-center p-12 bg-gradient-to-r from-blue-600 to-blue-800">
           <div className="text-center text-white">

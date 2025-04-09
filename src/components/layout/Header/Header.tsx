@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,6 +19,8 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+  const navigate = useNavigate();
+  const closeMenu = () => setOpen(!open);
 
   const nameUser = localStorage.getItem('nameUser');
 
@@ -27,14 +29,12 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
 
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/formulario-aluno':
+      case '/studants-form':
         return 'Formulário do candidato a bolsa de estudos';
       case '/dashboard/consulta':
         return 'Consulta';
-      case '/dashboard/users':
-        return 'Usuários';
-      default:
-        return 'Página';
+      case '/dashboard-students':
+        return 'Painel de alunos';
     }
   };
 
@@ -58,8 +58,14 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
     );
   }
 
+  const logOut = () => {
+    localStorage.removeItem('nameUser');
+    navigate('/');
+    closeMenu();
+  };
+
   return (
-    <header className="h-[76px] md:h-[64px] sm:h-[56px] bg-[#0b59ac] shadow-sm flex items-center justify-between px-[22px] md:px-4 sm:px-3">
+    <header className="h-auto md:h-[64px] sm:h-[56px] bg-[#0b59ac] shadow-sm flex items-center justify-between px-[22px] md:px-4 sm:px-3">
       <div className="flex items-center gap-[20px] md:gap-[12px] sm:gap-[8px]">
         <MenuComponent />
         <img
@@ -91,17 +97,16 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
               <User className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-[200px] bg-white shadow-md rounded mt-2">
-            <DropdownMenuItem onClick={() => setOpen(false)}>Perfil Localizador</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpen(false)}>Perfil ADM</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpen(false)}>Perfil Pátio</DropdownMenuItem>
+          <DropdownMenuContent
+            align="end"
+            sideOffset={8}
+            className="min-w-[200px] bg-white shadow-md rounded-md border"
+          >
+            <DropdownMenuItem onClick={logOut} className="text-red-700 h-10 px-4">
+              Sair
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* Settings */}
-        <Button variant="ghost" className="p-2 md:p-1.5 sm:p-1 text-white hover:bg-white">
-          <Settings className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
-        </Button>
       </div>
     </header>
   );

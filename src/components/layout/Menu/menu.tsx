@@ -2,18 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, Users, Clipboard, ClockAlert, X } from 'lucide-react';
+import { Menu, Clipboard, ClockAlert, X, BookOpenText } from 'lucide-react';
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const closeMenu = () => setOpen(!open);
-
-  const logOut = () => {
-    localStorage.removeItem('nameUser');
-    navigate('/');
-    closeMenu();
-  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -48,7 +42,17 @@ export default function MobileMenu() {
             variant="ghost"
             className="w-full flex justify-start gap-2 text-white"
             onClick={() => {
-              navigate('/formulario-aluno');
+              navigate('/dashboard-students');
+              closeMenu();
+            }}
+          >
+            <BookOpenText className="h-5 w-5" /> Painel de alunos
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 text-white"
+            onClick={() => {
+              navigate('/studants-form');
               closeMenu();
             }}
           >
@@ -65,25 +69,6 @@ export default function MobileMenu() {
           >
             <ClockAlert className="h-5 w-5" />
             Formulário antigo
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full flex justify-start gap-2 text-white"
-            onClick={() => {
-              navigate('/dashboard/users');
-              closeMenu();
-            }}
-          >
-            <Users className="h-5 w-5" /> Usuários
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full flex justify-start gap-2 text-red-700 h-5 p-5"
-            onClick={logOut}
-          >
-            Sair
           </Button>
         </nav>
       </SheetContent>
