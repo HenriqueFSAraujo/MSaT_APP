@@ -1,75 +1,92 @@
 // src/mock/usersMock.ts
+export type usersMockProps = {
+  id: string
+  fullName: string
+  email: string
+  cpf: string
+  role: string
+  status: string
+}
+
 const usersMock = [
   {
     id: 1,
     fullName: 'Ana Souza',
-    username: 'ana.souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'candidato novato',
+    role: 'gestor',
     status: 'ativo',
-    formStatus: 'Concluído',
   },
   {
     id: 2,
-    fullName: 'Carlos Lima',
-    username: 'carlos.lima',
-    email: 'carlos@example.com',
-    cpf: '23456789012',
-    role: 'candidato veterano',
-    status: 'inativo',
-    formStatus: 'Pendente',
+    fullName: 'Ana Souza',
+    email: 'ana@example.com',
+    cpf: '12345678901',
+    role: 'gestor',
+    status: 'ativo',
   },
   {
     id: 3,
-    fullName: 'Mariana Ribeiro',
-    username: 'mariana.r',
-    email: 'mariana@example.com',
-    cpf: '34567890123',
-    role: 'candidato novato',
-    status: 'ativo',
-    formStatus: 'Não iniciado',
+    fullName: 'Ana Souza',
+    email: 'ana@example.com',
+    cpf: '12345678901',
+    role: 'gestor',
+    status: 'inativo',
   },
   {
     id: 4,
-    fullName: 'Pedro Henrique',
-    username: 'pedro.h',
-    email: 'pedro@example.com',
-    cpf: '45678901234',
-    role: 'candidato veterano',
+    fullName: 'Ana Souza',
+    email: 'ana@example.com',
+    cpf: '12345678901',
+    role: 'gestor',
     status: 'ativo',
-    formStatus: 'Pendente',
   },
   {
     id: 5,
-    fullName: 'Luciana Alves',
-    username: 'luciana.alves',
-    email: 'luciana@example.com',
-    cpf: '56789012345',
-    role: 'candidato novato',
+    fullName: 'Ana Souza',
+    email: 'ana@example.com',
+    cpf: '12345678901',
+    role: 'gestor',
     status: 'inativo',
-    formStatus: 'Não iniciado',
   },
   {
     id: 6,
-    fullName: 'Bruno Castro',
-    username: 'bruno.castro',
-    email: 'bruno@example.com',
-    cpf: '67890123456',
-    role: 'candidato novato',
-    status: 'ativo',
-    formStatus: 'Pendente',
+    fullName: 'Ana Souza',
+    email: 'ana@example.com',
+    cpf: '12345678901',
+    role: 'gestor',
+    status: 'inativo',
   },
   {
     id: 7,
-    fullName: 'Fernanda Dias',
-    username: 'fernanda.d',
-    email: 'fernanda@example.com',
-    cpf: '78901234567',
-    role: 'candidato veterano',
+    fullName: 'Ana Souza',
+    email: 'ana@example.com',
+    cpf: '12345678901',
+    role: 'gestor',
     status: 'ativo',
-    formStatus: 'Pendente',
   },
 ];
+
+
+const params = {
+  relacao: [
+    {id: ""},
+    {
+      marca: "",
+      ano_fabricacao: "",
+      utilizacao: "",
+    },
+    {
+      marca: "",
+      ano_fabricacao: "",
+      utilizacao: "",
+    },
+    {
+      marca: "",
+      ano_fabricacao: "",
+      utilizacao: "",
+    }
+  ]
+}
 
 export default usersMock;

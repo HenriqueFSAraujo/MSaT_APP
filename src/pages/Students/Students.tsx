@@ -22,7 +22,6 @@ export default function UsuariosPage() {
   const [filters, setFilters] = useState({
     status: ['ativo', 'inativo'],
     fullName: '',
-    username: '',
     email: '',
     cpf: '',
   });
@@ -43,7 +42,6 @@ export default function UsuariosPage() {
     return (
       (filters.status.length === 0 || filters.status.includes(user.status)) &&
       user.fullName.toLowerCase().includes(filters.fullName.toLowerCase()) &&
-      user.username.toLowerCase().includes(filters.username.toLowerCase()) &&
       user.email.toLowerCase().includes(filters.email.toLowerCase()) &&
       user.cpf.includes(filters.cpf)
     );
@@ -140,9 +138,8 @@ export default function UsuariosPage() {
               <TableHeader className="bg-blue-400">
                 <TableRow>
                   <TableHead className="text-white">Nome</TableHead>
+                  <TableHead className="text-white">CPF</TableHead>
                   <TableHead className="text-white">E-mail</TableHead>
-                  <TableHead className="text-white">Login</TableHead>
-                  <TableHead className="text-white">Perfil</TableHead>
                   <TableHead className="text-white">
                     <Popover>
                       <PopoverTrigger asChild>
@@ -185,24 +182,8 @@ export default function UsuariosPage() {
                         index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                       }`}
                     >
-                      <TableCell className="text-gray-800 flex items-center gap-2">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span
-                                className={`w-2.5 h-2.5 rounded-full ${getFormStatusColor(user.formStatus)} animate-pulse-soft`}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent side="top">
-                              <p className="capitalize">{user.formStatus}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        {user.fullName}
-                      </TableCell>
-
                       <TableCell className="text-gray-800">{user.email}</TableCell>
-                      <TableCell className="text-gray-800">{user.username}</TableCell>
+                      <TableCell className="text-gray-800">{user.cpf}</TableCell>
                       <TableCell className="text-gray-800">{user.role}</TableCell>
                       <TableCell>
                         <Badge
