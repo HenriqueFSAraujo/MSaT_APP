@@ -54,17 +54,17 @@ export const DocumentForm = ({ label }: { label: string }) => {
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
-  const hasValidFile = (fieldName: string) => {
+  const hasValidFile = (fieldName: keyof FormValues) => {
     const value = formValues[fieldName];
-    return value?.file?.value instanceof File;
+    return typeof value !== 'string' && value?.file?.value instanceof File;
   };
 
-  const isRequiredAndEmpty = (fieldName: string) => {
+  const isRequiredAndEmpty = (fieldName: keyof FormValues) => {
     const value = formValues[fieldName];
     return (
       REQUIRED_DOCUMENTS.includes(fieldName) &&
-      !value?.file?.value &&
-      !(value?.option?.value && value.option.value !== 'none')
+      !(typeof value !== 'string' && value?.file?.value) &&
+      !(typeof value !== 'string' && value?.option?.value && value.option.value !== 'none')
     );
   };
 
@@ -164,9 +164,9 @@ export const DocumentForm = ({ label }: { label: string }) => {
                   <div
                     key={name}
                     className={`border-2 rounded-lg p-4 transition-colors ${
-                      hasValidFile(name)
+                      hasValidFile(name as keyof FormValues)
                         ? 'border-green-300 bg-green-50'
-                        : submitted && isRequiredAndEmpty(name)
+                        : submitted && isRequiredAndEmpty(name as keyof FormValues)
                           ? 'border-red-300 bg-red-50'
                           : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
                     }`}
@@ -179,9 +179,9 @@ export const DocumentForm = ({ label }: { label: string }) => {
                           <span className="text-red-500 ml-1">*</span>
                         )}
                       </h3>
-                      {hasValidFile(name) ? (
+                      {hasValidFile(name as keyof FormValues) ? (
                         <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      ) : submitted && isRequiredAndEmpty(name) ? (
+                      ) : submitted && isRequiredAndEmpty(name as keyof FormValues) ? (
                         <AlertCircle className="h-5 w-5 text-red-500" />
                       ) : null}
                     </div>
@@ -190,7 +190,7 @@ export const DocumentForm = ({ label }: { label: string }) => {
                       name={name}
                       id={`file-input-${name}`}
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      disabled={formValues[name] === 'Não possui'}
+                      disabled={formValues[name as keyof FormValues] === 'Não possui'}
                       selectOptions={options}
                       description={desc}
                       linkLabel={linkLabel}
@@ -199,7 +199,7 @@ export const DocumentForm = ({ label }: { label: string }) => {
                       downloadLink={downloadLink}
                     />
 
-                    {submitted && isRequiredAndEmpty(name) && (
+                    {submitted && isRequiredAndEmpty(name as keyof FormValues) && (
                       <p className="text-xs text-red-500 mt-2">Documento obrigatório</p>
                     )}
                   </div>

@@ -13,18 +13,22 @@ interface FormDateProps {
   label: string;
   required?: boolean;
   description?: string;
-  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>>;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 }
 
 const getErrorMessage = (
-  error: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>> | undefined
+  error:
+    | string
+    | FieldError
+    | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>
+    | undefined
 ): string => {
   if (typeof error === 'string') {
     return error;
   }
 
   if (error && 'message' in error) {
-    return error.message || 'Erro desconhecido';
+    return typeof error.message === 'string' ? error.message : 'Erro desconhecido';
   }
 
   return 'Erro desconhecido';
