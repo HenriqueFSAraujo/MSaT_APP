@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PersonalData from '@/components/PersonalData';
 import ParentalData from '@/components/ParentalData';
 import AddressResidence from '@/components/AddressResidence';
-import { DocumentForm } from '@/components/DocumentData/DocumentData';
+import { DocumentForm } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { TABS } from './type.ds';
 import { useTabStore } from '@/store/tabStore';

@@ -10,11 +10,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, ChevronDown, FileText, User } from 'lucide-react';
+import { Plus, ChevronDown, FileText, User, BookOpenText } from 'lucide-react';
 import { useState } from 'react';
 import usersMock from './usersMock';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const statusOptions = ['ativo', 'inativo'];
 
@@ -47,24 +46,13 @@ export default function UsuariosPage() {
     );
   });
 
-  const getFormStatusColor = (status: string) => {
-    switch (status) {
-      case 'Não iniciado':
-        return 'bg-yellow-400';
-      case 'Pendente':
-        return 'bg-orange-400';
-      case 'Concluído':
-        return 'bg-green-500';
-    }
-  };
-
   return (
     <main className="p-4 space-y-6 bg-gray-100 min-h-screen">
       <Card className="bg-white shadow-md rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h2 className="text-3xl font-bold text-muted-foreground flex items-center gap-1">
-              <FileText className="h-6 w-6" />
+              <BookOpenText className="h-5 w-5" />
               Painel de alunos
             </h2>
           </div>
@@ -182,6 +170,10 @@ export default function UsuariosPage() {
                         index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                       }`}
                     >
+                      <TableCell className="text-gray-800 flex items-center gap-2">
+                        {user.fullName}
+                      </TableCell>
+
                       <TableCell className="text-gray-800">{user.email}</TableCell>
                       <TableCell className="text-gray-800">{user.cpf}</TableCell>
                       <TableCell className="text-gray-800">{user.role}</TableCell>

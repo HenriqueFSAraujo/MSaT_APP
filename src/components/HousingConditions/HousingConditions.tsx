@@ -23,7 +23,9 @@ export const HousingConditions = ({ label }: { label: string }) => {
 
   const { handleSubmit } = methods;
 
-  const onSubmit = async (data) => {
+  type FormData = z.infer<typeof formSchema>;
+
+  const onSubmit = async (data: FormData) => {
     try {
       console.log('Dados enviados:', data);
       toast.success('Sucesso!', 'Condições de moradia salvas com sucesso!');

@@ -99,13 +99,18 @@ export default function LoginPage() {
                   )}
                 </div>
                 {error && <p className="text-red-500 text-sm mt-1 text-center">{error}</p>}
-                <Button
-                  type="submit"
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
-                  disabled={isSubmitting || isPending}
-                >
-                  {isPending ? 'Carregando...' : 'Entrar'}
-                </Button>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground cursor-pointer hover:text-blue-500 hover:underline">
+                    Esqueceu a senha?
+                  </span>
+                  <Button
+                    type="submit"
+                    className="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                    disabled={isSubmitting || isPending}
+                  >
+                    {isPending ? 'Carregando...' : 'Entrar'}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
