@@ -26,6 +26,24 @@ const formSchema = z.object({
             })
         )
         .min(1, 'Pelo menos uma linha é obrigatória'),
+    peopleDeficiency: z
+        .array(
+            z.object({
+                name: z.string().min(1, 'Campo obrigatório'),
+                tDeficiency: z.string().min(1, 'Campo obrigatório'),
+                monthlyValue: z.string().min(1, 'Campo obrigatório'),
+
+            })
+        )
+        .min(1, 'Pelo menos uma linha é obrigatória'),
+    expenseBreakdown: z
+        .array(
+            z.object({
+                expense: z.string().min(1, 'Campo obrigatório'),
+                realValue: z.string().min(1, 'Campo obrigatório'),
+            })
+        )
+        .min(1, 'Pelo menos uma linha é obrigatória'),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -36,6 +54,8 @@ export const PropertyRelations = ({ label }: { label: string }) => {
         defaultValues: {
             vehicles: [{ model: '', year: '', usage: '' }],
             peopleSchool: [{ name: '', school: '', monthlyValue: '' }],
+            peopleDeficiency: [{ name: '', tDeficiency: '', monthlyValue: '' }],
+            expenseBreakdown: [{ expense: '', realValue: '' }],
         },
     });
 
@@ -61,6 +81,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
                             <div key={section.key} className="w-full md:w-[520px]">
                                 <DynamicInputSection
                                     title={section.title}
+                                    info={section?.info}
                                     columns={section.columns}
                                     fieldNames={section.fields}
                                     namePrefix={section.key}

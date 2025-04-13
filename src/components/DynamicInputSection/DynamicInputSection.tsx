@@ -1,11 +1,12 @@
 import { useFormContext, useFieldArray, FieldError } from 'react-hook-form';
-import { Plus, Trash } from 'lucide-react';
+import { Plus, Trash, Info } from 'lucide-react';
 import autoAnimate from '@formkit/auto-animate';
 import { AnimatedIconButton } from "../common/AnimatedIconButton/AnimatedIconButton";
 import { useRef, useEffect } from 'react';
 
 type DynamicInputSectionProps = {
   title?: string;
+  info?: string;
   columns: string[];
   fieldNames: string[];
   namePrefix: string;
@@ -13,6 +14,7 @@ type DynamicInputSectionProps = {
 
 export const DynamicInputSection = ({
   title,
+  info,
   columns,
   fieldNames,
   namePrefix,
@@ -47,16 +49,19 @@ export const DynamicInputSection = ({
   const gridColsClass = `grid-cols-${columns.length}`;
 
   return (
-    <div className="max-w-[500px] space-y-4">
-      {title && <h3 className="font-semibold text-lg">{title}</h3>}
+    <div className="max-w-[950px] space-y-4">
+      <div className='flex gap-2 items-center'>
+        {title && <h3 className="font-semibold text-md text-muted-foreground">{title}</h3>}
+        {info && <div title={info}> <Info size={18} className='text-yellow-800 cursor-pointer' /></div>}
+      </div>
 
       <div className="rounded-lg overflow-hidden border border-gray-200">
         {/* Cabeçalho */}
-        <div className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-4 py-3 max-w-[500px] rounded-t-lg`}>
+        <div className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-1 py-1 max-w-[950px] rounded-t-lg`}>
           {columns.map((col, idx) => (
             <div
               key={idx}
-              className="font-bold text-white truncate bg-blue-400 p-2 rounded-t-md text-sm uppercase"
+              className="font-bold text-white truncate bg-blue-400 p-2 rounded-t-md text-sm"
               title={col} // mostra o texto completo no hover
             >
               {col}
@@ -65,18 +70,18 @@ export const DynamicInputSection = ({
         </div>
 
         {/* Linhas */}
-        <div ref={parentRef} className="max-w-[500px] divide-y ">
+        <div ref={parentRef} className="max-w-[950px] divide-y ">
           {fields.map((field, rowIdx) => (
             <div key={field.id} className={`grid ${gridColsClass} gap-4`}>
               {fieldNames.map((fieldName, colIdx) => {
                 const fieldError = (errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined)?.[rowIdx]?.[fieldName];
                 return (
-                  <div key={`${field.id}-${fieldName}`} className="relative">
+                  <div key={`${field.id}-${fieldName}`} >
                     <input
                       {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const)}
                       placeholder={columns[colIdx]}
                       className={`
-                          mt-2 p-2 border border-gray-300 w-full bg-transparent text-muted-foreground
+                          m-1 p-2 border border-gray-300 w-full bg-transparent text-muted-foreground
                           placeholder-muted-foreground rounded-lg
                           ${fieldError ? 'text-red-500' : ''}
                         `}
