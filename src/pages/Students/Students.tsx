@@ -41,8 +41,8 @@ export default function UsuariosPage() {
     return (
       (filters.status.length === 0 || filters.status.includes(user.status)) &&
       user.fullName.toLowerCase().includes(filters.fullName.toLowerCase()) &&
-      user.email.toLowerCase().includes(filters.email.toLowerCase()) &&
-      user.cpf.includes(filters.cpf)
+      user.cpf.includes(filters.cpf) &&
+      user.email.toLowerCase().includes(filters.email.toLowerCase())
     );
   });
 
@@ -175,14 +175,13 @@ export default function UsuariosPage() {
 
                       <TableCell className="text-gray-800">{user.email}</TableCell>
                       <TableCell className="text-gray-800">{user.cpf}</TableCell>
-                      <TableCell className="text-gray-800">{user.role}</TableCell>
                       <TableCell>
                         <Badge
                           className={`text-sm capitalize px-3 py-1 rounded-full font-medium border ${user.status === 'ativo'
-                              ? 'bg-green-100 text-green-800 border-green-200'
-                              : user.status === 'inativo'
-                                ? 'bg-red-100 text-red-800 border-red-200'
-                                : 'bg-gray-100 text-gray-700 border-gray-300'
+                            ? 'bg-green-100 text-green-800 border-green-200'
+                            : user.status === 'inativo'
+                              ? 'bg-red-100 text-red-800 border-red-200'
+                              : 'bg-gray-100 text-gray-700 border-gray-300'
                             }`}
                         >
                           {user.status}

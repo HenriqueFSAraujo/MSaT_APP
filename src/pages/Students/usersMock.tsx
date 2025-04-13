@@ -4,7 +4,6 @@ export type usersMockProps = {
   fullName: string
   email: string
   cpf: string
-  role: string
   status: string
 }
 
@@ -12,9 +11,8 @@ const usersMock = [
   {
     id: 1,
     fullName: 'Ana Souza',
-    email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
+    email: 'ana@example.com',
     status: 'ativo',
   },
   {
@@ -22,7 +20,6 @@ const usersMock = [
     fullName: 'Ana Souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
     status: 'ativo',
   },
   {
@@ -30,7 +27,6 @@ const usersMock = [
     fullName: 'Ana Souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
     status: 'inativo',
   },
   {
@@ -38,7 +34,6 @@ const usersMock = [
     fullName: 'Ana Souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
     status: 'ativo',
   },
   {
@@ -46,7 +41,6 @@ const usersMock = [
     fullName: 'Ana Souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
     status: 'inativo',
   },
   {
@@ -54,7 +48,6 @@ const usersMock = [
     fullName: 'Ana Souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
     status: 'inativo',
   },
   {
@@ -62,10 +55,11 @@ const usersMock = [
     fullName: 'Ana Souza',
     email: 'ana@example.com',
     cpf: '12345678901',
-    role: 'gestor',
     status: 'ativo',
   },
 ];
+
+
 
 
 const params = {
