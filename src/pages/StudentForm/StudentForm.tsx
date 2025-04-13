@@ -45,7 +45,7 @@ const StudentForm = () => {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="md:text-lg font-normal min-w-min md:w-full md:font-medium whitespace-normal md:whitespace-nowrap px-0 sm:px-2 md:px-4 py-1 md:py-2 rounded-lg hover:bg-gray-300 transition-all data-[state=active]:bg-blue-400 data-[state=active]:text-white"
+                className="lg:text-lg font-normal min-w-min lg:w-full lg:font-medium whitespace-normal lg:whitespace-nowrap px-0 sm:px-2 lg:px-4 py-1 lg:py-2 rounded-lg hover:bg-gray-300 transition-all data-[state=active]:bg-blue-400 data-[state=active]:text-white"
               >
                 {tab.label}
               </TabsTrigger>
