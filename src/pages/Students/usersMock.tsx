@@ -70,7 +70,7 @@ const usersMock = [
 
 const params = {
   relacao: [
-    {id: ""},
+    { id: "" },
     {
       marca: "",
       ano_fabricacao: "",

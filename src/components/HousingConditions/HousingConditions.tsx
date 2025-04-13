@@ -52,7 +52,6 @@ export const HousingConditions = ({ label }: { label: string }) => {
               </div>
             ))}
           </div>
-
           <div className="flex justify-end pt-6">
             <Button
               type="submit"

@@ -1,77 +1,119 @@
-import { useState } from 'react';
+import { useFormContext, useFieldArray, FieldError } from 'react-hook-form';
+import { Plus, Trash } from 'lucide-react';
+import autoAnimate from '@formkit/auto-animate';
+import { AnimatedIconButton } from "../common/AnimatedIconButton/AnimatedIconButton";
+import { useRef, useEffect } from 'react';
 
 type DynamicInputSectionProps = {
-  title: string;
+  title?: string;
   columns: string[];
-  initialRows?: number;
+  fieldNames: string[];
+  namePrefix: string;
 };
 
 export const DynamicInputSection = ({
   title,
   columns,
-  initialRows = 1,
+  fieldNames,
+  namePrefix,
 }: DynamicInputSectionProps) => {
-  const [rows, setRows] = useState<number>(initialRows);
+  const {
+    control,
+    register,
+    formState: { errors }
+  } = useFormContext();
 
-  const handleAddRow = () => {
-    setRows((prev) => prev + 1);
-  };
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: namePrefix,
+  });
 
-  const handleRemoveRow = () => {
-    if (rows > 1) {
-      setRows((prev) => prev - 1);
+  const parentRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (parentRef.current) {
+      autoAnimate(parentRef.current);
     }
-  };
+  }, []);
+
+  const handleAddRow = () => append(
+    fieldNames.reduce((acc, field) => ({ ...acc, [field]: null }), {}
+    )
+  )
+
+  const handleRemoveRow = (index: number) => remove(index);
+
+  const gridColsClass = `grid-cols-${columns.length}`;
 
   return (
-    <div className="bg-gray-50 p-4 rounded border space-y-4">
-      <h3 className="font-semibold">{title}</h3>
+    <div className="max-w-[500px] space-y-4">
+      {title && <h3 className="font-semibold text-lg">{title}</h3>}
 
-      {/* Cabeçalhos */}
-      <div className={`grid grid-cols-${columns.length} gap-2`}>
-        {columns.map((col, idx) => (
-          <div
-            key={idx}
-            className="bg-blue-600 text-white font-medium text-sm text-center py-2 rounded"
-          >
-            {col}
-          </div>
-        ))}
-      </div>
+      <div className="rounded-lg overflow-hidden border border-gray-200">
+        {/* Cabeçalho */}
+        <div className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-4 py-3 max-w-[500px] rounded-t-lg`}>
+          {columns.map((col, idx) => (
+            <div
+              key={idx}
+              className="font-bold text-white truncate bg-blue-400 p-2 rounded-t-md text-sm uppercase"
+              title={col} // mostra o texto completo no hover
+            >
+              {col}
+            </div>
+          ))}
+        </div>
 
-      {/* Linhas de inputs */}
-      <div className="space-y-2">
-        {Array.from({ length: rows }).map((_, rowIdx) => (
-          <div key={rowIdx} className={`grid grid-cols-${columns.length} gap-2`}>
-            {columns.map((col, colIdx) => (
-              <input
-                key={colIdx}
-                type="text"
-                placeholder={col}
-                className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            ))}
-          </div>
-        ))}
-      </div>
+        {/* Linhas */}
+        <div ref={parentRef} className="max-w-[500px] divide-y ">
+          {fields.map((field, rowIdx) => (
+            <div key={field.id} className={`grid ${gridColsClass} gap-4`}>
+              {fieldNames.map((fieldName, colIdx) => {
+                const fieldError = (errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined)?.[rowIdx]?.[fieldName];
+                return (
+                  <div key={`${field.id}-${fieldName}`} className="relative">
+                    <input
+                      {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const)}
+                      placeholder={columns[colIdx]}
+                      className={`
+                          mt-2 p-2 border border-gray-300 w-full bg-transparent text-muted-foreground
+                          placeholder-muted-foreground rounded-lg
+                          ${fieldError ? 'text-red-500' : ''}
+                        `}
+                    />
+                    {fieldError && (
+                      <p className="absolute -bottom-5 left-0 text-xs text-red-500">
+                        {fieldError.message}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
 
-      {/* Botões de ação */}
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={handleAddRow}
-          className="px-4 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
-          + Adicionar
-        </button>
-        <button
-          type="button"
-          onClick={handleRemoveRow}
-          className="px-4 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50"
-          disabled={rows <= 1}
-        >
-          − Remover Última
-        </button>
+              {rowIdx === fields.length - 1 && (
+                <div className="flex gap-2 items-center">
+                  <AnimatedIconButton
+                    onClick={handleAddRow}
+                    className="p-1 text-gray-600 rounded-full hover:bg-gray-200 transition"
+                    textDialog="Adicionar linha"
+                  >
+                    <Plus size={20} />
+                  </AnimatedIconButton>
+
+                  {fields.length > 1 && (
+                    <AnimatedIconButton
+                      onClick={() => handleRemoveRow(fields.length - 1)}
+                      className="p-1 text-gray-600 rounded-full hover:bg-gray-200 transition"
+                      textDialog="Remover linha"
+                    >
+                      <Trash size={19} />
+                    </AnimatedIconButton>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

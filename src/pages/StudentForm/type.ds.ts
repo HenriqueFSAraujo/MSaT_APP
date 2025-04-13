@@ -24,4 +24,8 @@ export const TABS: Tab[] = [
     value: 'housing_conditions',
     label: 'Condições Habitacionais',
   },
+  {
+    value: 'property_relations',
+    label: 'Relação de Bens',
+  },
 ];

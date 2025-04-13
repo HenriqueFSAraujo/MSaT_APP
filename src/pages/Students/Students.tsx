@@ -166,9 +166,8 @@ export default function UsuariosPage() {
                   filteredUsers.map((user, index) => (
                     <TableRow
                       key={user.id}
-                      className={`hover:bg-gray-50 transition-colors ${
-                        index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-                      }`}
+                      className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                        }`}
                     >
                       <TableCell className="text-gray-800 flex items-center gap-2">
                         {user.fullName}
@@ -179,13 +178,12 @@ export default function UsuariosPage() {
                       <TableCell className="text-gray-800">{user.role}</TableCell>
                       <TableCell>
                         <Badge
-                          className={`text-sm capitalize px-3 py-1 rounded-full font-medium border ${
-                            user.status === 'ativo'
+                          className={`text-sm capitalize px-3 py-1 rounded-full font-medium border ${user.status === 'ativo'
                               ? 'bg-green-100 text-green-800 border-green-200'
                               : user.status === 'inativo'
                                 ? 'bg-red-100 text-red-800 border-red-200'
                                 : 'bg-gray-100 text-gray-700 border-gray-300'
-                          }`}
+                            }`}
                         >
                           {user.status}
                         </Badge>

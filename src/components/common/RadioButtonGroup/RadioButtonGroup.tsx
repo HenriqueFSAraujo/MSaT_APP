@@ -32,7 +32,7 @@ export const RadioButtonGroup = ({
       name={name}
       render={({ field }) => (
         <FormItem className={`space-y-3 ${className}`}>
-          <FormLabel htmlFor={name} className='className="text-base font-medium text-gray-800"'>
+          <FormLabel htmlFor={name} className='text-xm font-medium text-muted"'>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </FormLabel>
@@ -40,9 +40,8 @@ export const RadioButtonGroup = ({
             <RadioGroup
               onValueChange={field.onChange}
               value={field.value}
-              className={`flex ${
-                orientation === 'horizontal' ? 'flex-row flex-wrap gap-4' : 'flex-col space-y-2'
-              }`}
+              className={`flex ${orientation === 'horizontal' ? 'flex-row flex-wrap gap-4' : 'flex-col space-y-2'
+                }`}
             >
               {options.map((option) => (
                 <FormItem key={option.value} className="flex items-center space-x-3 space-y-0">

@@ -4,6 +4,7 @@ import ParentalData from '@/components/ParentalData';
 import AddressResidence from '@/components/AddressResidence';
 import { DocumentForm } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
+import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
 import { TABS } from './type.ds';
 import { useTabStore } from '@/store/tabStore';
 
@@ -24,6 +25,10 @@ const COMPONENTS_MAP: Record<string, { component: JSX.Element; label: string }> 
   housing_conditions: {
     component: <HousingConditions label="Condições Habitacionais" />,
     label: 'Condições Habitacionais',
+  },
+  property_relations: {
+    component: <PropertyRelations label="Relação de Bens" />,
+    label: 'Relação de Bens',
   },
 };
 

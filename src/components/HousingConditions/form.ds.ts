@@ -13,7 +13,7 @@ type RadioGroup = {
 export const radioGroups: RadioGroup[] = [
   {
     name: 'propertyStatus',
-    label: '17.1 Situação do Imóvel',
+    label: 'Situação do Imóvel',
     required: true,
     options: [
       { value: 'PROPRIO', label: 'Próprio' },
@@ -25,7 +25,7 @@ export const radioGroups: RadioGroup[] = [
   },
   {
     name: 'propertyType',
-    label: '17.2 Tipo do Imóvel',
+    label: 'Tipo do Imóvel',
     required: true,
     options: [
       { value: 'CASA', label: 'Casa' },
@@ -35,7 +35,7 @@ export const radioGroups: RadioGroup[] = [
   },
   {
     name: 'buildingStructure',
-    label: '17.3 Estrutura Física',
+    label: 'Estrutura Física',
     required: true,
     options: [
       { value: 'ALVENARIA', label: 'Alvenária' },
@@ -45,7 +45,7 @@ export const radioGroups: RadioGroup[] = [
   },
   {
     name: 'sewageSystem',
-    label: '17.4 Esgoto Sanitário',
+    label: 'Esgoto Sanitário',
     required: true,
     options: [
       { value: 'EXISTENTE', label: 'Existente' },
@@ -54,7 +54,7 @@ export const radioGroups: RadioGroup[] = [
   },
   {
     name: 'electricitySupply',
-    label: '17.5 Fornecimento de Energia Elétrica',
+    label: 'Fornecimento de Energia Elétrica',
     required: true,
     options: [
       { value: 'COMPANHIA_EXISTENTE', label: 'Companhia Existente' },
@@ -64,11 +64,29 @@ export const radioGroups: RadioGroup[] = [
   },
   {
     name: 'waterSupply',
-    label: '17.6 Abastecimento de Água',
+    label: 'Abastecimento de Água',
     required: true,
     options: [
       { value: 'EXISTENTE', label: 'Existente' },
       { value: 'INEXISTENTE', label: 'Inexistente' },
+    ],
+  },
+  {
+    name: 'chronicDiseasesInFamily',
+    label: 'Condições de saúde - Há casos de doenças crônicas na família?',
+    required: true,
+    options: [
+      { value: 'SIM', label: 'Sim' },
+      { value: 'NAO', label: 'Não' },
+    ],
+  },
+  {
+    name: 'disabilitiesInFamily',
+    label: 'Condições de saúde - Há casos deficiencia na família?',
+    required: true,
+    options: [
+      { value: 'SIM', label: 'Sim' },
+      { value: 'NAO', label: 'Não' },
     ],
   },
 ];
