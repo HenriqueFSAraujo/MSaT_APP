@@ -10,22 +10,23 @@ export const TABS: Tab[] = [
   },
   {
     value: 'parents_data',
-    label: 'Dados dos Genitores',
+    label: 'Dados dos Pais',
   },
   {
     value: 'address_info',
-    label: 'Informações de Endereço e Residência',
+    label: 'Endereço e Moradia',
   },
   {
     value: 'required_documents',
-    label: 'Documentos Gerais',
+    label: 'Docs Necessários',
   },
   {
     value: 'housing_conditions',
-    label: 'Condições Habitacionais',
+    label: 'Condições da Casa',
   },
   {
     value: 'property_relations',
-    label: 'Relação de Bens',
+    label: 'Bens e Posses',
   },
 ];
+
