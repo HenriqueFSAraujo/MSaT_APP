@@ -41,23 +41,27 @@ const FormInput = ({
         <FormItem
           className={`relative flex flex-col w-full min-h-[80px] ${withMarginTop ? 'mt-6' : ''}`}
         >
-          <FormLabel className="text-sm md:text-base font-medium text-gray-700">
+          <FormLabel
+            className={`text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
+          >
             {label}
 
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className={`${fieldState.error ? 'text-red-500' : ''}`}>*</span>}
           </FormLabel>
           {mask ? (
             <MaskedInput
               {...field}
               mask={maskPatterns[mask]}
-              className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+              className={`"peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value)}
+              placeholder="Digite..."
             />
           ) : (
             <Input
               {...field}
               type={type}
-              className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+              className={`"peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
+              placeholder="Digite..."
             />
           )}
           {description && (

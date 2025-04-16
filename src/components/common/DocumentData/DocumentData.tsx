@@ -143,6 +143,10 @@ export const DocumentForm = ({ label }: { label: string }) => {
     });
   };
 
+  const isError = (name: string): boolean => {
+    return submitted && isRequiredAndEmpty(name as keyof FormValues);
+  };
+
   return (
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
@@ -173,10 +177,14 @@ export const DocumentForm = ({ label }: { label: string }) => {
                   >
                     {/* Cabeçalho mantido igual */}
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-800">
+                      <h3
+                        className={`font-medium text-gray-800 ${isError(name as string) ? 'text-red-500' : ''}`}
+                      >
                         {label}
                         {REQUIRED_DOCUMENTS.includes(name) && (
-                          <span className="text-red-500 ml-1">*</span>
+                          <span className={`ml-1 ${isError(name as string) ? 'text-red-500' : ''}`}>
+                            *
+                          </span>
                         )}
                       </h3>
                       {hasValidFile(name as keyof FormValues) ? (

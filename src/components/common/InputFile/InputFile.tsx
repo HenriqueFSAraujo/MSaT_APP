@@ -116,7 +116,7 @@ export const InputFile = ({
           <div>
             <Label htmlFor={id} className="text-base font-medium text-gray-800">
               {label}
-              {required && <span className="text-red-500 ml-1">*</span>}
+              {required && <span className={`${errors[name] ? 'text-red-500' : ''}`}>*</span>}
             </Label>
             {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
           </div>
