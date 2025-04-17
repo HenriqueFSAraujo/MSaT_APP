@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PersonalData from '@/components/PersonalData';
-import ParentalData from '@/components/ParentalData';
-import AddressResidence from '@/components/AddressResidence';
+import PersonalData from '@/components/PersonalData/PersonalData';
+import ParentalData from '@/components/ParentalData/ParentalData';
+import AddressResidence from '@/components/AddressResidence/AddressResidence';
 import { DocumentForm } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';

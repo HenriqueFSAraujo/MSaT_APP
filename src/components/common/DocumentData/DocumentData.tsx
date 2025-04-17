@@ -167,13 +167,12 @@ export const DocumentForm = ({ label }: { label: string }) => {
                 }) => (
                   <div
                     key={name}
-                    className={`border-2 rounded-lg p-4 transition-colors ${
-                      hasValidFile(name as keyof FormValues)
+                    className={`border-2 rounded-lg p-4 transition-colors ${hasValidFile(name as keyof FormValues)
                         ? 'border-green-300 bg-green-50'
                         : submitted && isRequiredAndEmpty(name as keyof FormValues)
                           ? 'border-red-300 bg-red-50'
                           : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
-                    }`}
+                      }`}
                   >
                     {/* Cabeçalho mantido igual */}
                     <div className="flex justify-between items-center mb-3">
@@ -197,7 +196,7 @@ export const DocumentForm = ({ label }: { label: string }) => {
                     <InputFile
                       name={name}
                       id={`file-input-${name}`}
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      accept=".pdf"
                       disabled={formValues[name as keyof FormValues] === 'Não possui'}
                       selectOptions={options}
                       description={desc}

@@ -1,10 +1,10 @@
 import { useFormContext, useFieldArray, FieldError } from 'react-hook-form';
 import { Plus, Trash, Info } from 'lucide-react';
 import autoAnimate from '@formkit/auto-animate';
-import { AnimatedIconButton } from '../common/AnimatedIconButton/AnimatedIconButton';
+import { AnimatedIconButton } from '../AnimatedIconButton/AnimatedIconButton';
 import { useRef, useEffect } from 'react';
-import { DialogAction } from '../common/DialogAction/DialogAction';
-import { TooltipAction } from '../common/TooltipAction/TooltipAction';
+import { DialogAction } from '../DialogAction/DialogAction';
+import { TooltipAction } from '../TooltipAction/TooltipAction';
 
 type DynamicInputSectionProps = {
   title?: string;

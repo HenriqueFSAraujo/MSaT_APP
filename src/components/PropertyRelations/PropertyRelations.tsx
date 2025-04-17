@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { dynamicSections } from './form.ds';
-import { DynamicInputSection } from '../DynamicInputSection/DynamicInputSection';
+import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
 
 const formSchema = z.object({
   vehicles: z
