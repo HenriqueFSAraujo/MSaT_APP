@@ -7,9 +7,10 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { User } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import MenuComponent from '@/components/Menu/menu';
 import { useTabStore } from '@/store/tabStore';
+import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
 
 interface HeaderProps {
   shouldRender?: boolean;
@@ -18,6 +19,7 @@ interface HeaderProps {
 export const Header = ({ shouldRender = true }: HeaderProps) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const navigate = useNavigate();
   const closeMenu = () => setOpen(!open);
@@ -64,6 +66,11 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
     closeMenu();
   };
 
+  const handleEditModal = () => {
+    setOpenModal(!openModal);
+    closeMenu();
+  }
+
   return (
     <header className="h-auto md:h-[64px] sm:h-[56px] bg-[#0b59ac] shadow-sm flex items-center justify-between px-[22px] md:px-4 sm:px-3">
       <div className="flex items-center gap-[20px] md:gap-[12px] sm:gap-[8px]">
@@ -100,14 +107,25 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           <DropdownMenuContent
             align="end"
             sideOffset={8}
-            className="min-w-[200px] bg-white shadow-md rounded-md border"
+            className="min-w-[200px] bg-white shadow-md rounded-md border cursor-pointer"
           >
-            <DropdownMenuItem onClick={logOut} className="text-red-700 h-10 px-4">
+            <DropdownMenuItem onClick={handleEditModal} className="text-muted-foreground h-10 px-4 cursor-pointer hover:bg-blue-800">
+              <User className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
+              Meu Perfil
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={logOut} className="text-red-700 h-10 px-4 cursor-pointer">
+              <LogOut className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
               Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <DialogPerfilAction
+        open={openModal}
+        onOpenChange={setOpenModal}
+        userName={nameUser || ''}
+      />
+
     </header>
   );
 };
