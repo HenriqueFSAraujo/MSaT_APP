@@ -27,7 +27,7 @@ const schema = z.object({
   educacenso: z.string().optional(),
 });
 
-const PersonalData = ({ label }: { label: string }) => {
+export const PersonalData = ({ label }: { label: string }) => {
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(schema),
@@ -156,5 +156,3 @@ const PersonalData = ({ label }: { label: string }) => {
     </FormProvider>
   );
 };
-
-export default PersonalData;

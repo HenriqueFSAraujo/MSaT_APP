@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PersonalData from '@/components/PersonalData/PersonalData';
-import ParentalData from '@/components/ParentalData/ParentalData';
-import AddressResidence from '@/components/AddressResidence/AddressResidence';
+import { PersonalData } from '@/components/PersonalData/PersonalData';
+import { ParentalDataForm } from '@/components/ParentalData/ParentalData';
+import { AddressResidence } from '@/components/AddressResidence/AddressResidence';
 import { DocumentForm } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
@@ -11,7 +11,7 @@ import { useTabStore } from '@/store/tabStore';
 const COMPONENTS_MAP: Record<string, { component: JSX.Element; label: string }> = {
   personal_data: { component: <PersonalData label="Dados Pessoais" />, label: 'Dados Pessoais' },
   parents_data: {
-    component: <ParentalData label="Dados dos Genitores" />,
+    component: <ParentalDataForm label="Dados dos Genitores" />,
     label: 'Dados dos Genitores',
   },
   address_info: {

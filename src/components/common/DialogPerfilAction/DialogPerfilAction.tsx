@@ -144,14 +144,13 @@ export const DialogPerfilAction = ({
           <DialogTitle className="text-3xl font-bold text-blue-600 text-center">
             Meu Perfil
           </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            Atualize sua senha abaixo
-          </DialogDescription>
         </DialogHeader>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <span className="text-lg text-muted-foreground">
+          Atualize sua senha abaixo
+        </span>
+        <div className="flex flex-wrap gap-4 mt-4 w-full">
           {/* Nome do usuário */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 w-[50%]">
             <User className="text-muted-foreground w-5 h-5" />
             <Label className="text-sm text-muted-foreground">Usuário:</Label>
             <span className="text-sm font-medium">{userName}</span>
@@ -183,7 +182,7 @@ export const DialogPerfilAction = ({
           </div>
 
           {/* Senha Atual */}
-          <div className="space-y-1">
+          <div className="space-y-1  w-[50%]">
             <Label className="text-sm">Senha Atual</Label>
             <div className="relative">
               <LockKeyhole className="absolute left-3 top-1.5 text-gray-400 w-5 h-5" />

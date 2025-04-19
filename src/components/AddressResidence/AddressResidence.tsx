@@ -33,7 +33,7 @@ const schema = z.object({
   studySegment: z.string().min(1, 'Informe o segmento que estudará em 2025'),
 });
 
-const AddressResidence = ({ label }: { label: string }) => {
+export const AddressResidence = ({ label }: { label: string }) => {
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(schema),
@@ -204,5 +204,3 @@ const AddressResidence = ({ label }: { label: string }) => {
     </FormProvider>
   );
 };
-
-export default AddressResidence;

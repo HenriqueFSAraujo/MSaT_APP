@@ -53,7 +53,7 @@ export default function UsuariosPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h2 className="text-3xl font-bold text-muted-foreground flex items-center gap-1">
               <BookOpenText className="h-5 w-5" />
-              Painel de alunos
+              Painel de usuários
             </h2>
           </div>
 

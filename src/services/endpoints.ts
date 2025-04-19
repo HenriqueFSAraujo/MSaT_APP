@@ -10,7 +10,22 @@ export const Endpoints = {
     Profile: {
         ChangePassword: '/profile/change-password',
     },
-    Products: {
-        List: '/products',
-    },
+    Forms: {
+        Personal_Data: {
+            List: '/forms',
+            Update: '/personal-data/update',
+        },
+        Relative_Data: {
+            List: '',
+            Update: '/parentes',
+        },
+        Housing_Conditions: {
+            List: '',
+            Update: '/form-condicoes-habitacionais',
+        },
+        Candidates_Address: {
+            List: '',
+            Update: '/enderecos',
+        }
+    }
 } as const;

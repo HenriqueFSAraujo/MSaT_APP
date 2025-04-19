@@ -24,7 +24,7 @@ const schema = z.object({
     .min(1, 'É obrigatório informar se o(a) candidato(a) reside com os dois genitores'),
 });
 
-const ParentalDataForm = ({ label }: { label: string }) => {
+export const ParentalDataForm = ({ label }: { label: string }) => {
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(schema),
@@ -160,5 +160,3 @@ const ParentalDataForm = ({ label }: { label: string }) => {
     </FormProvider>
   );
 };
-
-export default ParentalDataForm;

@@ -31,12 +31,12 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
 
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/studants-form':
-        return 'Formulário do candidato a bolsa de estudos';
+      case '/students':
+        return '';
       case '/dashboard/consulta':
-        return 'Consulta';
-      case '/dashboard-students':
-        return 'Painel de alunos';
+        return '';
+      case '/dashboard-users':
+        return '';
     }
   };
 

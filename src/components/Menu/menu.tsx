@@ -42,17 +42,17 @@ export default function MobileMenu() {
             variant="ghost"
             className="w-full flex justify-start gap-2 text-white"
             onClick={() => {
-              navigate('/dashboard-students');
+              navigate('/dashboard-users');
               closeMenu();
             }}
           >
-            <BookOpenText className="h-5 w-5" /> Painel de alunos
+            <BookOpenText className="h-5 w-5" /> Painel de usuários
           </Button>
           <Button
             variant="ghost"
             className="w-full flex justify-start gap-2 text-white"
             onClick={() => {
-              navigate('/studants-form');
+              navigate('/students-form');
               closeMenu();
             }}
           >

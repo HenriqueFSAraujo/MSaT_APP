@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Login from '@/pages/Login/Login';
-import Students from '@/pages/Students/Students';
+import Users from '@/pages/Users/Users';
 import NewDashboard from '@/pages/StudentForm/StudentForm';
 import { Header } from '@/components/Header/Header';
 import { Logins } from '@/utils/logins';
@@ -25,12 +25,12 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route
-          path="/studants-form"
+          path="/students-form"
           element={isAuthenticated() ? <NewDashboard /> : <Navigate to="/" />}
         />
         <Route
-          path="/dashboard-students"
-          element={isAuthenticated() ? <Students /> : <Navigate to="/" />}
+          path="/dashboard-Users"
+          element={isAuthenticated() ? <Users /> : <Navigate to="/" />}
         />
 
         <Route path="*" element={<NotFoundPage />} />

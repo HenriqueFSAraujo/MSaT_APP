@@ -36,7 +36,7 @@ export default function LoginPage() {
       );
       if (user) {
         localStorage.setItem('nameUser', user.name);
-        navigate('/dashboard-students');
+        navigate('/dashboard-users');
       } else {
         setError('Usuário ou senha inválidos.');
       }
