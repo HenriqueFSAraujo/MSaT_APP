@@ -35,7 +35,7 @@ const schema = z.object({
 
 export const AddressResidence = ({ label }: { label: string }) => {
   const methods = useForm({
-    mode: 'onSubmit',
+    mode: 'onChange',
     resolver: zodResolver(schema),
     defaultValues: {
       address: '',
@@ -63,7 +63,12 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
-  const onSubmit = (data: FieldValues) => {
+  const onSubmit = async (data: FieldValues) => {
+    const isValid = await methods.trigger();
+    if (!isValid) {
+      toast.error('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
     toast.success('Sucesso!', 'Dados enviados com sucesso!');
     setSelectedTab('required_documents');
     console.log('Dados do formulário:', data);
@@ -73,7 +78,7 @@ export const AddressResidence = ({ label }: { label: string }) => {
     <FormProvider {...methods}>
       <div className="max-w-6xl mx-auto bg-white p-6">
         <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             <FormInput
               {...methods.register('zipCode')}

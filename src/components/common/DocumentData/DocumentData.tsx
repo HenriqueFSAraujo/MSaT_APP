@@ -6,6 +6,8 @@ import { Button } from '../../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
+import { Card, CardContent } from '@/components/ui/card';
+import { SmartInputFile } from '../SmartInputFile/SmartInputFile';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',
@@ -27,7 +29,7 @@ const REQUIRED_DOCUMENTS = [
   // 'governmentProgram',
 ];
 
-export const DocumentForm = ({ label }: { label: string }) => {
+export const DocumentData = ({ label }: { label: string }) => {
   const [submitted, setSubmitted] = useState(false);
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -168,10 +170,10 @@ export const DocumentForm = ({ label }: { label: string }) => {
                   <div
                     key={name}
                     className={`border-2 rounded-lg p-4 transition-colors ${hasValidFile(name as keyof FormValues)
-                        ? 'border-green-300 bg-green-50'
-                        : submitted && isRequiredAndEmpty(name as keyof FormValues)
-                          ? 'border-red-300 bg-red-50'
-                          : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
+                      ? 'border-green-300 bg-green-50'
+                      : submitted && isRequiredAndEmpty(name as keyof FormValues)
+                        ? 'border-red-300 bg-red-50'
+                        : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
                       }`}
                   >
                     {/* Cabeçalho mantido igual */}

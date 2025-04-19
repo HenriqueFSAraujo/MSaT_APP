@@ -110,13 +110,15 @@ export const InputFile = ({
   };
 
   return (
-    <div className="w-full space-y-4 p-5 border border-gray-200 rounded-lg bg-transparent">
+    <div className={`w-full space-y-4 p-5 border rounded-lg transition-colors ${errors[name]
+      ? 'border-red-300 bg-red-50'
+      : 'border-gray-200 bg-transparent'
+      }`}>
       <div className="space-y-2">
         <div>
           <div>
             <Label htmlFor={id} className="text-base font-medium text-gray-800">
               {label}
-              {required && <span className={`${errors[name] ? 'text-red-500' : ''}`}>*</span>}
             </Label>
             {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
           </div>
@@ -148,7 +150,7 @@ export const InputFile = ({
 
       {selectOptions && (
         <Select onValueChange={handleOptionChange} value={getCurrentOption()} disabled={disabled}>
-          <SelectTrigger className="w-full bg-gray-50">
+          <SelectTrigger className={`w-full bg-gray-50 ${errors[name] ? 'border-red-500 ring-red-500 bg-red-50 text-red-500' : ''}`}>
             <SelectValue placeholder="Selecione uma opção" />
           </SelectTrigger>
           <SelectContent>
@@ -167,7 +169,24 @@ export const InputFile = ({
         accept={accept}
         className="hidden"
         {...register(name, {
-          validate: (value) => (required ? validateField(value) : true),
+          validate: (value) => {
+            if (!required) return true;
+            if (!value) return 'Campo obrigatório';
+
+            const hasFile = value.file?.value instanceof File;
+            const hasValidOption = value.option?.value && value.option.value !== 'none';
+
+            if (selectOptions) {
+              // Se tem opções de select, precisa ter uma opção válida E um arquivo
+              if (!hasValidOption) return 'Selecione uma opção válida';
+              if (!hasFile) return 'Envie um arquivo';
+            } else {
+              // Se não tem opções de select, precisa apenas do arquivo
+              if (!hasFile) return 'Envie um arquivo';
+            }
+
+            return true;
+          }
         })}
         onChange={handleFileChange}
         disabled={isFileInputDisabled()}
@@ -204,18 +223,24 @@ export const InputFile = ({
         ) : shouldShowFileInput() ? (
           <label
             htmlFor={id}
-            className={`flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-gray-300 rounded-md cursor-pointer transition-colors ${
-              isFileInputDisabled()
-                ? 'bg-gray-50 cursor-not-allowed'
-                : 'hover:border-blue-400 hover:bg-blue-50'
-            }`}
+            className={`flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-md cursor-pointer transition-colors ${isFileInputDisabled()
+              ? 'bg-gray-50 cursor-not-allowed border-gray-300'
+              : errors[name]
+                ? 'border-red-500 bg-red-50 hover:border-red-600'
+                : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+              }`}
           >
-            <UploadCloud className="w-6 h-6 text-gray-400 mb-2" />
-            <p className="text-sm text-gray-600 mb-1">Clique para enviar ou arraste</p>
+            <UploadCloud className={`w-6 h-6 mb-2 ${errors[name] ? 'text-red-500' : 'text-gray-400'}`} />
+            <p className={`text-sm mb-1 ${errors[name] ? 'text-red-600' : 'text-gray-600'}`}>
+              Clique para enviar ou arraste
+            </p>
             <p className="text-xs text-gray-500">{accept.split(',').join(', ')} (Max. 5MB)</p>
           </label>
         ) : (
-          <div className="w-full p-4 border border-gray-200 bg-gray-50 rounded-md text-center text-gray-500 text-sm">
+          <div className={`w-full p-4 border rounded-md text-center text-sm ${errors[name]
+            ? 'border-red-300 bg-red-50 text-red-600'
+            : 'border-gray-200 bg-gray-50 text-gray-500'
+            }`}>
             Selecione uma opção válida para habilitar o upload
           </div>
         )}

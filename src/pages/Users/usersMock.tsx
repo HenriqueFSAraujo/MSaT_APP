@@ -1,86 +1,53 @@
-// src/mock/usersMock.ts
-export type usersMockProps = {
-  id: string
-  fullName: string
-  email: string
-  cpf: string
-  status: string
+interface User {
+  id: number;
+  fullName: string;
+  cpf: string;
+  email: string;
+  status: string;
+  role: string;
 }
 
-const usersMock = [
+const usersMock: User[] = [
   {
     id: 1,
-    fullName: 'Ana Souza',
-    cpf: '12345678901',
-    email: 'ana@example.com',
+    fullName: 'João Silva',
+    cpf: '123.456.789-00',
+    email: 'joao.silva@email.com',
     status: 'ativo',
+    role: 'Aluno'
   },
   {
     id: 2,
-    fullName: 'Ana Souza',
-    email: 'ana@example.com',
-    cpf: '12345678901',
+    fullName: 'Maria Santos',
+    cpf: '987.654.321-00',
+    email: 'maria.santos@email.com',
     status: 'ativo',
+    role: 'Gestor'
   },
   {
     id: 3,
-    fullName: 'Ana Souza',
-    email: 'ana@example.com',
-    cpf: '12345678901',
+    fullName: 'Pedro Oliveira',
+    cpf: '456.789.123-00',
+    email: 'pedro.oliveira@email.com',
     status: 'inativo',
+    role: 'Aluno'
   },
   {
     id: 4,
-    fullName: 'Ana Souza',
-    email: 'ana@example.com',
-    cpf: '12345678901',
+    fullName: 'Ana Costa',
+    cpf: '789.123.456-00',
+    email: 'ana.costa@email.com',
     status: 'ativo',
+    role: 'Aluno'
   },
   {
     id: 5,
-    fullName: 'Ana Souza',
-    email: 'ana@example.com',
-    cpf: '12345678901',
+    fullName: 'Carlos Ferreira',
+    cpf: '321.654.987-00',
+    email: 'carlos.ferreira@email.com',
     status: 'inativo',
-  },
-  {
-    id: 6,
-    fullName: 'Ana Souza',
-    email: 'ana@example.com',
-    cpf: '12345678901',
-    status: 'inativo',
-  },
-  {
-    id: 7,
-    fullName: 'Ana Souza',
-    email: 'ana@example.com',
-    cpf: '12345678901',
-    status: 'ativo',
-  },
+    role: 'Gestor'
+  }
 ];
 
-
-
-
-const params = {
-  relacao: [
-    { id: "" },
-    {
-      marca: "",
-      ano_fabricacao: "",
-      utilizacao: "",
-    },
-    {
-      marca: "",
-      ano_fabricacao: "",
-      utilizacao: "",
-    },
-    {
-      marca: "",
-      ano_fabricacao: "",
-      utilizacao: "",
-    }
-  ]
-}
-
-export default usersMock;
+export default usersMock; 

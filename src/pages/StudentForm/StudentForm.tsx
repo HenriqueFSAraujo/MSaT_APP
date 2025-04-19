@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PersonalData } from '@/components/PersonalData/PersonalData';
 import { ParentalDataForm } from '@/components/ParentalData/ParentalData';
 import { AddressResidence } from '@/components/AddressResidence/AddressResidence';
-import { DocumentForm } from '@/components/common/DocumentData/DocumentData';
+import { DocumentData } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
 import { TABS } from './type.ds';
@@ -19,7 +19,7 @@ const COMPONENTS_MAP: Record<string, { component: JSX.Element; label: string }> 
     label: 'Informações de Endereço e Residência',
   },
   required_documents: {
-    component: <DocumentForm label="Documentos Gerais" />,
+    component: <DocumentData label='Documentos Gerais' />,
     label: 'Documentos Gerais',
   },
   housing_conditions: {
@@ -37,28 +37,41 @@ const StudentForm = () => {
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="mt-6 w-full max-w-7xl flex flex-col shadow-lg border border-neutral-300 bg-white rounded-lg overflow-hidden">
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full p-4">
-          <TabsList className="flex overflow-x-auto md:overflow-visible space-x-3 md:justify-center bg-gray-100 md:p-2 rounded-lg">
-            {TABS.map((tab) => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="lg:text-lg font-normal min-w-min lg:w-full lg:font-medium whitespace-normal lg:whitespace-nowrap px-0 sm:px-2 lg:px-4 py-1 lg:py-2 rounded-lg hover:bg-gray-300 transition-all data-[state=active]:bg-blue-400 data-[state=active]:text-white"
-              >
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <div className="p-6 bg-white rounded-b-lg shadow-inner">
-            {TABS.map((tab) => (
-              <TabsContent key={tab.value} value={tab.value}>
-                {COMPONENTS_MAP[tab.value].component}
-              </TabsContent>
-            ))}
-          </div>
-        </Tabs>
+    <div className="w-full min-h-screen bg-gray-50">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="w-full bg-white rounded-lg shadow-lg border border-neutral-200 overflow-hidden">
+          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+            <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+              <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 p-4 bg-gray-50">
+                {TABS.map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="w-full text-sm md:text-base whitespace-normal px-3 py-2.5 rounded-md
+                    bg-white border border-gray-200 shadow-sm
+                    hover:bg-gray-50 hover:border-gray-300
+                    data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:border-blue-600
+                    transition-all duration-200 ease-in-out
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+            <div className="p-6">
+              {TABS.map((tab) => (
+                <TabsContent
+                  key={tab.value}
+                  value={tab.value}
+                  className="mt-0 focus:outline-none"
+                >
+                  {COMPONENTS_MAP[tab.value].component}
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
