@@ -12,10 +12,17 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          vendor: ['axios', 'zod', 'react-hook-form'],
-        },
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) {
+              return 'react';
+            }
+            if (id.includes('react-dom')) {
+              return 'react-dom';
+            }
+            return 'vendor';
+          }
+        }
       },
     },
   },

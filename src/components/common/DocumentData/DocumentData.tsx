@@ -6,8 +6,6 @@ import { Button } from '../../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
-import { Card, CardContent } from '@/components/ui/card';
-import { SmartInputFile } from '../SmartInputFile/SmartInputFile';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',

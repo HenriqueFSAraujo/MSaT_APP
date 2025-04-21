@@ -74,10 +74,7 @@ export const DocumentForm = () => {
                                         {group.map((doc) => (
                                             <DocumentData
                                                 key={doc.name}
-                                                name={doc.name}
                                                 label={doc.label}
-                                                description={doc.desc}
-                                                required={doc.required}
                                             />
                                         ))}
                                     </div>
