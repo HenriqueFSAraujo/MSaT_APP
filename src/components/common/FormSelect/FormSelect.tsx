@@ -43,16 +43,18 @@ const FormSelect = ({ name, label, options, required = false, error }: FormSelec
       name={name}
       render={({ field, fieldState }) => (
         <FormItem className="w-full">
-          <FormLabel className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}>
+          <FormLabel
+            className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
+          >
             {label}
 
-            {required && (
-              <span >*</span>
-            )}
+            {required && <span>*</span>}
           </FormLabel>
           <FormControl>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className={`"peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}>
+              <SelectTrigger
+                className={`"peer w-full border border-gray-300 text-muted-foreground rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
+              >
                 <SelectValue placeholder="Digite..." />
               </SelectTrigger>
               <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200">

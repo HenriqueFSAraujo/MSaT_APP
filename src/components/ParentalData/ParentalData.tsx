@@ -7,6 +7,7 @@ import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
+import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';
 
 const schema = z.object({
   parent1FullName: z.string().min(1, 'Nome completo do Genitor 1 é obrigatório'),
@@ -88,20 +89,13 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
               label="Estado cívil do genitor 1"
               required
               description="Selecione uma das opções abaixo."
-              options={[
-                { value: 'S', label: 'Solteiro' },
-                { value: 'C', label: 'Casado' },
-                { value: 'D', label: 'Divorciado' },
-                { value: 'V', label: 'Viúvo' },
-                { value: 'O', label: 'Outro' },
-              ]}
+              options={maritalStatusOptions}
               error={errors.parent1MaritalStatus?.message}
             />
             <FormInput
               {...methods.register('parent2FullName')}
               name="parent2FullName"
               label="Nome completo do genitor 2"
-              required
               error={errors.parent1FullName?.message}
             />
             <FormInput
@@ -109,7 +103,6 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
               name="parent2Cpf"
               label="CPF do genitor 2"
               mask="cpf"
-              required
               error={errors.parent2Cpf?.message}
             />
             <FormInput
@@ -117,22 +110,14 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
               name="parent2Phone"
               label="Telefone de contato do genitor 2"
               mask="phone"
-              required
               type="parent2Phone"
               error={errors.parent2Phone?.message}
             />
             <FormSelect
               name="parent2MaritalStatus"
               label="Estado cívil do genitor 2"
-              required
               description="Selecione uma das opções abaixo."
-              options={[
-                { value: 'S', label: 'Solteiro' },
-                { value: 'C', label: 'Casado' },
-                { value: 'D', label: 'Divorciado' },
-                { value: 'V', label: 'Viúvo' },
-                { value: 'O', label: 'Outro' },
-              ]}
+              options={maritalStatusOptions}
               error={errors.parent2MaritalStatus?.message}
             />
             <FormSelect
@@ -140,10 +125,7 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
               label="O candidato reside com os dois genitores?"
               required
               description="Selecione uma das opções abaixo."
-              options={[
-                { value: 'S', label: 'Sim' },
-                { value: 'N', label: 'Não' },
-              ]}
+              options={residesWithBothParentsOptions}
               error={errors.residesWithBothParents?.message}
             />
           </div>

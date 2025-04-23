@@ -29,4 +29,3 @@ export const TABS: Tab[] = [
     label: 'Bens e Posses',
   },
 ];
-

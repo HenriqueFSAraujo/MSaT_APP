@@ -50,7 +50,9 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, erro
       name={name}
       render={({ field, fieldState }) => (
         <FormItem className="flex flex-col">
-          <FormLabel className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}>
+          <FormLabel
+            className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
+          >
             {label} {required && '*'}
           </FormLabel>
 
@@ -58,10 +60,11 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, erro
             <PopoverTrigger asChild>
               <Button
                 variant={'ghost'}
-                className={`text-muted-foreground bg-transparent peer w-full border border-gray-300 rounded-lg px-4 py-3 hover:bg-transparent hover:text-muted text focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error
-                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error hover:bg-primary-error hover:text-red-500'
-                  : ''
-                  }`}
+                className={`text-muted-foreground bg-transparent peer w-full border border-gray-300 rounded-lg px-4 py-3 hover:bg-transparent hover:text-muted text focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${
+                  fieldState.error
+                    ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error hover:bg-primary-error hover:text-red-500'
+                    : ''
+                }`}
               >
                 {field.value
                   ? format(new Date(field.value), 'dd/MM/yyyy', { locale: ptBR })

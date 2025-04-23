@@ -5,11 +5,15 @@ import { AddressResidence } from '@/components/AddressResidence/AddressResidence
 import { DocumentData } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
+
 import { TABS } from './type.ds';
 import { useTabStore } from '@/store/tabStore';
 
 const COMPONENTS_MAP: Record<string, { component: JSX.Element; label: string }> = {
-  personal_data: { component: <PersonalData label="Dados Pessoais" />, label: 'Dados Pessoais' },
+  personal_data: {
+    component: <PersonalData label="Primeiras Informações" />,
+    label: 'Primeiras Informações',
+  },
   parents_data: {
     component: <ParentalDataForm label="Dados dos Genitores" />,
     label: 'Dados dos Genitores',
@@ -19,7 +23,7 @@ const COMPONENTS_MAP: Record<string, { component: JSX.Element; label: string }> 
     label: 'Informações de Endereço e Residência',
   },
   required_documents: {
-    component: <DocumentData label='Documentos Gerais' />,
+    component: <DocumentData label="Documentos Gerais" />,
     label: 'Documentos Gerais',
   },
   housing_conditions: {
@@ -61,11 +65,7 @@ const StudentForm = () => {
             </div>
             <div className="p-6">
               {TABS.map((tab) => (
-                <TabsContent
-                  key={tab.value}
-                  value={tab.value}
-                  className="mt-0 focus:outline-none"
-                >
+                <TabsContent key={tab.value} value={tab.value} className="mt-0 focus:outline-none">
                   {COMPONENTS_MAP[tab.value].component}
                 </TabsContent>
               ))}

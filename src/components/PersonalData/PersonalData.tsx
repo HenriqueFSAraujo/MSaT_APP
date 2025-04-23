@@ -8,12 +8,16 @@ import FormDate from '../common/FormDate/FormDate';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
+import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/utils/optionsMock';
 
 const schema = z.object({
   username: z.string().min(1, 'Nome completo é obrigatório'),
-  login: z.string().min(1, 'Login é obrigatório'),
   email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
   cpf: z.string().min(1, 'CPF é obrigatório'),
+  rg: z.string().min(1, 'RG é obrigatório'),
+  nationality: z.string().min(1, 'Nacionalidade é obrigatória'),
+  birthplace: z.string().min(1, 'Naturalidade é obrigatória'),
+  race: z.string().min(1, 'Raça/Cor é obrigatória'),
   phone: z.string().min(1, 'phone é obrigatório'),
   gender: z.string().min(1, 'Gênero é obrigatório'),
   cpfScholarship: z.string().optional(),
@@ -33,9 +37,12 @@ export const PersonalData = ({ label }: { label: string }) => {
     resolver: zodResolver(schema),
     defaultValues: {
       username: '',
-      login: '',
       email: '',
       cpf: '',
+      rg: '',
+      nationality: '',
+      birthplace: '',
+      race: '',
       cpfScholarship: '',
       phone: '',
       dateBirth: '',
@@ -70,20 +77,11 @@ export const PersonalData = ({ label }: { label: string }) => {
               required
               error={errors.username?.message}
             />
-            <FormInput
-              {...methods.register('login')}
-              name="login"
-              label="Login"
+            <FormDate
+              name="dateBirth"
+              label="Data de Nascimento"
               required
-              error={errors.login?.message}
-            />
-            <FormInput
-              {...methods.register('email')}
-              name="email"
-              label="E-mail"
-              type="email"
-              required
-              error={errors.email?.message}
+              error={errors.dateBirth?.message}
             />
             <FormInput
               {...methods.register('cpf')}
@@ -94,47 +92,73 @@ export const PersonalData = ({ label }: { label: string }) => {
               error={errors.cpf?.message}
             />
             <FormInput
-              {...methods.register('phone')}
-              name="phone"
-              label="Telefone"
-              mask="phone"
+              {...methods.register('rg')}
+              name="rg"
+              label="RG do candidato(a)"
+              mask="rg"
+              error={errors.rg?.message}
+            />
+            <FormSelect
+              name="nationality"
+              label="Nacionalidade"
               required
-              error={errors.phone?.message}
+              description="Selecione uma das opções abaixo."
+              options={Nationality}
+              error={errors.nationality?.message}
+            />
+            <FormSelect
+              name="birthplace"
+              label="Naturalidade"
+              required
+              description="Selecione uma das opções abaixo."
+              options={Birthplace}
+              error={errors.birthplace?.message}
+            />
+            <FormSelect
+              name="race"
+              label="Raça/Cor do(a) candidato(a)"
+              required
+              description="Selecione uma das opções abaixo."
+              options={raceOptions}
+              error={errors.race?.message}
             />
             <FormSelect
               name="gender"
               label="Escolha seu Gênero"
               required
               description="Selecione uma das opções abaixo."
-              options={[
-                { value: 'M', label: 'Masculino' },
-                { value: 'F', label: 'Feminino' },
-                { value: 'O', label: 'Outro' },
-              ]}
+              options={genderOptions}
               error={errors.gender?.message}
-            />
-            <FormInput
-              {...methods.register('cpfScholarship')}
-              name="cpfScholarship"
-              label="CPF do(a) candidato(a) bolsista"
-              mask="cpf"
-            />
-            <FormDate
-              name="dateBirth"
-              label="Data de Nascimento"
-              required
-              error={errors.dateBirth?.message}
             />
             <FormSelect
               name="deficiency"
               label="Pessoa com deficiência"
               required
               description="Selecione uma das opções abaixo."
-              options={[
-                { value: 'S', label: 'Sim' },
-                { value: 'N', label: 'Não' },
-              ]}
+              options={YesOrNo}
               error={errors.deficiency?.message}
+            />
+            <FormInput
+              {...methods.register('email')}
+              name="email"
+              label="E-mail"
+              type="email"
+              required
+              error={errors.email?.message}
+            />
+            <FormInput
+              {...methods.register('phone')}
+              name="phone"
+              label="Celular"
+              mask="phone"
+              required
+              error={errors.phone?.message}
+            />
+            <FormInput
+              {...methods.register('cpfScholarship')}
+              name="cpfScholarship"
+              label="CPF do(a) candidato(a) bolsista"
+              mask="cpf"
             />
             <FormInput
               {...methods.register('educacenso')}

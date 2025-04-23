@@ -10,16 +10,18 @@ interface FormInputProps {
   type?: string;
   required?: boolean;
   error?: string;
-  mask?: 'cpf' | 'phone' | 'cep';
+  mask?: 'cpf' | 'rg' | 'phone' | 'cep';
   description?: string;
   withMarginTop?: boolean;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   [key: string]: unknown;
 }
 
 const maskPatterns = {
   cpf: [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
+  rg: [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
-  cep: [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
+  cep: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/], // Corrigido para 8 dígitos
 };
 
 interface CustomMaskedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -30,11 +32,11 @@ interface CustomMaskedInputProps extends React.InputHTMLAttributes<HTMLInputElem
 const CustomMaskedInput = forwardRef<HTMLInputElement, CustomMaskedInputProps>((props, ref) => (
   <MaskedInput
     {...props}
-    ref={(inputRef: any) => {
+    ref={(inputRef: MaskedInput | null) => {
       if (typeof ref === 'function') {
-        ref(inputRef ? inputRef.inputElement : null);
+        ref(inputRef ? (inputRef.inputElement as HTMLInputElement | null) : null);
       } else if (ref) {
-        ref.current = inputRef ? inputRef.inputElement : null;
+        ref.current = inputRef ? (inputRef.inputElement as HTMLInputElement | null) : null;
       }
     }}
   />
@@ -50,6 +52,7 @@ const FormInput = ({
   description,
   mask,
   withMarginTop = false,
+  onBlur,
 }: FormInputProps) => {
   const { control } = useFormContext();
 
@@ -73,13 +76,20 @@ const FormInput = ({
               {...field}
               mask={maskPatterns[mask]}
               guide={false}
-              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
-                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                }`}
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
+                fieldState.error
+                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+              }`}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 field.onChange(value);
+              }}
+              onBlur={(e) => {
+                field.onBlur(); // <- importante para RHF
+                if (onBlur && typeof onBlur === 'function') {
+                  onBlur(e); // <- isso chama o handleCepBlur que você passou no pai!
+                }
               }}
               placeholder="Digite..."
             />
@@ -87,18 +97,23 @@ const FormInput = ({
             <Input
               {...field}
               type={type}
-              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
-                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                }`}
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
+                fieldState.error
+                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+              }`}
               placeholder="Digite..."
+              onBlur={(e) => {
+                field.onBlur();
+                if (onBlur) {
+                  onBlur(e);
+                }
+              }}
             />
           )}
 
           {description && (
-            <FormDescription className="text-gray-500 text-xs mt-1">
-              {description}
-            </FormDescription>
+            <FormDescription className="text-gray-500 text-xs mt-1">{description}</FormDescription>
           )}
 
           {fieldState.error && (
