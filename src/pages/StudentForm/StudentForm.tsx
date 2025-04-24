@@ -5,68 +5,63 @@ import { AddressResidence } from '@/components/AddressResidence/AddressResidence
 import { DocumentData } from '@/components/common/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
+import { ScholarshipProcessInfo } from '@/pages/FirstLogin/ScholarshipProcessInfo';
+import { TABS, Tab } from './type.ds';
 
-import { TABS } from './type.ds';
 import { useTabStore } from '@/store/tabStore';
-
-const COMPONENTS_MAP: Record<string, { component: JSX.Element; label: string }> = {
-  personal_data: {
-    component: <PersonalData label="Primeiras Informações" />,
-    label: 'Primeiras Informações',
-  },
-  parents_data: {
-    component: <ParentalDataForm label="Dados dos Genitores" />,
-    label: 'Dados dos Genitores',
-  },
-  address_info: {
-    component: <AddressResidence label="Informações de Endereço e Residência" />,
-    label: 'Informações de Endereço e Residência',
-  },
-  required_documents: {
-    component: <DocumentData label="Documentos Gerais" />,
-    label: 'Documentos Gerais',
-  },
-  housing_conditions: {
-    component: <HousingConditions label="Condições Habitacionais" />,
-    label: 'Condições Habitacionais',
-  },
-  property_relations: {
-    component: <PropertyRelations label="Relação de Bens" />,
-    label: 'Relação de Bens',
-  },
-};
 
 const StudentForm = () => {
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   return (
-    <div className="w-full min-h-screen bg-gray-50">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="w-full bg-white rounded-lg shadow-lg border border-neutral-200 overflow-hidden">
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <div className="container mx-auto py-3">
+          <h1 className="text-2xl font-semibold">Formulário do Estudante</h1>
+        </div>
+      </div>
+      
+      <div className="container mx-auto py-6 px-4">
+        <div className="bg-card rounded-lg shadow-lg border">
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-              <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 p-4 bg-gray-50">
-                {TABS.map((tab) => (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="w-full text-sm md:text-base whitespace-normal px-3 py-2.5 rounded-md
-                    bg-white border border-gray-200 shadow-sm
-                    hover:bg-gray-50 hover:border-gray-300
-                    data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:border-blue-600
-                    transition-all duration-200 ease-in-out
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
+            <div className="sticky top-[73px] z-40 bg-background border-b">
+              <TabsList className="h-auto p-4 bg-muted/50">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 w-full">
+                  {TABS.map((tab: Tab) => (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="w-full text-sm md:text-base whitespace-normal h-full min-h-[60px] px-3 py-2
+                      data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+                      bg-background hover:bg-accent
+                      transition-all duration-200"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
+                  ))}
+                </div>
               </TabsList>
             </div>
+
             <div className="p-6">
-              {TABS.map((tab) => (
-                <TabsContent key={tab.value} value={tab.value} className="mt-0 focus:outline-none">
-                  {COMPONENTS_MAP[tab.value].component}
+              {TABS.map((tab: Tab) => (
+                <TabsContent key={tab.value} value={tab.value} className="mt-0 focus-visible:outline-none">
+                  {tab.value === 'scholarship_info' ? (
+                    <ScholarshipProcessInfo onNext={() => setSelectedTab('personal_data')} onBack={() => null} />
+                  ) : tab.value === 'personal_data' ? (
+                    <PersonalData label="Dados Pessoais" />
+                  ) : tab.value === 'parents_data' ? (
+                    <ParentalDataForm label="Dados dos Pais" />
+                  ) : tab.value === 'address_info' ? (
+                    <AddressResidence label="Endereço" />
+                  ) : tab.value === 'housing_conditions' ? (
+                    <HousingConditions label="Condições de Moradia" />
+                  ) : tab.value === 'property_relations' ? (
+                    <PropertyRelations label="Relação de Bens" />
+                  ) : (
+                    <DocumentData label="Documentos" />
+                  )}
                 </TabsContent>
               ))}
             </div>

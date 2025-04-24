@@ -1,9 +1,13 @@
-type Tab = {
+export type Tab = {
   value: string;
   label: string;
 };
 
 export const TABS: Tab[] = [
+  { 
+    value: 'scholarship_info',
+    label: 'Processo de Bolsa'
+  },
   {
     value: 'personal_data',
     label: 'Dados Pessoais',

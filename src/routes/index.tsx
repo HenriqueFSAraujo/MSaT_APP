@@ -15,7 +15,6 @@ const AppRoutes = () => {
   };
 
   const location = useLocation();
-
   const isLoginPage = location.pathname === '/';
 
   return (

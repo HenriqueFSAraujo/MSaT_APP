@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Logins } from '@/utils/logins';
+import { useTabStore } from '@/store/tabStore';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -26,6 +27,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   const onSubmit = async (formData: LoginForm) => {
     setIsPending(true);
@@ -36,7 +38,8 @@ export default function LoginPage() {
       );
       if (user) {
         localStorage.setItem('nameUser', user.name);
-        navigate('/dashboard-users');
+        setSelectedTab('personal_data');
+        navigate('/students-form');
       } else {
         setError('Usuário ou senha inválidos.');
       }
@@ -50,6 +53,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     localStorage.removeItem('nameUser');
+    setSelectedTab('personal_data');
   }, []);
 
   return (
