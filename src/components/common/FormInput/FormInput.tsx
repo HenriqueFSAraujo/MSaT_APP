@@ -2,6 +2,7 @@ import MaskedInput from 'react-text-mask';
 import { Input } from '@/components/ui/input';
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { useFormContext } from 'react-hook-form';
+import { forwardRef } from 'react';
 
 interface FormInputProps {
   name: string;
@@ -9,17 +10,39 @@ interface FormInputProps {
   type?: string;
   required?: boolean;
   error?: string;
-  mask?: 'cpf' | 'phone' | 'cep';
+  mask?: 'cpf' | 'rg' | 'phone' | 'cep';
   description?: string;
   withMarginTop?: boolean;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   [key: string]: unknown;
 }
 
 const maskPatterns = {
   cpf: [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
+  rg: [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
-  cep: [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
+  cep: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/], // Corrigido para 8 dígitos
 };
+
+interface CustomMaskedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  mask: (string | RegExp)[];
+  guide?: boolean;
+}
+
+const CustomMaskedInput = forwardRef<HTMLInputElement, CustomMaskedInputProps>((props, ref) => (
+  <MaskedInput
+    {...props}
+    ref={(inputRef: MaskedInput | null) => {
+      if (typeof ref === 'function') {
+        ref(inputRef ? (inputRef.inputElement as HTMLInputElement | null) : null);
+      } else if (ref) {
+        ref.current = inputRef ? (inputRef.inputElement as HTMLInputElement | null) : null;
+      }
+    }}
+  />
+));
+
+CustomMaskedInput.displayName = 'CustomMaskedInput';
 
 const FormInput = ({
   name,
@@ -28,10 +51,10 @@ const FormInput = ({
   type = 'text',
   description,
   mask,
-  error,
   withMarginTop = false,
+  onBlur,
 }: FormInputProps) => {
-  const { control } = useFormContext();
+  const { control, trigger } = useFormContext();
 
   return (
     <FormField
@@ -41,31 +64,62 @@ const FormInput = ({
         <FormItem
           className={`relative flex flex-col w-full min-h-[80px] ${withMarginTop ? 'mt-6' : ''}`}
         >
-          <FormLabel className="text-sm md:text-base font-medium text-gray-700">
+          <FormLabel
+            className={`text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
+          >
             {label}
-
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className={`${fieldState.error ? 'text-red-500' : ''}`}>*</span>}
           </FormLabel>
+
           {mask ? (
-            <MaskedInput
+            <CustomMaskedInput
               {...field}
               mask={maskPatterns[mask]}
-              className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value)}
+              guide={false}
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
+                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                }`}
+              onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                field.onChange(value);
+                await trigger(name);
+              }}
+              onBlur={async (e) => {
+                field.onBlur();
+                if (onBlur && typeof onBlur === 'function') {
+                  await onBlur(e);
+                }
+                await trigger(name);
+              }}
+              placeholder="Digite..."
             />
           ) : (
             <Input
               {...field}
               type={type}
-              className="peer w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
+                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                }`}
+              placeholder="Digite..."
+              onBlur={async (e) => {
+                field.onBlur();
+                await trigger(name);
+                if (onBlur) {
+                  onBlur(e);
+                }
+              }}
             />
           )}
+
           {description && (
             <FormDescription className="text-gray-500 text-xs mt-1">{description}</FormDescription>
           )}
+
           {fieldState.error && (
             <FormMessage className="block text-red-500 text-xs mt-1">
-              {error || fieldState.error.message || 'Erro desconhecido'}
+              {fieldState.error.message || 'Campo obrigatório'}
             </FormMessage>
           )}
         </FormItem>

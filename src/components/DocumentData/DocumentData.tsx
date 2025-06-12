@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
+import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',
@@ -27,7 +28,7 @@ const REQUIRED_DOCUMENTS = [
   // 'governmentProgram',
 ];
 
-export const DocumentForm = ({ label }: { label: string }) => {
+export const DocumentData = ({ label }: { label: string }) => {
   const [submitted, setSubmitted] = useState(false);
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -54,17 +55,17 @@ export const DocumentForm = ({ label }: { label: string }) => {
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
-  const hasValidFile = (fieldName: string) => {
+  const hasValidFile = (fieldName: keyof FormValues) => {
     const value = formValues[fieldName];
-    return value?.file?.value instanceof File;
+    return typeof value !== 'string' && value?.file?.value instanceof File;
   };
 
-  const isRequiredAndEmpty = (fieldName: string) => {
+  const isRequiredAndEmpty = (fieldName: keyof FormValues) => {
     const value = formValues[fieldName];
     return (
       REQUIRED_DOCUMENTS.includes(fieldName) &&
-      !value?.file?.value &&
-      !(value?.option?.value && value.option.value !== 'none')
+      !(typeof value !== 'string' && value?.file?.value) &&
+      !(typeof value !== 'string' && value?.option?.value && value.option.value !== 'none')
     );
   };
 
@@ -143,80 +144,91 @@ export const DocumentForm = ({ label }: { label: string }) => {
     });
   };
 
+  const isError = (name: string): boolean => {
+    return submitted && isRequiredAndEmpty(name as keyof FormValues);
+  };
+
   return (
     <FormProvider {...methods}>
-      <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
-          {DOCUMENT_GROUPS.map((group, groupIndex) => (
-            <div key={`group-${groupIndex}`} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {group.map(
-                ({
-                  name,
-                  label,
-                  options,
-                  desc,
-                  linkLabel,
-                  openLink,
-                  downloadLabel,
-                  downloadLink,
-                }) => (
-                  <div
-                    key={name}
-                    className={`border-2 rounded-lg p-4 transition-colors ${
-                      hasValidFile(name)
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
+            {DOCUMENT_GROUPS.map((group, groupIndex) => (
+              <div key={`group-${groupIndex}`} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {group.map(
+                  ({
+                    name,
+                    label,
+                    options,
+                    desc,
+                    linkLabel,
+                    openLink,
+                    downloadLabel,
+                    downloadLink,
+                  }) => (
+                    <div
+                      key={name}
+                      className={`border-2 rounded-lg p-4 transition-colors ${hasValidFile(name as keyof FormValues)
                         ? 'border-green-300 bg-green-50'
-                        : submitted && isRequiredAndEmpty(name)
+                        : submitted && isRequiredAndEmpty(name as keyof FormValues)
                           ? 'border-red-300 bg-red-50'
                           : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
-                    }`}
-                  >
-                    {/* Cabeçalho mantido igual */}
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-800">
-                        {label}
-                        {REQUIRED_DOCUMENTS.includes(name) && (
-                          <span className="text-red-500 ml-1">*</span>
-                        )}
-                      </h3>
-                      {hasValidFile(name) ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      ) : submitted && isRequiredAndEmpty(name) ? (
-                        <AlertCircle className="h-5 w-5 text-red-500" />
-                      ) : null}
+                        }`}
+                    >
+                      {/* Cabeçalho mantido igual */}
+                      <div className="flex justify-between items-center mb-3">
+                        <h3
+                          className={`font-medium text-gray-800 ${isError(name as string) ? 'text-red-500' : ''}`}
+                        >
+                          {label}
+                          {REQUIRED_DOCUMENTS.includes(name) && (
+                            <span className={`ml-1 ${isError(name as string) ? 'text-red-500' : ''}`}>
+                              *
+                            </span>
+                          )}
+                        </h3>
+                        {hasValidFile(name as keyof FormValues) ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        ) : submitted && isRequiredAndEmpty(name as keyof FormValues) ? (
+                          <AlertCircle className="h-5 w-5 text-red-500" />
+                        ) : null}
+                      </div>
+
+                      <InputFile
+                        name={name}
+                        id={`file-input-${name}`}
+                        accept=".pdf"
+                        disabled={formValues[name as keyof FormValues] === 'Não possui'}
+                        selectOptions={options}
+                        description={desc}
+                        linkLabel={linkLabel}
+                        openLink={openLink}
+                        downloadLabel={downloadLabel}
+                        downloadLink={downloadLink}
+                      />
+
+                      {submitted && isRequiredAndEmpty(name as keyof FormValues) && (
+                        <p className="text-xs text-red-500 mt-2">Documento obrigatório</p>
+                      )}
                     </div>
-
-                    <InputFile
-                      name={name}
-                      id={`file-input-${name}`}
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      disabled={formValues[name] === 'Não possui'}
-                      selectOptions={options}
-                      description={desc}
-                      linkLabel={linkLabel}
-                      openLink={openLink}
-                      downloadLabel={downloadLabel}
-                      downloadLink={downloadLink}
-                    />
-
-                    {submitted && isRequiredAndEmpty(name) && (
-                      <p className="text-xs text-red-500 mt-2">Documento obrigatório</p>
-                    )}
-                  </div>
-                )
-              )}
+                  )
+                )}
+              </div>
+            ))}
+            <div className="flex justify-end w-full">
+              <Button
+                type="submit"
+                className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+              >
+                Salvar e continuar
+              </Button>
             </div>
-          ))}
-          <div className="flex justify-end w-full">
-            <Button
-              type="submit"
-              className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
-            >
-              Salvar e continuar
-            </Button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
     </FormProvider>
   );
 };

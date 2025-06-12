@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Logins } from '@/utils/logins';
+import { useTabStore } from '@/store/tabStore';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -26,6 +27,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   const onSubmit = async (formData: LoginForm) => {
     setIsPending(true);
@@ -36,7 +38,8 @@ export default function LoginPage() {
       );
       if (user) {
         localStorage.setItem('nameUser', user.name);
-        navigate('/formulario-aluno');
+        setSelectedTab('personal_data');
+        navigate('/students-form');
       } else {
         setError('Usuário ou senha inválidos.');
       }
@@ -50,10 +53,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     localStorage.removeItem('nameUser');
+    setSelectedTab('personal_data');
   }, []);
 
   return (
-    <div className="flex items-center bg-blue-600 justify-center min-h-screen px-4">
+    <div className="flex items-center bg-blue-300 justify-center min-h-screen px-4">
       <div className="w-full max-w-4xl bg-blue-600 shadow-2xl rounded-lg overflow-hidden grid grid-cols-1 lg:grid-cols-2">
         <div className="flex items-center justify-center p-12 bg-gradient-to-r from-blue-600 to-blue-800">
           <div className="text-center text-white">
@@ -99,13 +103,18 @@ export default function LoginPage() {
                   )}
                 </div>
                 {error && <p className="text-red-500 text-sm mt-1 text-center">{error}</p>}
-                <Button
-                  type="submit"
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
-                  disabled={isSubmitting || isPending}
-                >
-                  {isPending ? 'Carregando...' : 'Entrar'}
-                </Button>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground cursor-pointer hover:text-blue-500 hover:underline">
+                    Esqueceu a senha?
+                  </span>
+                  <Button
+                    type="submit"
+                    className="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                    disabled={isSubmitting || isPending}
+                  >
+                    {isPending ? 'Carregando...' : 'Entrar'}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
