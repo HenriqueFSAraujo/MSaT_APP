@@ -1,33 +1,25 @@
-# Use uma imagem Node.js como base
-FROM node:18-alpine as build
-
-# Defina o diretório de trabalho
+# Etapa 1: Build
+FROM node:18 AS builder
 WORKDIR /app
 
-# Copie os arquivos de configuração do projeto
-COPY package.json package-lock.json ./
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY vite.config.ts ./
+COPY ./src ./src
+COPY ./public ./public
+COPY index.html ./
 
-# Instale as dependências
-RUN npm ci
+# 🔍 ADICIONA ISSO PRA VER OS ARQUIVOS
+RUN ls -la
 
-# Copie o resto dos arquivos do projeto
-COPY . .
-
-# Construa o projeto
-
+RUN npm install
 RUN npm run build
 
-# Use uma imagem nginx leve para servir o aplicativo
-FROM nginx:alpine
-
-# Copie os arquivos de build para o diretório de conteúdo do nginx
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copie o arquivo de configuração do nginx
+# Etapa 2: Servir com Nginx
+FROM nginx:stable-alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expõe a porta 80
 EXPOSE 80
 
-# Inicia o nginx
 CMD ["nginx", "-g", "daemon off;"]

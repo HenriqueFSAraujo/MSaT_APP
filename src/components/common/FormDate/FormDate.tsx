@@ -13,18 +13,22 @@ interface FormDateProps {
   label: string;
   required?: boolean;
   description?: string;
-  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>>;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 }
 
 const getErrorMessage = (
-  error: string | FieldError | Merge<FieldError, FieldErrorsImpl<unknown>> | undefined
+  error:
+    | string
+    | FieldError
+    | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>
+    | undefined
 ): string => {
   if (typeof error === 'string') {
     return error;
   }
 
   if (error && 'message' in error) {
-    return error.message || 'Erro desconhecido';
+    return typeof error.message === 'string' ? error.message : 'Erro desconhecido';
   }
 
   return 'Erro desconhecido';
@@ -46,19 +50,25 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, erro
       name={name}
       render={({ field, fieldState }) => (
         <FormItem className="flex flex-col">
-          <FormLabel className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm md:text-base font-medium text-gray-700">
+          <FormLabel
+            className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
+          >
             {label} {required && '*'}
           </FormLabel>
 
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="w-full justify-start text-left peer border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                variant={'ghost'}
+                className={`text-muted-foreground bg-transparent peer w-full border border-gray-300 rounded-lg px-4 py-3 hover:bg-transparent hover:text-muted text focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${
+                  fieldState.error
+                    ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error hover:bg-primary-error hover:text-red-500'
+                    : ''
+                }`}
               >
                 {field.value
                   ? format(new Date(field.value), 'dd/MM/yyyy', { locale: ptBR })
-                  : 'Selecionar data'}
+                  : 'clique para selecionar data'}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>

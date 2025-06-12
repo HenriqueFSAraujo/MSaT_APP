@@ -37,6 +37,7 @@ type DocumentOption = {
   openLink?: string;
   downloadLabel?: string;
   downloadLink?: string;
+  required?: boolean;
   options?: {
     value: string;
     label: string;
@@ -51,11 +52,13 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
       label: 'Cadastro do CAD. único',
       linkLabel: 'Disponível no link',
       openLink: 'https://meucadunico.cidadania.gov.br/meu_cadunico',
+      required: true
     },
     {
       name: 'maritalStatus',
       label: 'Estado Civil',
       desc: 'Documentos comprobatórios do estado civil atual',
+      required: true,
       options: [
         {
           value: 'marriageCertificate',
@@ -78,6 +81,7 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
       name: 'identityDocuments',
       label: 'Documentos de Identidade',
       desc: 'Documentos oficiais com foto para identificação pessoal',
+      required: true,
       options: [
         {
           value: 'idCard',
