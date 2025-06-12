@@ -10,11 +10,6 @@ import { TABS, Tab } from './type.ds';
 
 import { useTabStore } from '@/store/tabStore';
 
-type ScholarshipProcessInfoProps = {
-  onNext: () => void;
-  onBack: () => void;
-};
-
 const StudentForm = () => {
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
