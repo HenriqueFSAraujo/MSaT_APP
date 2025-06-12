@@ -19,7 +19,7 @@ interface FormSelectProps {
 }
 
 const FormSelect = ({ name, label, options, required = false, error }: FormSelectProps) => {
-  const { control } = useFormContext();
+  const { control, trigger } = useFormContext();
 
   const getErrorMessage = (
     error:
@@ -36,6 +36,10 @@ const FormSelect = ({ name, label, options, required = false, error }: FormSelec
     }
     return 'Erro desconhecido';
   };
+  const handleChange = async (value: string, field: { onChange: (value: string) => void }) => {
+    field.onChange(value);
+    await trigger(name);
+  };
 
   return (
     <FormField
@@ -51,9 +55,12 @@ const FormSelect = ({ name, label, options, required = false, error }: FormSelec
             {required && <span>*</span>}
           </FormLabel>
           <FormControl>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={(value) => handleChange(value, field)}
+              defaultValue={field.value}
+            >
               <SelectTrigger
-                className={`"peer w-full border border-gray-300 text-muted-foreground rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
+                className={`peer w-full border border-gray-300 text-muted-foreground rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
               >
                 <SelectValue placeholder="Digite..." />
               </SelectTrigger>

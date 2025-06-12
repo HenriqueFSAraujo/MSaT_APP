@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { dynamicSections } from './form.ds';
 import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
+import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 
 const formSchema = z.object({
   vehicles: z
@@ -72,34 +73,38 @@ export const PropertyRelations = ({ label }: { label: string }) => {
 
   return (
     <FormProvider {...methods}>
-      <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-wrap gap-6">
-            {dynamicSections.map((section) => (
-              <div key={section.key} className="w-full md:w-[520px]">
-                <DynamicInputSection
-                  title={section.title}
-                  info={section?.info}
-                  columns={section.columns}
-                  fieldNames={section.fields}
-                  namePrefix={section.key}
-                  required={section.required}
-                />
-              </div>
-            ))}
-          </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-wrap gap-6">
+              {dynamicSections.map((section) => (
+                <div key={section.key} className="w-full md:w-[520px]">
+                  <DynamicInputSection
+                    title={section.title}
+                    info={section?.info}
+                    columns={section.columns}
+                    fieldNames={section.fields}
+                    namePrefix={section.key}
+                    required={section.required}
+                  />
+                </div>
+              ))}
+            </div>
 
-          <div className="flex justify-end pt-6">
-            <Button
-              type="submit"
-              className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
-            >
-              Salvar e continuar
-            </Button>
-          </div>
-        </form>
-      </div>
+            <div className="flex justify-end pt-6">
+              <Button
+                type="submit"
+                className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+              >
+                Salvar e continuar
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </FormProvider>
   );
 };

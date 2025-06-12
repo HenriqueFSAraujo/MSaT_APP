@@ -54,7 +54,7 @@ const FormInput = ({
   withMarginTop = false,
   onBlur,
 }: FormInputProps) => {
-  const { control } = useFormContext();
+  const { control, trigger } = useFormContext();
 
   return (
     <FormField
@@ -76,20 +76,21 @@ const FormInput = ({
               {...field}
               mask={maskPatterns[mask]}
               guide={false}
-              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
-                fieldState.error
-                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-              }`}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
+                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                }`}
+              onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 field.onChange(value);
+                await trigger(name);
               }}
-              onBlur={(e) => {
-                field.onBlur(); // <- importante para RHF
+              onBlur={async (e) => {
+                field.onBlur();
                 if (onBlur && typeof onBlur === 'function') {
-                  onBlur(e); // <- isso chama o handleCepBlur que você passou no pai!
+                  await onBlur(e);
                 }
+                await trigger(name);
               }}
               placeholder="Digite..."
             />
@@ -97,14 +98,14 @@ const FormInput = ({
             <Input
               {...field}
               type={type}
-              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
-                fieldState.error
-                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-              }`}
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
+                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                }`}
               placeholder="Digite..."
-              onBlur={(e) => {
+              onBlur={async (e) => {
                 field.onBlur();
+                await trigger(name);
                 if (onBlur) {
                   onBlur(e);
                 }

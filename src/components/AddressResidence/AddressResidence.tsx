@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
 import { useViaCep } from '@/hooks/useViaCep';
+import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 
 const schema = z.object({
   address: z.string().min(1, 'Endereço é obrigatório'),
@@ -70,14 +71,15 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
   const handleCepBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
     const cep = event.target.value;
-    console.log('CEP digitado:', cep); // <-- Adicione isso
 
     const result = await fetchAddress(cep);
 
     if (result) {
-      setValue('address', result.logradouro || '');
-      setValue('neighborhood', result.bairro || '');
-      setValue('city', result.localidade || '');
+      setValue('address', result.logradouro || '', { shouldValidate: true });
+      setValue('neighborhood', result.bairro || '', { shouldValidate: true });
+      setValue('city', result.localidade || '', { shouldValidate: true });
+
+      await methods.trigger(['address', 'neighborhood', 'city']);
     } else {
       toast.error('CEP não encontrado ou inválido.');
     }
@@ -96,69 +98,73 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
   return (
     <FormProvider {...methods}>
-      <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-            <FormInput
-              {...methods.register('zipCode')}
-              name="zipCode"
-              label="CEP"
-              required
-              error={errors.zipCode?.message}
-              mask="cep"
-              onBlur={handleCepBlur} // Adiciona o evento onBlur
-            />
-            <FormInput
-              {...methods.register('address')}
-              name="address"
-              label="Endereço"
-              required
-              error={errors.address?.message}
-            />
-            <FormInput
-              {...methods.register('neighborhood')}
-              name="neighborhood"
-              label="Bairro"
-              required
-              error={errors.neighborhood?.message}
-            />
-            <FormInput
-              {...methods.register('city')}
-              name="city"
-              label="Cidade"
-              required
-              error={errors.city?.message}
-            />
-            <FormInput
-              {...methods.register('referencePoint')}
-              name="referencePoint"
-              label="Ponto de referência do endereço"
-              error={errors.referencePoint?.message}
-            />
-            <FormSelect
-              name="residenceType"
-              label="O(a) candidato(a) reside:"
-              required
-              options={[
-                { value: 'P', label: 'Própria' },
-                { value: 'A', label: 'Alugada' },
-                { value: 'O', label: 'Outros' },
-              ]}
-              error={errors.residenceType?.message}
-            />
-            {/* Outros campos continuam aqui */}
-          </div>
-          <div className="flex justify-end w-full">
-            <Button
-              type="submit"
-              className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
-            >
-              Salvar e continuar
-            </Button>
-          </div>
-        </form>
-      </div>
-    </FormProvider>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+              <FormInput
+                {...methods.register('zipCode')}
+                name="zipCode"
+                label="CEP"
+                required
+                error={errors.zipCode?.message}
+                mask="cep"
+                onBlur={handleCepBlur} // Adiciona o evento onBlur
+              />
+              <FormInput
+                {...methods.register('address')}
+                name="address"
+                label="Endereço"
+                required
+                error={errors.address?.message}
+              />
+              <FormInput
+                {...methods.register('neighborhood')}
+                name="neighborhood"
+                label="Bairro"
+                required
+                error={errors.neighborhood?.message}
+              />
+              <FormInput
+                {...methods.register('city')}
+                name="city"
+                label="Cidade"
+                required
+                error={errors.city?.message}
+              />
+              <FormInput
+                {...methods.register('referencePoint')}
+                name="referencePoint"
+                label="Ponto de referência do endereço"
+                error={errors.referencePoint?.message}
+              />
+              <FormSelect
+                name="residenceType"
+                label="O(a) candidato(a) reside:"
+                required
+                options={[
+                  { value: 'P', label: 'Própria' },
+                  { value: 'A', label: 'Alugada' },
+                  { value: 'O', label: 'Outros' },
+                ]}
+                error={errors.residenceType?.message}
+              />
+              {/* Outros campos continuam aqui */}
+            </div>
+            <div className="flex justify-end w-full">
+              <Button
+                type="submit"
+                className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+              >
+                Salvar e continuar
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </FormProvider >
   );
 };

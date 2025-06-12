@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PersonalData } from '@/components/PersonalData/PersonalData';
 import { ParentalDataForm } from '@/components/ParentalData/ParentalData';
 import { AddressResidence } from '@/components/AddressResidence/AddressResidence';
-import { DocumentData } from '@/components/common/DocumentData/DocumentData';
+import { DocumentData } from '@/components/DocumentData/DocumentData';
 import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
 import { ScholarshipProcessInfo } from '@/pages/FirstLogin/ScholarshipProcessInfo';
@@ -21,18 +21,18 @@ const StudentForm = () => {
           <h1 className="text-2xl font-semibold">Formulário do Estudante</h1>
         </div>
       </div>
-      
+
       <div className="container mx-auto py-6 px-4">
         <div className="bg-card rounded-lg shadow-lg border">
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
             <div className="sticky top-[73px] z-40 bg-background border-b">
-              <TabsList className="h-auto p-4 bg-muted/50">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 w-full">
+              <TabsList className="h-auto px-4 bg-muted/50">
+                <div className="flex flex-wrap md:grid md:grid-cols-4 lg:grid lg:grid-cols-7 gap-2 w-full">
                   {TABS.map((tab: Tab) => (
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
-                      className="w-full text-sm md:text-base whitespace-normal h-full min-h-[60px] px-3 py-2
+                      className="w-[138px] md:w-full text-sm md:text-base whitespace-normal h-full min-h-[60px] px-3 py-2
                       data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
                       bg-background hover:bg-accent
                       transition-all duration-200"

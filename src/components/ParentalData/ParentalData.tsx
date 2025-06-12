@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
 import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';
+import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 
 const schema = z.object({
   parent1FullName: z.string().min(1, 'Nome completo do Genitor 1 é obrigatório'),
@@ -56,89 +57,95 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
 
   return (
     <FormProvider {...methods}>
-      <div className="max-w-6xl mx-auto bg-white p-6">
-        <h1 className="text-2xl font-semibold text-gray-700 text-center m-6">{label}</h1>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-            <FormInput
-              {...methods.register('parent1FullName')}
-              name="parent1FullName"
-              label="Nome completo do genitor 1"
-              required
-              error={errors.parent1FullName?.message}
-            />
-            <FormInput
-              {...methods.register('parent1Cpf')}
-              name="parent1Cpf"
-              label="CPF do genitor 1"
-              mask="cpf"
-              required
-              error={errors.parent1Cpf?.message}
-            />
-            <FormInput
-              {...methods.register('parent1Phone')}
-              name="parent1Phone"
-              label="Telefone de contato do genitor 1"
-              mask="phone"
-              required
-              type="parent1Phone"
-              error={errors.parent1Phone?.message}
-            />
-            <FormSelect
-              name="parent1MaritalStatus"
-              label="Estado cívil do genitor 1"
-              required
-              description="Selecione uma das opções abaixo."
-              options={maritalStatusOptions}
-              error={errors.parent1MaritalStatus?.message}
-            />
-            <FormInput
-              {...methods.register('parent2FullName')}
-              name="parent2FullName"
-              label="Nome completo do genitor 2"
-              error={errors.parent1FullName?.message}
-            />
-            <FormInput
-              {...methods.register('parent2Cpf')}
-              name="parent2Cpf"
-              label="CPF do genitor 2"
-              mask="cpf"
-              error={errors.parent2Cpf?.message}
-            />
-            <FormInput
-              {...methods.register('parent2Phone')}
-              name="parent2Phone"
-              label="Telefone de contato do genitor 2"
-              mask="phone"
-              type="parent2Phone"
-              error={errors.parent2Phone?.message}
-            />
-            <FormSelect
-              name="parent2MaritalStatus"
-              label="Estado cívil do genitor 2"
-              description="Selecione uma das opções abaixo."
-              options={maritalStatusOptions}
-              error={errors.parent2MaritalStatus?.message}
-            />
-            <FormSelect
-              name="residesWithBothParents"
-              label="O candidato reside com os dois genitores?"
-              required
-              description="Selecione uma das opções abaixo."
-              options={residesWithBothParentsOptions}
-              error={errors.residesWithBothParents?.message}
-            />
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="max-w-6xl mx-auto bg-white p-6">
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                <FormInput
+                  {...methods.register('parent1FullName')}
+                  name="parent1FullName"
+                  label="Nome completo do genitor 1"
+                  required
+                  error={errors.parent1FullName?.message}
+                />
+                <FormInput
+                  {...methods.register('parent1Cpf')}
+                  name="parent1Cpf"
+                  label="CPF do genitor 1"
+                  mask="cpf"
+                  required
+                  error={errors.parent1Cpf?.message}
+                />
+                <FormInput
+                  {...methods.register('parent1Phone')}
+                  name="parent1Phone"
+                  label="Telefone de contato do genitor 1"
+                  mask="phone"
+                  required
+                  type="parent1Phone"
+                  error={errors.parent1Phone?.message}
+                />
+                <FormSelect
+                  name="parent1MaritalStatus"
+                  label="Estado cívil do genitor 1"
+                  required
+                  description="Selecione uma das opções abaixo."
+                  options={maritalStatusOptions}
+                  error={errors.parent1MaritalStatus?.message}
+                />
+                <FormInput
+                  {...methods.register('parent2FullName')}
+                  name="parent2FullName"
+                  label="Nome completo do genitor 2"
+                  error={errors.parent1FullName?.message}
+                />
+                <FormInput
+                  {...methods.register('parent2Cpf')}
+                  name="parent2Cpf"
+                  label="CPF do genitor 2"
+                  mask="cpf"
+                  error={errors.parent2Cpf?.message}
+                />
+                <FormInput
+                  {...methods.register('parent2Phone')}
+                  name="parent2Phone"
+                  label="Telefone de contato do genitor 2"
+                  mask="phone"
+                  type="parent2Phone"
+                  error={errors.parent2Phone?.message}
+                />
+                <FormSelect
+                  name="parent2MaritalStatus"
+                  label="Estado cívil do genitor 2"
+                  description="Selecione uma das opções abaixo."
+                  options={maritalStatusOptions}
+                  error={errors.parent2MaritalStatus?.message}
+                />
+                <FormSelect
+                  name="residesWithBothParents"
+                  label="O candidato reside com os dois genitores?"
+                  required
+                  description="Selecione uma das opções abaixo."
+                  options={residesWithBothParentsOptions}
+                  error={errors.residesWithBothParents?.message}
+                />
+              </div>
+              <div className="flex justify-end w-full">
+                <Button
+                  type="submit"
+                  className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+                >
+                  Salvar e continuar
+                </Button>
+              </div>
+            </form>
           </div>
-          <div className="flex justify-end w-full">
-            <Button
-              type="submit"
-              className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
-            >
-              Salvar e continuar
-            </Button>
-          </div>
-        </form>
-      </div>
+        </CardContent>
+      </Card>
     </FormProvider>
   );
 };
