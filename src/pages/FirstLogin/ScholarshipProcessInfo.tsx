@@ -5,7 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-export const ScholarshipProcessInfo = () => {
+
+type ScholarshipProcessInfoProps = {
+  onNext: () => void;
+  onBack: () => void;
+};
+
+export function ScholarshipProcessInfo({ onNext, onBack }: ScholarshipProcessInfoProps): JSX.Element {
   const navigate = useNavigate();
   const [wantsToParticipate, setWantsToParticipate] = useState<string>("");
   const [hadScholarshipLastYear, setHadScholarshipLastYear] = useState<string>("");
@@ -33,27 +39,27 @@ export const ScholarshipProcessInfo = () => {
       <CardContent className="space-y-6">
         <div className="prose">
           <p>
-            Solicitamos atenção para o preenchimento do Formulário Socioeconômico do Candidato à Bolsa 
-            de Estudo e comprovação dos dados fornecidos por meio da documentação necessária. Alguns 
-            campos do Formulário são de preenchimento obrigatório, bem como o envio de alguns documentos. 
-            Sendo assim, sem tais preenchimentos o sistema não permite avançar para a próxima informação. 
+            Solicitamos atenção para o preenchimento do Formulário Socioeconômico do Candidato à Bolsa
+            de Estudo e comprovação dos dados fornecidos por meio da documentação necessária. Alguns
+            campos do Formulário são de preenchimento obrigatório, bem como o envio de alguns documentos.
+            Sendo assim, sem tais preenchimentos o sistema não permite avançar para a próxima informação.
             Os campos com * são obrigatórios.
           </p>
 
           <ul className="list-disc pl-6 space-y-2">
             <li>
-              Nos campos de documentação obrigatória (marcados com *) no Formulário Socioeconômico do 
-              Candidato à Bolsa de Estudo não serão aceitos documentos repetidos ou folhas em branco. 
-              Caso isso aconteça, o processo não será analisado, acarretando o indeferimento da renovação/ 
+              Nos campos de documentação obrigatória (marcados com *) no Formulário Socioeconômico do
+              Candidato à Bolsa de Estudo não serão aceitos documentos repetidos ou folhas em branco.
+              Caso isso aconteça, o processo não será analisado, acarretando o indeferimento da renovação/
               concessão da Bolsa de Estudo para o ano letivo de 2026.
             </li>
             <li>
-              Formulário Socioeconômico do Candidato à Bolsa de Estudo preenchido parcialmente, 
-              documentação incompleta e documentos ilegíveis resultarão no indeferimento da renovação/ 
+              Formulário Socioeconômico do Candidato à Bolsa de Estudo preenchido parcialmente,
+              documentação incompleta e documentos ilegíveis resultarão no indeferimento da renovação/
               concessão da Bolsa de Estudo.
             </li>
             <li>
-              Nenhum documento será recebido após a data limite estabelecida, salvo se solicitado pela 
+              Nenhum documento será recebido após a data limite estabelecida, salvo se solicitado pela
               Comissão de Bolsa de Estudo 2026 da Unidade Educacional.
             </li>
           </ul>
@@ -124,15 +130,15 @@ export const ScholarshipProcessInfo = () => {
 
           <div className="mt-6">
             <p className="mb-4">
-              No link abaixo consta o Edital de Divulgação do Processo Seletivo de Renovação/Concessão 
-              da Bolsa de Estudo para o ano letivo de 2026, elaborado em conformidade com a Lei Complementar 
+              No link abaixo consta o Edital de Divulgação do Processo Seletivo de Renovação/Concessão
+              da Bolsa de Estudo para o ano letivo de 2026, elaborado em conformidade com a Lei Complementar
               nº187/2021 e o Decreto nº 11.791/2023. Solicitamos uma leitura completa das informações.
             </p>
             <div className="flex flex-col space-y-4">
               <Button onClick={handleDownloadEdital} variant="outline">
                 Baixar Edital de Divulgação do Processo
               </Button>
-              <Button 
+              <Button
                 onClick={handleContinue}
                 disabled={!wantsToParticipate || !hadScholarshipLastYear || (hadScholarshipLastYear === "sim" && !previousScholarshipPercentage)}
               >

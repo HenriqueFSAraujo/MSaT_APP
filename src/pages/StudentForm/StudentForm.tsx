@@ -10,6 +10,11 @@ import { TABS, Tab } from './type.ds';
 
 import { useTabStore } from '@/store/tabStore';
 
+type ScholarshipProcessInfoProps = {
+  onNext: () => void;
+  onBack: () => void;
+};
+
 const StudentForm = () => {
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
@@ -48,7 +53,10 @@ const StudentForm = () => {
               {TABS.map((tab: Tab) => (
                 <TabsContent key={tab.value} value={tab.value} className="mt-0 focus-visible:outline-none">
                   {tab.value === 'scholarship_info' ? (
-                    <ScholarshipProcessInfo onNext={() => setSelectedTab('personal_data')} onBack={() => null} />
+                    <ScholarshipProcessInfo
+                      onNext={() => setSelectedTab('personal_data')}
+                      onBack={() => null}
+                    />
                   ) : tab.value === 'personal_data' ? (
                     <PersonalData label="Dados Pessoais" />
                   ) : tab.value === 'parents_data' ? (
