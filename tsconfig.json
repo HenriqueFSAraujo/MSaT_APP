@@ -1,10 +1,20 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
+    "noEmit": true,
+    "allowJs": false,
+    "checkJs": false,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "baseUrl": "./",
+    "types": ["node"],  // Adiciona os tipos do Node.js
     "paths": {
       "@/*": ["src/*"]
     }

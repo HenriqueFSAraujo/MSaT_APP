@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -59,11 +70,69 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+@layer components {
+  /* Scrollbar customizada */
+  .select-content-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) hsl(var(--background));
   }
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
+  
+  .select-content-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .select-content-scroll::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+    border-radius: 3px;
+  }
+  
+  .select-content-scroll::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 3px;
+  }
+  
+  .select-content-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground));
+  }
+
+  /* Classes para arquivos */
+  .file-card {
+    border: 2px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  
+  .file-card:hover {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--accent));
+  }
+  
+  .file-uploaded {
+    color: hsl(142.1 76.2% 36.3%);
+    font-weight: 500;
+  }
+  
+  .file-empty {
+    color: hsl(221.2 83.2% 53.3%);
+  }
+
+  /* Estilo para toasts de erro */
+  [data-sonner-toast][data-type="error"] {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+    color: #991b1b !important;
+  }
+
+  /* Estilo para toasts de sucesso */
+  [data-sonner-toast][data-type="success"] {
+    background: #f0fdf4 !important;
+    border-color: #bbf7d0 !important;
+    color: #166534 !important;
   }
 }

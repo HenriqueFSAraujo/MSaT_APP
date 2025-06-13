@@ -1,24 +1,24 @@
 import { useEffect } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 
 export const NotFoundPage: React.FC = () => {
-  const navigate = useNavigate();
-
   useEffect(() => {
-    navigate('/404', { replace: true });
-  }, [navigate]);
+    // Se isso estiver redirecionando para si mesmo, pode ser removido
+    // navigate('/404', { replace: true });
+  }, []);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center bg-white dark:bg-gray-950">
+      <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
         404 - Página Não Encontrada
-      </Typography>
-      <Typography paragraph>Desculpe, a página que você está procurando não existe.</Typography>
-      <Button component={Link} to="/" variant="contained">
-        Voltar para a Página Inicial
+      </h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+        Desculpe, a página que você está procurando não existe.
+      </p>
+      <Button asChild>
+        <Link to="/">Voltar para a Página Inicial</Link>
       </Button>
-    </Box>
+    </div>
   );
 };
