@@ -79,9 +79,9 @@ export const PropertyRelations = ({ label }: { label: string }) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap gap-6 justify-center">
               {dynamicSections.map((section) => (
-                <div key={section.key} className="w-full md:w-[520px]">
+                <div key={section.key} className="w-full md:w-[550px]">
                   <DynamicInputSection
                     title={section.title}
                     info={section?.info}

@@ -145,9 +145,10 @@ export const DialogPerfilAction = ({
     }
   }, [open]);
 
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[500px] p-0 overflow-hidden">
+      <DialogContent className="max-w-[500px] p-0 overflow-hidden" onInteractOutside={(e) => e.preventDefault()}>
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">

@@ -4,32 +4,30 @@ import Login from '@/pages/Login/Login';
 import Users from '@/pages/Users/Users';
 import StudentForm from '@/pages/StudentForm/StudentForm';
 import { Header } from '@/components/Header/Header';
-import { Logins } from '@/utils/logins';
 import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
+import { useAuthStore } from '@/store/useAuthStore';
+import { DialogPerfilAction } from '../components/common/DialogPerfilAction/DialogPerfilAction';
 
 const AppRoutes = () => {
-  const userName = localStorage.getItem('nameUser');
-
-  const isAuthenticated = () => {
-    return Logins.some((login) => login.name === userName);
-  };
+  const { token: isAuthenticated, role } = useAuthStore();
 
   const location = useLocation();
   const isLoginPage = location.pathname === '/';
 
+
   return (
     <>
-      {!isLoginPage && isAuthenticated() && <Header shouldRender={true} />}
+      {!isLoginPage && isAuthenticated && <Header shouldRender={true} />}
 
       <Routes>
         <Route path="/" element={<Login />} />
         <Route
           path="/students-form"
-          element={isAuthenticated() ? <StudentForm /> : <Navigate to="/" />}
+          element={isAuthenticated && role === "ROLE_USER" || role === "ROLE_ADMIN" ? <StudentForm /> : <Navigate to="/" />}
         />
         <Route
           path="/dashboard-Users"
-          element={isAuthenticated() ? <Users /> : <Navigate to="/" />}
+          element={isAuthenticated && role === "ROLE_ADMIN" ? <Users /> : <Navigate to="/" />}
         />
 
         <Route path="*" element={<NotFoundPage />} />

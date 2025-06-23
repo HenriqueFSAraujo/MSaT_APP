@@ -83,7 +83,7 @@ export const DynamicInputSection = ({
 
       <div className="rounded-lg overflow-hidden border border-gray-200">
         <div
-          className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-1 py-1 max-w-[950px] rounded-t-lg`}
+          className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-1 py-1 max-w-[1000px] rounded-t-lg`}
         >
           {columns.map((col, idx) => (
             <div
@@ -97,7 +97,7 @@ export const DynamicInputSection = ({
         </div>
 
         {/* Linhas */}
-        <div ref={parentRef} className="max-w-[950px] divide-y ">
+        <div ref={parentRef} className="max-w-[1000px] divide-y ">
           {fields.map((field, rowIdx) => (
             <div key={field.id} className={`grid ${gridColsClass} gap-4 p-4`}>
               {fieldNames.map((fieldName) => {
