@@ -20,12 +20,12 @@ const StudentForm = () => {
   const { firstLogin, name: nameUser } = useAuthStore();
 
 
-  useEffect(() => {
-    if (!firstLogin) {
-      console.log("cheguei")
-      setChangePasswordModal(!changePasswordModal)
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!firstLogin) {
+  //     console.log("cheguei")
+  //     setChangePasswordModal(!changePasswordModal)
+  //   }
+  // }, []);
 
   return (
     <div className="min-h-auto bg-background">

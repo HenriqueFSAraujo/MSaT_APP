@@ -22,12 +22,12 @@ export default function UsuariosPage() {
 
   const { firstLogin, name: nameUser } = useAuthStore();
 
-  useEffect(() => {
-    if (!firstLogin) {
-      console.log("cheguei")
-      setChangePasswordModal(!changePasswordModal)
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!firstLogin) {
+  //     console.log("cheguei")
+  //     setChangePasswordModal(!changePasswordModal)
+  //   }
+  // }, []);
 
 
 
