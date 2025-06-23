@@ -7,8 +7,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Plus, ChevronDown, Users } from 'lucide-react';
 
-const roleOptions = ['Todos', 'Gestor', 'Aluno'] as const;
-export type Role = (typeof roleOptions)[number];
+const roleOptions = ['ROLE_USER', 'ROLE_ADMIN'] as const;
+export type Role = 'Aluno' | 'Gestor' | 'Todos';
+
+const apiRoleToUiRole: Record<typeof roleOptions[number], Role> = {
+    ROLE_USER: 'Aluno',
+    ROLE_ADMIN: 'Gestor',
+};
+
+
 
 interface UsersFiltersProps {
     searchTerm: string;
@@ -66,9 +73,9 @@ export function UsersFilters({
                         <DropdownMenuItem
                             key={role}
                             className="cursor-pointer"
-                            onClick={() => onRoleChange(role)}
+                            onClick={() => onRoleChange(apiRoleToUiRole[role])}
                         >
-                            {role}
+                            {role === "ROLE_ADMIN" ? "Gestor" : "Aluno"}
                         </DropdownMenuItem>
                     ))}
                 </DropdownMenuContent>
@@ -76,7 +83,7 @@ export function UsersFilters({
 
             <Button variant="default" className="whitespace-nowrap" onClick={onNewUser}>
                 <Plus className="mr-1" />
-                Novo aluno
+                Novo Usuário
             </Button>
         </div>
     );

@@ -11,6 +11,7 @@ import { User, LogOut } from 'lucide-react';
 import MenuComponent from '@/components/Menu/menu';
 import { useTabStore } from '@/store/tabStore';
 import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface HeaderProps {
   shouldRender?: boolean;
@@ -24,7 +25,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const navigate = useNavigate();
   const closeMenu = () => setOpen(!open);
 
-  const nameUser = localStorage.getItem('nameUser');
+  const { name: nameUser } = useAuthStore.getState()
 
   const isLoginPage =
     location.pathname === '/login' || location.pathname.startsWith('/cadastrarSenha/');
@@ -41,7 +42,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   };
 
   const backToFirstTab = () => {
-    setSelectedTab('personal_data');
+    setSelectedTab('scholarship_info');
   };
 
   if (!shouldRender) return null;
@@ -61,7 +62,9 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   }
 
   const logOut = () => {
-    localStorage.removeItem('nameUser');
+    // Limpa o estado do zustand
+    useAuthStore.getState().clearAuthData();
+
     navigate('/');
     closeMenu();
   };

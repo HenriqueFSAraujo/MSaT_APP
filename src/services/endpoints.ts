@@ -1,6 +1,6 @@
 export const Endpoints = {
     Users: {
-        List: '/users',
+        List: '/api/users',
         Profile: '/users/profile',
     },
     Auth: {

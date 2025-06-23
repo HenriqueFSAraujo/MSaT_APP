@@ -10,6 +10,7 @@ type ChangePasswordPayload = {
 
 export function useUpdatePassword() {
     return useMutation({
+
         mutationFn: (payload: ChangePasswordPayload) =>
             api.post(Endpoints.Profile.ChangePassword, payload),
 

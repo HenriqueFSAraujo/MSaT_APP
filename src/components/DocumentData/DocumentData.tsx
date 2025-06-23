@@ -1,12 +1,12 @@
 import { useForm, FormProvider, FieldValues } from 'react-hook-form';
 import { InputFile } from '../common/InputFile/InputFile';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Download } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '../ui/card';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',
@@ -122,7 +122,7 @@ export const DocumentData = ({ label }: { label: string }) => {
       //   },
       //   body: JSON.stringify(payload)
       // });
-      console.log(payload);
+
 
       toast.success('Sucesso!', 'Documentos enviados com sucesso!');
       setSelectedTab('housing_conditions');
@@ -153,6 +153,14 @@ export const DocumentData = ({ label }: { label: string }) => {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardDescription className='text-md text-muted-foreground text-center'>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+              Em caso de dúvidas, sobre como emitir os documento basta baixar clicando aqui
+              <a href="/TUTORIAIS.pdf" download>
+                <Download className="mr-1 h-5 w-5 cursor-pointer" />
+              </a>
+            </div>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">

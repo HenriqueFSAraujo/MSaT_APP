@@ -1,10 +1,13 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { BookOpenText } from 'lucide-react';
-import { useState, useMemo } from 'react';
-import usersMock from './usersMock';
+import { useState, useMemo, useEffect } from 'react';
 import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCards';
 import { UsersFilters, Role } from '@/components/UsersFilters/UsersFilters';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
+import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
+import { useGetUsers } from '@/services/queries/useGetUsers'
+import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function UsuariosPage() {
   const [filters, setFilters] = useState({
@@ -12,6 +15,23 @@ export default function UsuariosPage() {
     role: 'Aluno' as Role,
     searchTerm: '',
   });
+
+  const { data: users = [] } = useGetUsers();
+
+  const [changePasswordModal, setChangePasswordModal] = useState(false);
+
+  const { firstLogin, name: nameUser } = useAuthStore();
+
+  useEffect(() => {
+    if (!firstLogin) {
+      console.log("cheguei")
+      setChangePasswordModal(!changePasswordModal)
+    }
+  }, []);
+
+
+
+  const [openModal, setOpenModal] = useState(false);
 
   const toggleStatus = (status: string) => {
     setFilters((prev) => {
@@ -34,51 +54,59 @@ export default function UsuariosPage() {
   };
 
   const handleNewUser = () => {
-    // Implement new user logic
-    console.log('New user clicked');
+    setOpenModal(!openModal)
   };
 
   const handleEditUser = (user: any) => {
-    // Implement edit user logic
     console.log('Edit user:', user);
   };
 
   const filteredUsers = useMemo(() => {
-    return usersMock.filter((user) => {
-      const matchesStatus = filters.status.length === 0 || filters.status.includes(user.status);
-      const matchesRole = filters.role === 'Todos' || filters.role === user.role;
+    const roleLabelToApi: Record<Role, string> = {
+      Aluno: 'ROLE_USER',
+      Gestor: 'ROLE_ADMIN',
+      Todos: 'Todos',
+    };
 
-      // Search in all fields
+    const apiRole = roleLabelToApi[filters.role];
+
+    return users.filter((user) => {
+      const matchesRole = apiRole === 'Todos' || user.roleName === apiRole;
+
       const searchTerm = filters.searchTerm.toLowerCase();
-      const matchesSearch = searchTerm === '' ||
-        Object.values(user).some(value =>
-          value.toString().toLowerCase().includes(searchTerm)
+      const matchesSearch =
+        searchTerm === '' ||
+        Object.values(user).some((value) =>
+          String(value ?? '').toLowerCase().includes(searchTerm)
         );
 
-      return matchesStatus && matchesRole && matchesSearch;
+      return matchesRole && matchesSearch;
     });
-  }, [filters]);
+  }, [users, filters]);
+
+
 
   // Calculate metrics
   const metrics = useMemo(() => {
-    const totalAlunos = usersMock.filter(user => user.role === 'Aluno').length;
-    const alunosAtivos = usersMock.filter(user => user.role === 'Aluno' && user.status === 'ativo').length;
-    const totalGestores = usersMock.filter(user => user.role === 'Gestor').length;
+    const totalAlunos = users.filter(user => user.roleName === 'ROLE_USER').length;
+    // const alunosAtivos = users.filter(user => user.roleName === 'ROLE_USER' && user.status === 'ativo').length;
+    const totalGestores = users.filter(user => user.roleName === 'ROLE_ADMIN').length;
 
-    const percentageAtivos = totalAlunos > 0
-      ? Math.round((alunosAtivos / totalAlunos) * 100)
-      : 0;
+    // const percentageAtivos = totalAlunos > 0
+    //   ? Math.round((alunosAtivos / totalAlunos) * 100)
+    //   : 0;
 
     return {
       totalAlunos,
-      alunosAtivos,
+      // alunosAtivos,
       totalGestores,
-      percentageAtivos
+      // percentageAtivos
     };
-  }, []);
+  }, [users]);
+
 
   return (
-    <main className="p-4 space-y-6 bg-gray-100 min-h-screen">
+    <main className="p-4 space-y-6 min-h-auto">
       <Card className="bg-white shadow-md rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
@@ -106,6 +134,15 @@ export default function UsuariosPage() {
           />
         </CardContent>
       </Card>
+      <DialogCreateUser
+        open={openModal}
+        onOpenChange={setOpenModal}
+      />
+      <DialogPerfilAction
+        open={changePasswordModal}
+        onOpenChange={setChangePasswordModal}
+        userName={nameUser || ''}
+      />
     </main>
   );
 }

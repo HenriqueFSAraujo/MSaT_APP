@@ -2,10 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../api';
 import { Endpoints } from '../endpoints';
 
-type User = {
-    id: number;
-    name: string;
-    email: string;
+export type User = {
+    name: string,
+    userName?: string,
+    roleName: "ROLE_ADMIN" | "ROLE_USER",
+    cpf: null,
+    email: null,
+    firstLogin: false
 };
 
 export function useGetUsers() {

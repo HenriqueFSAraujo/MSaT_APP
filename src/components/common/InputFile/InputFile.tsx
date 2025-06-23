@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useCallback } from 'react';
 import { CheckCircle2, UploadCloud, X, ExternalLink, Download } from 'lucide-react';
 import {
   Select,
@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { InputFileProps, DataProps } from './type.ds';
+import Dropzone, { useDropzone } from 'react-dropzone'
 
 export const InputFile = ({
   name,
@@ -110,145 +111,147 @@ export const InputFile = ({
   };
 
   return (
-    <div className={`w-full space-y-4 p-5 border rounded-lg transition-colors ${errors[name]
-      ? 'border-red-300 bg-red-50'
-      : 'border-gray-200 bg-transparent'
-      }`}>
-      <div className="space-y-2">
-        <div>
+    <>
+      <div className={`w-full space-y-4 p-5 border rounded-lg transition-colors ${errors[name]
+        ? 'border-red-300 bg-red-50'
+        : 'border-gray-200 bg-transparent'
+        }`}>
+        <div className="space-y-2">
           <div>
-            <Label htmlFor={id} className="text-base font-medium text-gray-800">
-              {label}
-            </Label>
-            {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+            <div>
+              <Label htmlFor={id} className="text-base font-medium text-gray-800">
+                {label}
+              </Label>
+              {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+            </div>
+
+            {openLink && linkLabel && (
+              <a
+                href={openLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                {linkLabel}
+                <ExternalLink className="ml-1 h-4 w-4" />
+              </a>
+            )}
           </div>
 
-          {openLink && linkLabel && (
+          {downloadLink && downloadLabel && (
             <a
-              href={openLink}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={downloadLink}
+              download
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
             >
-              {linkLabel}
-              <ExternalLink className="ml-1 h-4 w-4" />
+              <Download className="mr-1 h-4 w-4" />
+              {downloadLabel}
             </a>
           )}
         </div>
 
-        {downloadLink && downloadLabel && (
-          <a
-            href={downloadLink}
-            download
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            <Download className="mr-1 h-4 w-4" />
-            {downloadLabel}
-          </a>
+        {selectOptions && (
+          <Select onValueChange={handleOptionChange} value={getCurrentOption()} disabled={disabled}>
+            <SelectTrigger className={`w-full bg-gray-50 ${errors[name] ? 'border-red-500 ring-red-500 bg-red-50 text-red-500' : ''}`}>
+              <SelectValue placeholder="Selecione uma opção" />
+            </SelectTrigger>
+            <SelectContent>
+              {selectOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
-      </div>
 
-      {selectOptions && (
-        <Select onValueChange={handleOptionChange} value={getCurrentOption()} disabled={disabled}>
-          <SelectTrigger className={`w-full bg-gray-50 ${errors[name] ? 'border-red-500 ring-red-500 bg-red-50 text-red-500' : ''}`}>
-            <SelectValue placeholder="Selecione uma opção" />
-          </SelectTrigger>
-          <SelectContent>
-            {selectOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      )}
+        <input
+          type="file"
+          id={id}
+          accept={accept}
+          className="hidden"
+          {...register(name, {
+            validate: (value) => {
+              if (!required) return true;
+              if (!value) return 'Campo obrigatório';
 
-      <input
-        type="file"
-        id={id}
-        accept={accept}
-        className="hidden"
-        {...register(name, {
-          validate: (value) => {
-            if (!required) return true;
-            if (!value) return 'Campo obrigatório';
+              const hasFile = value.file?.value instanceof File;
+              const hasValidOption = value.option?.value && value.option.value !== 'none';
 
-            const hasFile = value.file?.value instanceof File;
-            const hasValidOption = value.option?.value && value.option.value !== 'none';
+              if (selectOptions) {
+                // Se tem opções de select, precisa ter uma opção válida E um arquivo
+                if (!hasValidOption) return 'Selecione uma opção válida';
+                if (!hasFile) return 'Envie um arquivo';
+              } else {
+                // Se não tem opções de select, precisa apenas do arquivo
+                if (!hasFile) return 'Envie um arquivo';
+              }
 
-            if (selectOptions) {
-              // Se tem opções de select, precisa ter uma opção válida E um arquivo
-              if (!hasValidOption) return 'Selecione uma opção válida';
-              if (!hasFile) return 'Envie um arquivo';
-            } else {
-              // Se não tem opções de select, precisa apenas do arquivo
-              if (!hasFile) return 'Envie um arquivo';
+              return true;
             }
+          })}
+          onChange={handleFileChange}
+          disabled={isFileInputDisabled()}
+        />
 
-            return true;
-          }
-        })}
-        onChange={handleFileChange}
-        disabled={isFileInputDisabled()}
-      />
-
-      <div className="mt-2">
-        {currentValue?.option?.type === 'none' ? (
-          <div className="w-full p-4 border border-gray-200 bg-gray-50 rounded-md text-center text-gray-500 text-sm">
-            Documento não é necessário
-          </div>
-        ) : currentValue?.file?.value ? (
-          <div className="w-full p-3 border border-green-200 bg-green-50 rounded-md">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
-                <div>
-                  <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
-                    {currentValue.file.value.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {(currentValue.file.value.size / 1024).toFixed(2)} KB
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleRemoveFile}
-                className="text-gray-400 hover:text-red-500 transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
+        <div className="mt-2">
+          {currentValue?.option?.type === 'none' ? (
+            <div className="w-full p-4 border border-gray-200 bg-gray-50 rounded-md text-center text-gray-500 text-sm">
+              Documento não é necessário
             </div>
-          </div>
-        ) : shouldShowFileInput() ? (
-          <label
-            htmlFor={id}
-            className={`flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-md cursor-pointer transition-colors ${isFileInputDisabled()
-              ? 'bg-gray-50 cursor-not-allowed border-gray-300'
-              : errors[name]
-                ? 'border-red-500 bg-red-50 hover:border-red-600'
-                : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
-              }`}
-          >
-            <UploadCloud className={`w-6 h-6 mb-2 ${errors[name] ? 'text-red-500' : 'text-gray-400'}`} />
-            <p className={`text-sm mb-1 ${errors[name] ? 'text-red-600' : 'text-gray-600'}`}>
-              Clique para enviar ou arraste
-            </p>
-            <p className="text-xs text-gray-500">{accept.split(',').join(', ')} (Max. 5MB)</p>
-          </label>
-        ) : (
-          <div className={`w-full p-4 border rounded-md text-center text-sm ${errors[name]
-            ? 'border-red-300 bg-red-50 text-red-600'
-            : 'border-gray-200 bg-gray-50 text-gray-500'
-            }`}>
-            Selecione uma opção válida para habilitar o upload
-          </div>
+          ) : currentValue?.file?.value ? (
+            <div className="w-full p-3 border border-green-200 bg-green-50 rounded-md">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
+                      {currentValue.file.value.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {(currentValue.file.value.size / 1024).toFixed(2)} KB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          ) : shouldShowFileInput() ? (
+            <label
+              htmlFor={id}
+              className={`flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-md cursor-pointer transition-colors ${isFileInputDisabled()
+                ? 'bg-gray-50 cursor-not-allowed border-gray-300'
+                : errors[name]
+                  ? 'border-red-500 bg-red-50 hover:border-red-600'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                }`}
+            >
+              <UploadCloud className={`w-6 h-6 mb-2 ${errors[name] ? 'text-red-500' : 'text-gray-400'}`} />
+              <p className={`text-sm mb-1 ${errors[name] ? 'text-red-600' : 'text-gray-600'}`}>
+                Clique para enviar ou arraste
+              </p>
+              <p className="text-xs text-gray-500">{accept.split(',').join(', ')} (Max. 5MB)</p>
+            </label>
+          ) : (
+            <div className={`w-full p-4 border rounded-md text-center text-sm ${errors[name]
+              ? 'border-red-300 bg-red-50 text-red-600'
+              : 'border-gray-200 bg-gray-50 text-gray-500'
+              }`}>
+              Selecione uma opção válida para habilitar o upload
+            </div>
+          )}
+        </div>
+
+        {errors[name] && (
+          <p className="text-red-500 text-sm mt-1">{errors[name]?.message as string}</p>
         )}
       </div>
-
-      {errors[name] && (
-        <p className="text-red-500 text-sm mt-1">{errors[name]?.message as string}</p>
-      )}
-    </div>
+    </>
   );
 };
