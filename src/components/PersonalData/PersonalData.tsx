@@ -12,14 +12,14 @@ import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 
 const schema = z.object({
-  username: z.string().min(1, 'Nome completo é obrigatório'),
+  username: z.string().nonempty('Nome completo é obrigatório'),
   email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
   cpf: z.string().min(1, 'CPF é obrigatório'),
   rg: z.string().min(1, 'RG é obrigatório'),
   nationality: z.string().min(1, 'Nacionalidade é obrigatória'),
   birthplace: z.string().min(1, 'Naturalidade é obrigatória'),
   race: z.string().min(1, 'Raça/Cor é obrigatória'),
-  phone: z.string().min(1, 'phone é obrigatório'),
+  phone: z.string().min(1, 'Celular é obrigatório'),
   gender: z.string().min(1, 'Gênero é obrigatório'),
   cpfScholarship: z.string().optional(),
   dateBirth: z

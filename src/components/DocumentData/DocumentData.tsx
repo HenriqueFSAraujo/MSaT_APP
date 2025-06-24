@@ -154,12 +154,13 @@ export const DocumentData = ({ label }: { label: string }) => {
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
           <CardDescription className='text-md text-muted-foreground text-center'>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-              Em caso de dúvidas, sobre como emitir os documento basta baixar clicando aqui
-              <a href="/TUTORIAIS.pdf" download>
+            <a href="/TUTORIAIS.pdf" download>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                Em caso de dúvidas, sobre como emitir os documento basta clicar aqui!
+
                 <Download className="mr-1 h-5 w-5 cursor-pointer" />
-              </a>
-            </div>
+              </div>
+            </a>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -237,6 +238,6 @@ export const DocumentData = ({ label }: { label: string }) => {
           </form>
         </CardContent>
       </Card>
-    </FormProvider>
+    </FormProvider >
   );
 };

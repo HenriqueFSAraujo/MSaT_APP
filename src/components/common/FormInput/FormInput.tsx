@@ -88,7 +88,7 @@ const FormInput = ({
               onBlur={async (e) => {
                 field.onBlur();
                 if (onBlur && typeof onBlur === 'function') {
-                  await onBlur(e);
+                  onBlur(e);
                 }
                 await trigger(name);
               }}
