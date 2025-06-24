@@ -3,12 +3,14 @@ import { api } from '../api';
 import { Endpoints } from '../endpoints';
 
 export type User = {
-    name: string,
-    userName?: string,
-    roleName: "ROLE_ADMIN" | "ROLE_USER",
-    cpf: null,
-    email: null,
-    firstLogin: false
+    userId: number
+    name: string
+    userName?: string
+    roleName: "ROLE_ADMIN" | "ROLE_USER"
+    cpf: null
+    email: null
+    active: boolean
+    firstLogin: boolean
 };
 
 export function useGetUsers() {

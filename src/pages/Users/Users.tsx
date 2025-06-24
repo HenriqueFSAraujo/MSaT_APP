@@ -80,9 +80,14 @@ export default function UsuariosPage() {
           String(value ?? '').toLowerCase().includes(searchTerm)
         );
 
-      return matchesRole && matchesSearch;
+      const matchesStatus =
+        filters.status.length === 0 ||
+        filters.status.includes(user.active ? 'ativo' : 'inativo');
+
+      return matchesRole && matchesSearch && matchesStatus;
     });
   }, [users, filters]);
+
 
 
 

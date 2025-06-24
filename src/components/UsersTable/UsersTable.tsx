@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown } from 'lucide-react';
 import { User } from '@/services/queries/useGetUsers';
+import { formatCpf } from '@/utils/transformToCPF';
 
 
 interface UsersTableProps {
@@ -21,7 +22,7 @@ interface UsersTableProps {
     onEdit: (user: User) => void;
 }
 
-// const statusOptions = ['ativo', 'inativo'];
+const statusOptions = ['ativo', 'inativo'];
 
 export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: UsersTableProps) {
     return (
@@ -29,6 +30,7 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
             <Table className="w-full rounded-2xl overflow-hidden">
                 <TableHeader className="bg-blue-400">
                     <TableRow>
+                        <TableHead className="text-white">Id</TableHead>
                         <TableHead className="text-white">Nome</TableHead>
                         <TableHead className="text-white">CPF</TableHead>
                         <TableHead className="text-white">E-mail</TableHead>
@@ -41,12 +43,12 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                                         <ChevronDown className="w-4 h-4" />
                                     </Button>
                                 </PopoverTrigger>
-                                {/* <PopoverContent className="w-auto p-2 space-y-1">
+                                <PopoverContent className="w-auto p-2 space-y-1">
                                     {statusOptions.map((status) => (
                                         <div key={status} className="flex items-center space-x-2">
                                             <Checkbox
                                                 id={`table-${status}`}
-                                                checked={statusFilter.includes(status)}
+                                                checked={statusFilter?.includes(status)}
                                                 onCheckedChange={() => onStatusChange(status)}
                                             />
                                             <label htmlFor={`table-${status}`} className="text-sm cursor-pointer">
@@ -54,7 +56,7 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                                             </label>
                                         </div>
                                     ))}
-                                </PopoverContent> */}
+                                </PopoverContent>
                             </Popover>
                         </TableHead>
                         <TableHead className="text-white">Ações</TableHead>
@@ -71,12 +73,15 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                         users.map((user, index) => (
                             <TableRow
                                 key={index}
-                                className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
+                                className={`hover:bg-blue-100 hover:cursor-pointer transition-colors ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
                             >
                                 <TableCell className="text-gray-800 flex items-center gap-2">
+                                    {user.userId}
+                                </TableCell>
+                                <TableCell className="text-gray-800">
                                     {user.name}
                                 </TableCell>
-                                <TableCell className="text-gray-800">{user.cpf}</TableCell>
+                                <TableCell className="text-gray-800">{formatCpf(user.cpf || '')}</TableCell>
                                 <TableCell className="text-gray-800">{user.email}</TableCell>
                                 <TableCell>
                                     <Badge
@@ -85,18 +90,18 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                                         {user.roleName === "ROLE_ADMIN" ? "Gestor" : "Aluno"}
                                     </Badge>
                                 </TableCell>
-                                {/* <TableCell>
+                                <TableCell>
                                     <Badge
-                                        className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${user.status === 'ativo'
+                                        className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${user.active === true
                                             ? 'bg-green-100 text-green-800 border-green-200'
-                                            : user.status === 'inativo'
+                                            : user.active === false
                                                 ? 'bg-red-100 text-red-800 border-red-200'
                                                 : 'bg-gray-100 text-gray-700 border-gray-300'
                                             }`}
                                     >
-                                        {user.status}
+                                        {user.active ? 'Ativo' : 'Inativo'}
                                     </Badge>
-                                </TableCell> */}
+                                </TableCell>
                                 <TableCell>
                                     <Button size="sm" variant="outline" onClick={() => onEdit(user)}>
                                         Editar
