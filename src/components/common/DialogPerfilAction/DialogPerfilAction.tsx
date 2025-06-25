@@ -1,30 +1,28 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
-import { User, LockKeyhole, Eye, EyeOff, AlertCircle, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { useState, useEffect } from 'react';
+import { User, LockKeyhole, Eye, EyeOff, AlertCircle, Shield } from 'lucide-react';
 import { toast } from '@/utils/toast';
-import { z } from "zod";
+import { z } from 'zod';
 import { useUpdatePassword } from '@/services/queries/useChangePassword';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, "A senha atual é obrigatória"),
-  newPassword: z.string().min(1, "A nova senha é obrigatória"),
-  confirmPassword: z.string().min(1, "A confirmação da senha é obrigatória"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"],
-}).refine((data) => data.newPassword !== data.currentPassword, {
-  message: "A nova senha não pode ser igual à senha atual",
-  path: ["newPassword"],
-});
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'A senha atual é obrigatória'),
+    newPassword: z.string().min(1, 'A nova senha é obrigatória'),
+    confirmPassword: z.string().min(1, 'A confirmação da senha é obrigatória'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: 'A nova senha não pode ser igual à senha atual',
+    path: ['newPassword'],
+  });
 
 type DialogPerfilActionProps = {
   open: boolean;
@@ -32,15 +30,11 @@ type DialogPerfilActionProps = {
   userName: string;
 };
 
-export const DialogPerfilAction = ({
-  open,
-  onOpenChange,
-  userName,
-}: DialogPerfilActionProps) => {
+export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfilActionProps) => {
   const { mutate: updatePassword } = useUpdatePassword();
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -65,9 +59,9 @@ export const DialogPerfilAction = ({
 
     if (!currentPassword || !newPassword || !confirmPassword) {
       const newErrors: Record<string, string> = {};
-      if (!currentPassword) newErrors.currentPassword = "A senha atual é obrigatória";
-      if (!newPassword) newErrors.newPassword = "A nova senha é obrigatória";
-      if (!confirmPassword) newErrors.confirmPassword = "A confirmação da senha é obrigatória";
+      if (!currentPassword) newErrors.currentPassword = 'A senha atual é obrigatória';
+      if (!newPassword) newErrors.newPassword = 'A nova senha é obrigatória';
+      if (!confirmPassword) newErrors.confirmPassword = 'A confirmação da senha é obrigatória';
       setErrors(newErrors);
       toast.error('Por favor, preencha todos os campos obrigatórios.');
       return;
@@ -83,9 +77,9 @@ export const DialogPerfilAction = ({
             onOpenChange(false);
             toast.success('Senha atualizada com sucesso!');
             // Reset form
-            setCurrentPassword("");
-            setNewPassword("");
-            setConfirmPassword("");
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
             setErrors({});
             setIsFormValid(false);
             setIsDirty(false);
@@ -136,19 +130,21 @@ export const DialogPerfilAction = ({
 
   useEffect(() => {
     if (!open) {
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
       setErrors({});
       setIsFormValid(false);
       setIsDirty(false);
     }
   }, [open]);
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[500px] p-0 overflow-hidden" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        className="max-w-[500px] p-0 overflow-hidden"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
@@ -176,13 +172,17 @@ export const DialogPerfilAction = ({
               <div className="relative">
                 <LockKeyhole className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
                 <Input
-                  type={showCurrent ? "text" : "password"}
+                  type={showCurrent ? 'text' : 'password'}
+                  name="fake-password-field"
+                  autoComplete="off"
                   value={currentPassword}
-                  onChange={(e) => handleInputChange(e.target.value, setCurrentPassword, currentPassword)}
+                  onChange={(e) =>
+                    handleInputChange(e.target.value, setCurrentPassword, currentPassword)
+                  }
                   placeholder="Digite sua senha atual"
                   className={cn(
-                    "pl-9 pr-9",
-                    errors.currentPassword ? "border-red-500 focus-visible:ring-red-500" : ""
+                    'pl-9 pr-9',
+                    errors.currentPassword ? 'border-red-500 focus-visible:ring-red-500' : ''
                   )}
                 />
                 <button
@@ -206,13 +206,14 @@ export const DialogPerfilAction = ({
               <div className="relative">
                 <LockKeyhole className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
                 <Input
-                  type={showNew ? "text" : "password"}
+                  autoComplete="off"
+                  type={showNew ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => handleInputChange(e.target.value, setNewPassword, newPassword)}
                   placeholder="Digite a nova senha"
                   className={cn(
-                    "pl-9 pr-9",
-                    errors.newPassword ? "border-red-500 focus-visible:ring-red-500" : ""
+                    'pl-9 pr-9',
+                    errors.newPassword ? 'border-red-500 focus-visible:ring-red-500' : ''
                   )}
                 />
                 <button
@@ -236,13 +237,16 @@ export const DialogPerfilAction = ({
               <div className="relative">
                 <LockKeyhole className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
                 <Input
-                  type={showConfirm ? "text" : "password"}
+                  autoComplete="off"
+                  type={showConfirm ? 'text' : 'password'}
                   value={confirmPassword}
-                  onChange={(e) => handleInputChange(e.target.value, setConfirmPassword, confirmPassword)}
+                  onChange={(e) =>
+                    handleInputChange(e.target.value, setConfirmPassword, confirmPassword)
+                  }
                   placeholder="Confirme a nova senha"
                   className={cn(
-                    "pl-9 pr-9",
-                    errors.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""
+                    'pl-9 pr-9',
+                    errors.confirmPassword ? 'border-red-500 focus-visible:ring-red-500' : ''
                   )}
                 />
                 <button
@@ -263,11 +267,7 @@ export const DialogPerfilAction = ({
           </div>
 
           <div className="flex justify-end gap-3 mt-8">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="px-6"
-            >
+            <Button variant="outline" onClick={() => onOpenChange(false)} className="px-6">
               Cancelar
             </Button>
             <Button
@@ -283,4 +283,3 @@ export const DialogPerfilAction = ({
     </Dialog>
   );
 };
-

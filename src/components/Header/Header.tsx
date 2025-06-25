@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,7 +12,7 @@ import MenuComponent from '@/components/Menu/menu';
 import { useTabStore } from '@/store/tabStore';
 import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { DialogLogOut } from '../common/DialogLogOut/DialogLogOut';
 
 interface HeaderProps {
   shouldRender?: boolean;
@@ -22,8 +22,8 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [openModalLogOut, setOpenModalLogOut] = useState(false);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
-  const navigate = useNavigate();
   const closeMenu = () => setOpen(!open);
 
   const { name: nameUser } = useAuthStore.getState();
@@ -62,12 +62,8 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
     );
   }
 
-  const logOut = () => {
-    // Limpa o estado do zustand
-    useAuthStore.getState().clearAuthData();
-    useScholarshipFormStore.getState().clearFormData();
-
-    navigate('/');
+  const handleLogOut = () => {
+    setOpenModalLogOut(!openModalLogOut);
     closeMenu();
   };
 
@@ -121,7 +117,10 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
               <User className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
               Meu Perfil
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={logOut} className="text-red-700 h-10 px-4 cursor-pointer">
+            <DropdownMenuItem
+              onClick={handleLogOut}
+              className="text-red-700 h-10 px-4 cursor-pointer"
+            >
               <LogOut className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
               Sair
             </DropdownMenuItem>
@@ -129,6 +128,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
         </DropdownMenu>
       </div>
       <DialogPerfilAction open={openModal} onOpenChange={setOpenModal} userName={nameUser || ''} />
+      <DialogLogOut open={openModalLogOut} onOpenChange={setOpenModalLogOut} />
     </header>
   );
 };
