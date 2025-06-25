@@ -1,3 +1,9 @@
+export const fieldMasksMap: Record<string, 'date' | 'currency'> = {
+  year: 'date',
+  monthlyValue: 'currency',
+  realValue: 'currency',
+};
+
 export const dynamicSections = [
   {
     key: 'vehicles',

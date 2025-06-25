@@ -3,67 +3,42 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
-import { dynamicSections } from './form.ds';
+import { dynamicSections, fieldMasksMap } from './form.ds';
 import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-
-const formSchema = z.object({
-  vehicles: z
-    .array(
-      z.object({
-        model: z.string().min(1, 'Campo obrigatório'),
-        year: z.string().min(1, 'Campo obrigatório'),
-        usage: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .min(1, 'Pelo menos uma linha é obrigatória'),
-  peopleSchool: z
-    .array(
-      z.object({
-        name: z.string().min(1, 'Campo obrigatório'),
-        school: z.string().min(1, 'Campo obrigatório'),
-        monthlyValue: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .min(1, 'Pelo menos uma linha é obrigatória'),
-  peopleDeficiency: z
-    .array(
-      z.object({
-        name: z.string().min(1, 'Campo obrigatório'),
-        tDeficiency: z.string().min(1, 'Campo obrigatório'),
-        monthlyValue: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .min(1, 'Pelo menos uma linha é obrigatória'),
-  expenseBreakdown: z
-    .array(
-      z.object({
-        expense: z.string().min(1, 'Campo obrigatório'),
-        realValue: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .min(1, 'Pelo menos uma linha é obrigatória'),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { PropertyRelationsSchema, PropertyRelationsInfo } from './type/formData';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
 export const PropertyRelations = ({ label }: { label: string }) => {
-  const methods = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const { setFormData, formData } = useScholarshipFormStore();
+  const methods = useForm<z.infer<typeof PropertyRelationsSchema>>({
+    resolver: zodResolver(PropertyRelationsSchema),
     mode: 'onSubmit',
     defaultValues: {
       vehicles: [{ model: '', year: '', usage: '' }],
       peopleSchool: [{ name: '', school: '', monthlyValue: '' }],
       peopleDeficiency: [{ name: '', tDeficiency: '', monthlyValue: '' }],
       expenseBreakdown: [{ expense: '', realValue: '' }],
+      ...(formData.property_relations as Partial<PropertyRelationsInfo>),
     },
   });
 
   const { handleSubmit } = methods;
 
-  const onSubmit = async (data: FormData) => {
+  const getMasksForSection = (fields: string[]) => {
+    const masks: Record<string, 'date' | 'currency'> = {};
+    fields.forEach((field) => {
+      if (fieldMasksMap[field]) {
+        masks[field] = fieldMasksMap[field];
+      }
+    });
+    return masks;
+  };
+
+  const onSubmit = async (data: PropertyRelationsInfo) => {
     try {
       console.log('Dados enviados:', data);
+      setFormData('property_relations', data);
       toast.success('Sucesso!', 'salva com sucesso!');
     } catch (error) {
       console.error('Erro no processamento:', error);
@@ -75,7 +50,9 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -89,6 +66,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
                     fieldNames={section.fields}
                     namePrefix={section.key}
                     required={section.required}
+                    fieldMasks={getMasksForSection(section.fields)}
                   />
                 </div>
               ))}

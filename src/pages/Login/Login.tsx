@@ -8,11 +8,10 @@ import { useEffect, useState } from 'react';
 import { useTabStore } from '@/store/tabStore';
 import { useLogin } from '@/Auth/Login/useLogin';
 import { LoginPayload } from '@/Auth/Login/useLogin';
-import { formatCpf } from "@/utils/transformToCPF";
-
+import { formatCpf } from '@/utils/transformMasks';
 
 const loginSchema = z.object({
-  userName: z.string().min(11, "O CPF é obrigatório"),
+  userName: z.string().min(11, 'O CPF é obrigatório'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
 });
 
@@ -28,7 +27,6 @@ export default function LoginPage() {
 
   const [cpf, setCpf] = useState('');
 
-
   const [error, setError] = useState<string | null>(null);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const loginMutation = useLogin();
@@ -38,7 +36,7 @@ export default function LoginPage() {
     try {
       const payload: LoginPayload = {
         userName: formData.userName.replace(/\D/g, ''),
-        password: formData.password
+        password: formData.password,
       };
       await loginMutation.mutateAsync(payload);
     } catch (error) {
@@ -80,7 +78,9 @@ export default function LoginPage() {
             <CardContent>
               <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Usuário (CPF)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Usuário (CPF)
+                  </label>
                   <input
                     type="text"
                     placeholder="Digite seu CPF"

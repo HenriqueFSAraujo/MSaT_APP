@@ -12,6 +12,7 @@ import MenuComponent from '@/components/Menu/menu';
 import { useTabStore } from '@/store/tabStore';
 import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
 interface HeaderProps {
   shouldRender?: boolean;
@@ -25,7 +26,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const navigate = useNavigate();
   const closeMenu = () => setOpen(!open);
 
-  const { name: nameUser } = useAuthStore.getState()
+  const { name: nameUser } = useAuthStore.getState();
 
   const isLoginPage =
     location.pathname === '/login' || location.pathname.startsWith('/cadastrarSenha/');
@@ -64,6 +65,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const logOut = () => {
     // Limpa o estado do zustand
     useAuthStore.getState().clearAuthData();
+    useScholarshipFormStore.getState().clearFormData();
 
     navigate('/');
     closeMenu();
@@ -72,7 +74,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const handleEditModal = () => {
     setOpenModal(!openModal);
     closeMenu();
-  }
+  };
 
   return (
     <header className="h-auto md:h-[64px] sm:h-[56px] bg-[#0b59ac] shadow-sm flex items-center justify-between px-[22px] md:px-4 sm:px-3">
@@ -112,7 +114,10 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
             sideOffset={8}
             className="min-w-[200px] bg-white shadow-md rounded-md border cursor-pointer"
           >
-            <DropdownMenuItem onClick={handleEditModal} className="text-muted-foreground h-10 px-4 cursor-pointer hover:bg-blue-800">
+            <DropdownMenuItem
+              onClick={handleEditModal}
+              className="text-muted-foreground h-10 px-4 cursor-pointer hover:bg-blue-800"
+            >
               <User className="w-[24px] h-[24px] md:w-[22px] md:h-[22px] sm:w-[20px] sm:h-[20px]" />
               Meu Perfil
             </DropdownMenuItem>
@@ -123,12 +128,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <DialogPerfilAction
-        open={openModal}
-        onOpenChange={setOpenModal}
-        userName={nameUser || ''}
-      />
-
+      <DialogPerfilAction open={openModal} onOpenChange={setOpenModal} userName={nameUser || ''} />
     </header>
   );
 };

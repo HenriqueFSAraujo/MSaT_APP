@@ -1,44 +1,21 @@
 import { useForm, FormProvider } from 'react-hook-form';
 import FormInput from '../common/FormInput/FormInput';
-import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
 import { useViaCep } from '@/hooks/useViaCep';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-
-const schema = z.object({
-  address: z.string().min(1, 'Endereço é obrigatório'),
-  neighborhood: z.string().min(1, 'Bairro é obrigatório'),
-  city: z.string().min(1, 'Cidade é obrigatória'),
-  zipCode: z.string().min(1, 'CEP é obrigatório'),
-  referencePoint: z.string().optional(),
-  residenceType: z.string().min(1, 'Informe onde o candidato reside'),
-
-  transportUsage: z
-    .string()
-    .min(1, 'Informe se utiliza transporte para chegar à Unidade Educacional'),
-  travelTime: z.string().min(1, 'Informe o tempo de deslocamento'),
-  extracurricularActivities: z
-    .string()
-    .min(1, 'Informe se participa de atividades extracurriculares'),
-
-  homePhone: z.string().optional(),
-  workPhone: z.string().optional(),
-  mobilePhone: z.string().min(1, 'Telefone celular é obrigatório'),
-  email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
-
-  legalGuardian: z.string().min(1, 'Responsável legal é obrigatório'),
-  studySegment: z.string().min(1, 'Informe o segmento que estudará em 2025'),
-});
+import { addressInfoSchema, AddressInfo } from './type/formData';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
 export const AddressResidence = ({ label }: { label: string }) => {
+  const { setFormData, formData } = useScholarshipFormStore();
   const methods = useForm({
-    mode: 'onChange',
-    resolver: zodResolver(schema),
+    mode: 'onSubmit',
+
+    resolver: zodResolver(addressInfoSchema),
     defaultValues: {
       address: '',
       neighborhood: '',
@@ -58,10 +35,10 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
       legalGuardian: '',
       studySegment: '',
+      ...(formData.address_info as Partial<AddressInfo>),
     },
   });
 
-  // Corrigido: Desestruture `setValue` diretamente de `methods`
   const {
     setValue,
     formState: { errors },
@@ -72,25 +49,33 @@ export const AddressResidence = ({ label }: { label: string }) => {
   const handleCepBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
     const cep = event.target.value;
 
-    const result = await fetchAddress(cep);
+    try {
+      const result = await fetchAddress(cep);
 
-    if (result) {
-      setValue('address', result.logradouro || '', { shouldValidate: true });
-      setValue('neighborhood', result.bairro || '', { shouldValidate: true });
-      setValue('city', result.localidade || '', { shouldValidate: true });
+      if (result) {
+        setValue('address', result.logradouro || '', { shouldValidate: true });
+        setValue('neighborhood', result.bairro || '', { shouldValidate: true });
+        setValue('city', result.localidade || '', { shouldValidate: true });
 
-      await methods.trigger(['address', 'neighborhood', 'city']);
-    } else {
-      toast.error('CEP não encontrado ou inválido.');
+        await methods.trigger(['address', 'neighborhood', 'city']);
+      } else {
+        toast.error('CEP não encontrado ou inválido.');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+      toast.error('Erro ao buscar CEP. Tente novamente mais tarde.');
     }
   };
 
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (data: AddressInfo) => {
     const isValid = await methods.trigger();
+    console.log('cheguei');
     if (!isValid) {
       toast.error('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
+
+    setFormData('address_info', data);
     toast.success('Sucesso!', 'Dados enviados com sucesso!');
     setSelectedTab('required_documents');
     console.log('Dados do formulário:', data);
@@ -100,43 +85,30 @@ export const AddressResidence = ({ label }: { label: string }) => {
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
               <FormInput
-                {...methods.register('zipCode')}
                 name="zipCode"
                 label="CEP"
                 required
                 error={errors.zipCode?.message}
                 mask="cep"
-                onBlur={handleCepBlur} // Adiciona o evento onBlur
+                onBlur={handleCepBlur}
               />
+              <FormInput name="address" label="Endereço" required error={errors.address?.message} />
               <FormInput
-                {...methods.register('address')}
-                name="address"
-                label="Endereço"
-                required
-                error={errors.address?.message}
-              />
-              <FormInput
-                {...methods.register('neighborhood')}
                 name="neighborhood"
                 label="Bairro"
                 required
                 error={errors.neighborhood?.message}
               />
+              <FormInput name="city" label="Cidade" required error={errors.city?.message} />
               <FormInput
-                {...methods.register('city')}
-                name="city"
-                label="Cidade"
-                required
-                error={errors.city?.message}
-              />
-              <FormInput
-                {...methods.register('referencePoint')}
                 name="referencePoint"
                 label="Ponto de referência do endereço"
                 error={errors.referencePoint?.message}
@@ -152,7 +124,6 @@ export const AddressResidence = ({ label }: { label: string }) => {
                 ]}
                 error={errors.residenceType?.message}
               />
-              {/* Outros campos continuam aqui */}
             </div>
             <div className="flex justify-end w-full">
               <Button
@@ -165,6 +136,6 @@ export const AddressResidence = ({ label }: { label: string }) => {
           </form>
         </CardContent>
       </Card>
-    </FormProvider >
+    </FormProvider>
   );
 };

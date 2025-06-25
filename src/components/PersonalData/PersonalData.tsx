@@ -1,8 +1,6 @@
 import { useForm, FormProvider } from 'react-hook-form';
 import FormInput from '../common/FormInput/FormInput';
-import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues } from 'react-hook-form';
 import FormSelect from '../common/FormSelect/FormSelect';
 import FormDate from '../common/FormDate/FormDate';
 import { Button } from '../ui/button';
@@ -10,32 +8,15 @@ import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
 import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/utils/optionsMock';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-
-const schema = z.object({
-  username: z.string().nonempty('Nome completo é obrigatório'),
-  email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
-  cpf: z.string().min(1, 'CPF é obrigatório'),
-  rg: z.string().min(1, 'RG é obrigatório'),
-  nationality: z.string().min(1, 'Nacionalidade é obrigatória'),
-  birthplace: z.string().min(1, 'Naturalidade é obrigatória'),
-  race: z.string().min(1, 'Raça/Cor é obrigatória'),
-  phone: z.string().min(1, 'Celular é obrigatório'),
-  gender: z.string().min(1, 'Gênero é obrigatório'),
-  cpfScholarship: z.string().optional(),
-  dateBirth: z
-    .date({
-      required_error: 'Data de nascimento é obrigatória',
-      invalid_type_error: 'Formato inválido de data',
-    })
-    .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
-  deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
-  educacenso: z.string().optional(),
-});
+import { personalDataSchema, PersonalDataType } from './type/formData';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
 export const PersonalData = ({ label }: { label: string }) => {
-  const methods = useForm({
-    mode: 'onSubmit',
-    resolver: zodResolver(schema),
+  const { setFormData, formData } = useScholarshipFormStore();
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+
+  const methods = useForm<PersonalDataType>({
+    resolver: zodResolver(personalDataSchema),
     defaultValues: {
       username: '',
       email: '',
@@ -44,21 +25,23 @@ export const PersonalData = ({ label }: { label: string }) => {
       nationality: '',
       birthplace: '',
       race: '',
-      cpfScholarship: '',
       phone: '',
-      dateBirth: '',
       gender: '',
+      dateBirth: undefined,
       deficiency: '',
+      cpfScholarship: '',
       educacenso: '',
+      ...(formData.personal_data as Partial<PersonalDataType>),
     },
   });
+
   const { errors } = methods.formState;
 
-  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
-
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (data: PersonalDataType) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
+
+    setFormData('personal_data', data);
     toast.success('Sucesso!', 'Dados enviados com sucesso!');
     setSelectedTab('parents_data');
 
@@ -69,14 +52,15 @@ export const PersonalData = ({ label }: { label: string }) => {
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="max-w-6xl mx-auto bg-white p-6">
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 <FormInput
-                  {...methods.register('username')}
                   name="username"
                   label="Nome completo"
                   required
@@ -88,16 +72,8 @@ export const PersonalData = ({ label }: { label: string }) => {
                   required
                   error={errors.dateBirth?.message}
                 />
+                <FormInput name="cpf" label="CPF" mask="cpf" required error={errors.cpf?.message} />
                 <FormInput
-                  {...methods.register('cpf')}
-                  name="cpf"
-                  label="CPF"
-                  mask="cpf"
-                  required
-                  error={errors.cpf?.message}
-                />
-                <FormInput
-                  {...methods.register('rg')}
                   name="rg"
                   label="RG do candidato(a)"
                   mask="rg"
@@ -144,7 +120,6 @@ export const PersonalData = ({ label }: { label: string }) => {
                   error={errors.deficiency?.message}
                 />
                 <FormInput
-                  {...methods.register('email')}
                   name="email"
                   label="E-mail"
                   type="email"
@@ -152,7 +127,6 @@ export const PersonalData = ({ label }: { label: string }) => {
                   error={errors.email?.message}
                 />
                 <FormInput
-                  {...methods.register('phone')}
                   name="phone"
                   label="Celular"
                   mask="phone"
@@ -160,13 +134,11 @@ export const PersonalData = ({ label }: { label: string }) => {
                   error={errors.phone?.message}
                 />
                 <FormInput
-                  {...methods.register('cpfScholarship')}
                   name="cpfScholarship"
                   label="CPF do(a) candidato(a) bolsista"
                   mask="cpf"
                 />
                 <FormInput
-                  {...methods.register('educacenso')}
                   name="educacenso"
                   label="Número Educacenso"
                   description="Caso não possua, deixe em branco."

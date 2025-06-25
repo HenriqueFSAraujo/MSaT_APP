@@ -6,29 +6,27 @@ import { toast } from '@/utils/toast';
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
 import { radioGroups } from './form.ds';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
+import { housingConditionsSchema, housingConditionsInfo } from './type/formData';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
-const formSchema = z.object(
-  Object.fromEntries(
-    radioGroups.map((group) => [
-      group.name,
-      group.required ? z.string().min(1, 'Campo obrigatório') : z.string().optional(),
-    ])
-  )
-);
+type FormData = z.infer<typeof housingConditionsSchema>;
 
 export const HousingConditions = ({ label }: { label: string }) => {
-  const methods = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: Object.fromEntries(radioGroups.map((group) => [group.name, ''])),
+  const { setFormData, formData } = useScholarshipFormStore();
+  const methods = useForm<FormData>({
+    resolver: zodResolver(housingConditionsSchema),
+    defaultValues: {
+      ...Object.fromEntries(radioGroups.map((group) => [group.name, ''])),
+      ...(formData.housing_conditions as Partial<FormData>),
+    },
   });
 
   const { handleSubmit } = methods;
 
-  type FormData = z.infer<typeof formSchema>;
-
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: housingConditionsInfo) => {
     try {
       console.log('Dados enviados:', data);
+      setFormData('housing_conditions', data);
       toast.success('Sucesso!', 'Condições de moradia salvas com sucesso!');
     } catch (error) {
       console.error('Erro no processamento:', error);
@@ -40,7 +38,9 @@ export const HousingConditions = ({ label }: { label: string }) => {
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">

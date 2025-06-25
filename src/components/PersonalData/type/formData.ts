@@ -1,0 +1,24 @@
+import { z } from 'zod';
+
+export const personalDataSchema = z.object({
+  username: z.string().nonempty('Nome completo é obrigatório'),
+  email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
+  cpf: z.string().min(1, 'CPF é obrigatório'),
+  rg: z.string().min(1, 'RG é obrigatório'),
+  nationality: z.string().min(1, 'Nacionalidade é obrigatória'),
+  birthplace: z.string().min(1, 'Naturalidade é obrigatória'),
+  race: z.string().min(1, 'Raça/Cor é obrigatória'),
+  phone: z.string().min(1, 'Celular é obrigatório'),
+  gender: z.string().min(1, 'Gênero é obrigatório'),
+  cpfScholarship: z.string().optional(),
+  dateBirth: z
+    .date({
+      required_error: 'Data de nascimento é obrigatória',
+      invalid_type_error: 'Formato inválido de data',
+    })
+    .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
+  deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
+  educacenso: z.string().optional(),
+});
+
+export type PersonalDataType = z.infer<typeof personalDataSchema>;

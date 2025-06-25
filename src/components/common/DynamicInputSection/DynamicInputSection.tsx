@@ -5,6 +5,9 @@ import { AnimatedIconButton } from '../AnimatedIconButton/AnimatedIconButton';
 import { useRef, useEffect } from 'react';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
+import { maskCurrency, maskDate } from '@/utils/transformMasks';
+
+type MaskType = 'date' | 'currency';
 
 type DynamicInputSectionProps = {
   title?: string;
@@ -13,6 +16,7 @@ type DynamicInputSectionProps = {
   fieldNames: string[];
   namePrefix: string;
   required: boolean;
+  fieldMasks?: Record<string, MaskType>;
 };
 
 export const DynamicInputSection = ({
@@ -22,11 +26,14 @@ export const DynamicInputSection = ({
   fieldNames = [],
   namePrefix = '',
   required = false,
+  fieldMasks = {},
 }: DynamicInputSectionProps) => {
   const {
     control,
     register,
     formState: { errors },
+    setValue,
+    watch,
   } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -35,7 +42,6 @@ export const DynamicInputSection = ({
   });
 
   const parentRef = useRef<HTMLDivElement>(null);
-  // const actionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (parentRef.current) {
@@ -62,6 +68,44 @@ export const DynamicInputSection = ({
   const hasError = Array.isArray(errors[namePrefix])
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))
     : false;
+
+  const renderInputWithMask = (fieldName: string, rowIdx: number, fieldError?: FieldError) => {
+    const path = `${namePrefix}.${rowIdx}.${fieldName}` as const;
+    const mask = fieldMasks[fieldName];
+    const value = watch(path) || '';
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+
+      if (mask === 'date') {
+        val = maskDate(val);
+      } else if (mask === 'currency') {
+        val = maskCurrency(val);
+      }
+
+      setValue(path, val, { shouldValidate: true, shouldDirty: true });
+    };
+
+    return (
+      <>
+        <input
+          {...register(path, { required: required ? 'Campo obrigatório' : false })}
+          placeholder="Digite..."
+          value={value}
+          onChange={onChange}
+          className={`
+            m-1 p-2 border w-full bg-transparent text-muted-foreground
+            placeholder-muted-foreground rounded-lg
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            ${fieldError ? 'text-red-500 border-red-500 placeholder:text-current bg-red-200' : 'border-gray-300'}
+          `}
+        />
+        {fieldError && (
+          <p className="absolute text-red-500 text-xs mt-1 bottom-[-13px]">{fieldError.message}</p>
+        )}
+      </>
+    );
+  };
 
   return (
     <div className="max-w-[950px] space-y-4">
@@ -99,11 +143,22 @@ export const DynamicInputSection = ({
         {/* Linhas */}
         <div ref={parentRef} className="max-w-[1000px] divide-y ">
           {fields.map((field, rowIdx) => (
-            <div key={field.id} className={`grid ${gridColsClass} gap-4 p-4`}>
+            <div key={field.id} className={`grid ${gridColsClass} gap-4 p-4 relative`}>
               {fieldNames.map((fieldName) => {
                 const fieldError = (
                   errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
                 )?.[rowIdx]?.[fieldName];
+
+                // Renderiza input com máscara caso tenha máscara configurada, senão input padrão
+                if (fieldMasks[fieldName]) {
+                  return (
+                    <div key={`${field.id}-${fieldName}`} className="relative">
+                      {renderInputWithMask(fieldName, rowIdx, fieldError)}
+                    </div>
+                  );
+                }
+
+                // Input padrão
                 return (
                   <div key={`${field.id}-${fieldName}`} className="relative">
                     <input
