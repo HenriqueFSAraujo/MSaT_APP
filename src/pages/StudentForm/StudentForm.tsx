@@ -19,13 +19,12 @@ const StudentForm = () => {
   const [changePasswordModal, setChangePasswordModal] = useState(false);
   const { firstLogin, name: nameUser } = useAuthStore();
 
-
-  // useEffect(() => {
-  //   if (!firstLogin) {
-  //     console.log("cheguei")
-  //     setChangePasswordModal(!changePasswordModal)
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (firstLogin) {
+      console.log('cheguei');
+      setChangePasswordModal(!changePasswordModal);
+    }
+  }, [changePasswordModal, firstLogin]);
 
   return (
     <div className="min-h-auto bg-background">
@@ -53,7 +52,11 @@ const StudentForm = () => {
 
             <div className="p-6">
               {TABS.map((tab: Tab) => (
-                <TabsContent key={tab.value} value={tab.value} className="mt-0 focus-visible:outline-none">
+                <TabsContent
+                  key={tab.value}
+                  value={tab.value}
+                  className="mt-0 focus-visible:outline-none"
+                >
                   {tab.value === 'scholarship_info' ? (
                     <ScholarshipProcessInfo
                       onNext={() => setSelectedTab('personal_data')}

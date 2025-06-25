@@ -8,6 +8,7 @@ import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCre
 import { useGetUsers } from '@/services/queries/useGetUsers';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
 export default function UsuariosPage() {
   const [filters, setFilters] = useState({
@@ -22,12 +23,12 @@ export default function UsuariosPage() {
 
   const { firstLogin, name: nameUser } = useAuthStore();
 
-  // useEffect(() => {
-  //   if (!firstLogin) {
-  //     console.log("cheguei")
-  //     setChangePasswordModal(!changePasswordModal)
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (firstLogin) {
+      setChangePasswordModal(!changePasswordModal);
+    }
+    useScholarshipFormStore.getState().clearFormData();
+  }, [changePasswordModal, firstLogin]);
 
   const [openModal, setOpenModal] = useState(false);
 
