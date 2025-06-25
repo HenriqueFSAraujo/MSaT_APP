@@ -65,7 +65,7 @@ export default function LoginPage() {
               alt="Logo"
               className="max-h-60 w-auto object-contain mx-auto mb-6 p-3 bg-white"
             />
-            <h1 className="text-4xl font-bold mb-4">Bem-vindo de Volta</h1>
+            <h1 className="text-3xl font-bold mb-4">Bem-vindo de Volta</h1>
             <p className="text-lg">Por favor, insira suas credenciais para acessar sua conta.</p>
           </div>
         </div>

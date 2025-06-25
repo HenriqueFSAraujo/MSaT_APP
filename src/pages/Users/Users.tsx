@@ -5,7 +5,7 @@ import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCa
 import { UsersFilters, Role } from '@/components/UsersFilters/UsersFilters';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
 import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
-import { useGetUsers } from '@/services/queries/useGetUsers'
+import { useGetUsers } from '@/services/queries/useGetUsers';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -29,8 +29,6 @@ export default function UsuariosPage() {
   //   }
   // }, []);
 
-
-
   const [openModal, setOpenModal] = useState(false);
 
   const toggleStatus = (status: string) => {
@@ -46,18 +44,18 @@ export default function UsuariosPage() {
   };
 
   const handleRoleChange = (role: Role) => {
-    setFilters(prev => ({ ...prev, role }));
+    setFilters((prev) => ({ ...prev, role }));
   };
 
   const handleSearch = (searchTerm: string) => {
-    setFilters(prev => ({ ...prev, searchTerm }));
+    setFilters((prev) => ({ ...prev, searchTerm }));
   };
 
   const handleNewUser = () => {
-    setOpenModal(!openModal)
+    setOpenModal(!openModal);
   };
 
-  const handleEditUser = (user: any) => {
+  const handleEditUser = (user: unknown) => {
     console.log('Edit user:', user);
   };
 
@@ -77,25 +75,23 @@ export default function UsuariosPage() {
       const matchesSearch =
         searchTerm === '' ||
         Object.values(user).some((value) =>
-          String(value ?? '').toLowerCase().includes(searchTerm)
+          String(value ?? '')
+            .toLowerCase()
+            .includes(searchTerm)
         );
 
       const matchesStatus =
-        filters.status.length === 0 ||
-        filters.status.includes(user.active ? 'ativo' : 'inativo');
+        filters.status.length === 0 || filters.status.includes(user.active ? 'ativo' : 'inativo');
 
       return matchesRole && matchesSearch && matchesStatus;
     });
   }, [users, filters]);
 
-
-
-
   // Calculate metrics
   const metrics = useMemo(() => {
-    const totalAlunos = users.filter(user => user.roleName === 'ROLE_USER').length;
+    const totalAlunos = users.filter((user) => user.roleName === 'ROLE_USER').length;
     // const alunosAtivos = users.filter(user => user.roleName === 'ROLE_USER' && user.status === 'ativo').length;
-    const totalGestores = users.filter(user => user.roleName === 'ROLE_ADMIN').length;
+    const totalGestores = users.filter((user) => user.roleName === 'ROLE_ADMIN').length;
 
     // const percentageAtivos = totalAlunos > 0
     //   ? Math.round((alunosAtivos / totalAlunos) * 100)
@@ -108,7 +104,6 @@ export default function UsuariosPage() {
       // percentageAtivos
     };
   }, [users]);
-
 
   return (
     <main className="p-4 space-y-6 min-h-auto">
@@ -139,10 +134,7 @@ export default function UsuariosPage() {
           />
         </CardContent>
       </Card>
-      <DialogCreateUser
-        open={openModal}
-        onOpenChange={setOpenModal}
-      />
+      <DialogCreateUser open={openModal} onOpenChange={setOpenModal} />
       <DialogPerfilAction
         open={changePasswordModal}
         onOpenChange={setChangePasswordModal}
