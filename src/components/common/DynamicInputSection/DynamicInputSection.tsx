@@ -94,7 +94,7 @@ export const DynamicInputSection = ({
           value={value}
           onChange={onChange}
           className={`
-            m-1 p-2 border w-full bg-transparent text-muted-foreground
+            m-1 p-2 border w-full text-muted-foreground
             placeholder-muted-foreground rounded-lg
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
             ${fieldError ? 'text-red-500 border-red-500 placeholder:text-current bg-red-200' : 'border-gray-300'}
@@ -167,7 +167,7 @@ export const DynamicInputSection = ({
                       })}
                       placeholder="Digite..."
                       className={`
-                        m-1 p-2 border w-full bg-transparent text-muted-foreground
+                        m-1 p-2 border w-full text-muted-foreground
                         placeholder-muted-foreground rounded-lg
                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
                         ${fieldError ? 'text-red-500 border-red-500 placeholder:text-current bg-red-200' : 'border-gray-300'}

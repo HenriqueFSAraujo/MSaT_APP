@@ -24,7 +24,7 @@ const StudentForm = () => {
       console.log('cheguei');
       setChangePasswordModal(!changePasswordModal);
     }
-  }, [changePasswordModal, firstLogin]);
+  }, []);
 
   return (
     <div className="min-h-auto bg-background">

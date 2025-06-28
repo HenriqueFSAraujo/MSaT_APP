@@ -7,7 +7,9 @@ import { User, LockKeyhole, Eye, EyeOff, AlertCircle, Shield } from 'lucide-reac
 import { toast } from '@/utils/toast';
 import { z } from 'zod';
 import { useUpdatePassword } from '@/services/queries/useChangePassword';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import { useResetPassword } from "@/services/queries/useResetPassword";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const passwordSchema = z
   .object({
@@ -42,6 +44,8 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { id } = useAuthStore();
+  const { mutate: resetPassword } = useResetPassword();
 
   const handleInputChange = (
     value: string,
@@ -55,8 +59,7 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
   };
 
   const handleSave = () => {
-    setIsDirty(true); // Force validation on save attempt
-
+    setIsDirty(true);
     if (!currentPassword || !newPassword || !confirmPassword) {
       const newErrors: Record<string, string> = {};
       if (!currentPassword) newErrors.currentPassword = 'A senha atual é obrigatória';
@@ -70,8 +73,12 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
     try {
       passwordSchema.parse({ currentPassword, newPassword, confirmPassword });
 
-      updatePassword(
-        { currentPassword, newPassword },
+      resetPassword(
+        {
+          id,
+          currentPassword,
+          newPassword,
+        },
         {
           onSuccess: () => {
             onOpenChange(false);

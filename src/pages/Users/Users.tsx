@@ -28,7 +28,7 @@ export default function UsuariosPage() {
       setChangePasswordModal(!changePasswordModal);
     }
     useScholarshipFormStore.getState().clearFormData();
-  }, [changePasswordModal, firstLogin]);
+  }, []);
 
   const [openModal, setOpenModal] = useState(false);
 
