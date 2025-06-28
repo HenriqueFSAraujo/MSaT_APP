@@ -13,19 +13,20 @@ export interface LoginPayload {
 
 export interface LoginResponse {
     userName: string
-    token: string
     role: string
     userInfo: UserInfoProps
-    firstLogin: boolean
 }
 
 export interface UserInfoProps {
-    firstLogin: boolean
     id: string
     name: string
-    role: RoleProps
-    token: string
+    cpf: string
+    email: string
     userName: string
+    token: string
+    role: RoleProps
+    active: boolean
+    firstLogin: boolean
 }
 
 export interface RoleProps {
@@ -34,13 +35,15 @@ export interface RoleProps {
 }
 
 export interface UserInfo {
-    id: string;
-    name: string;
-    userName: string;
-    password: string;
-    token: string;
-    role: UserRole;
-    firstLogin: boolean;
+    id: string
+    name: string
+    cpf: string
+    email: string
+    userName: string
+    token: string
+    role: RoleProps
+    active: boolean
+    firstLogin: boolean
 }
 
 export interface UserRole {
@@ -58,12 +61,15 @@ export function useLogin() {
         },
 
         onSuccess: (data) => {
-            useAuthStore.getState().setAuthData({
+            useAuthStore.setState({
                 id: data.userInfo.id,
                 name: data.userInfo.name,
+                cpf: data.userInfo.cpf,
+                email: data.userInfo.email,
                 userName: data.userInfo.userName,
-                role: data.role,
                 token: data.userInfo.token,
+                role: data.userInfo.role,
+                active: data.userInfo.active,
                 firstLogin: data.userInfo.firstLogin,
             })
             if (data.role === "ROLE_ADMIN") {

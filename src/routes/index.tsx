@@ -6,7 +6,6 @@ import StudentForm from '@/pages/StudentForm/StudentForm';
 import { Header } from '@/components/Header/Header';
 import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
 import { useAuthStore } from '@/store/useAuthStore';
-import { DialogPerfilAction } from '../components/common/DialogPerfilAction/DialogPerfilAction';
 
 const AppRoutes = () => {
   const { token: isAuthenticated, role } = useAuthStore();
@@ -23,11 +22,11 @@ const AppRoutes = () => {
         <Route path="/" element={<Login />} />
         <Route
           path="/students-form"
-          element={isAuthenticated && role === "ROLE_USER" || role === "ROLE_ADMIN" ? <StudentForm /> : <Navigate to="/" />}
+          element={isAuthenticated && role.name === "ROLE_USER" || role.name === "ROLE_ADMIN" ? <StudentForm /> : <Navigate to="/" />}
         />
         <Route
           path="/dashboard-Users"
-          element={isAuthenticated && role === "ROLE_ADMIN" ? <Users /> : <Navigate to="/" />}
+          element={isAuthenticated && role.name === "ROLE_ADMIN" ? <Users /> : <Navigate to="/" />}
         />
 
         <Route path="*" element={<NotFoundPage />} />

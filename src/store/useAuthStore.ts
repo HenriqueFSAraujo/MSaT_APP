@@ -1,3 +1,5 @@
+import type { UserInfo, RoleProps } from '@/Auth/Login/useLogin'
+// import { UserRole } from '@/Auth/Login/useLogin' // Commented out because UserRole is only a type
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -19,23 +21,29 @@ type AuthState = {
     clearAuthData: () => void
 }
 
-export const useAuthStore = create<AuthState>()(
+export const useAuthStore = create<UserInfo>()(
     persist(
         (set) => ({
             id: '',
             name: '',
+            cpf: '',
+            email: '',
             userName: '',
-            role: '',
             token: '',
+            role: {} as unknown as RoleProps,
+            active: false,
             firstLogin: false,
 
-            setAuthData: (data) =>
+            setAuthData: (data: UserInfo) =>
                 set({
                     id: data.id,
                     name: data.name,
+                    cpf: data.cpf,
+                    email: data.email,
                     userName: data.userName,
-                    role: data.role,
                     token: data.token,
+                    role: data.role,
+                    active: data.active,
                     firstLogin: data.firstLogin,
                 }),
 
@@ -43,9 +51,12 @@ export const useAuthStore = create<AuthState>()(
                 set({
                     id: '',
                     name: '',
+                    cpf: '',
+                    email: '',
                     userName: '',
-                    role: '',
                     token: '',
+                    role: {} as unknown as RoleProps,
+                    active: false,
                     firstLogin: false,
                 }),
         }),

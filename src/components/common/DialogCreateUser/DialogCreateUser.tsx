@@ -21,7 +21,12 @@ const userSchema = z.object({
   fullName: z.string().min(1, 'O nome completo é obrigatório'),
   cpf: z.string().min(1, 'O CPF é obrigatório'),
   email: z.string().email('E-mail inválido'),
-  role: z.enum(['admin', 'user']),
+  roleName: z.object({
+    name: z.enum(['ROLE_ADMIN', 'ROLE_USER'], {
+      required_error: 'O perfil é obrigatório',
+    }),
+    id: z.number().optional(),
+  }),
 });
 
 type DialogCreateUserProps = {
@@ -33,22 +38,30 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
   const { mutate: createUser } = useCreateUser();
 
   const [formData, setFormData] = useState({
+    name: '',
     fullName: '',
+    roleName: { id: 0, name: '' },
     cpf: '',
     email: '',
-    role: 'user',
+    isFirstLogin: true
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    const newValue = field === 'cpf' ? formatCpf(value) : value;
-
+  const handleInputChange = (field: string, value: string | { name: string }) => {
+    let newValue: any = value;
+    if (field === 'cpf' && typeof value === 'string') {
+      newValue = formatCpf(value);
+    }
+    if (field === 'roleName' && typeof value === 'object' && value !== null) {
+      newValue = { ...formData.roleName, ...value };
+    }
     setFormData((prev) => ({ ...prev, [field]: newValue }));
     setIsDirty(true);
   };
+
 
   const handleSave = () => {
     setIsDirty(true);
@@ -58,22 +71,23 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
 
       const payload = {
         name: formData.fullName,
+        userName: formData.cpf,
         cpf: formData.cpf.replace(/\D/g, ''),
-        userName: '',
-        roleName:
-          formData.role === 'admin' ? ('ROLE_ADMIN' as 'ROLE_ADMIN') : ('ROLE_USER' as 'ROLE_USER'),
+        roleName: formData.roleName,
         email: formData.email,
-        isFirstLogin: true,
+        isFirstLogin: formData.isFirstLogin,
       };
 
       createUser(payload, {
         onSuccess: () => {
           onOpenChange(false);
           setFormData({
-            fullName: '',
+            name: '',
             cpf: '',
+            roleName: { id: 0, name: '' },
+            fullName: '',
             email: '',
-            role: 'user',
+            isFirstLogin: false,
           });
           setErrors({});
           setIsFormValid(false);
@@ -92,6 +106,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
           }
         });
         setErrors(newErrors);
+        console.log(newErrors)
         toast.error('Por favor, corrija os erros do formulário.');
       }
     }
@@ -120,10 +135,12 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
   useEffect(() => {
     if (!open) {
       setFormData({
-        fullName: '',
+        name: '',
         cpf: '',
+        roleName: { id: 0, name: '' },
+        fullName: '',
         email: '',
-        role: 'user',
+        isFirstLogin: false,
       });
       setErrors({});
       setIsFormValid(false);
@@ -158,9 +175,9 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                 {field === 'email' && 'E-mail'}
               </Label>
               <Input
-                value={formData[field as keyof typeof formData]}
+                value={typeof formData[field as keyof typeof formData] === 'string' ? formData[field as keyof typeof formData] as string : ''}
                 onChange={(e) => handleInputChange(field, e.target.value)}
-                placeholder={`Digite o ${field === 'fullName' ? 'nome completo' : field}`}
+                placeholder={`Digite o ${field === 'name' ? 'nome completo' : field}`}
                 className={cn(errors[field] && 'border-red-500 focus-visible:ring-red-500')}
               />
               {errors[field] && (
@@ -176,23 +193,25 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
           <div className="space-y-2">
             <Label className="text-sm font-medium">Perfil</Label>
             <Select
-              value={formData.role}
-              onValueChange={(value) => handleInputChange('role', value)}
+              value={formData.roleName.name}
+              onValueChange={(value) => {
+                handleInputChange('roleName', { name: value });
+              }}
             >
               <SelectTrigger
-                className={cn(errors.role && 'border-red-500 focus-visible:ring-red-500')}
+                className={cn(errors.roleName && 'border-red-500 focus-visible:ring-red-500')}
               >
                 <SelectValue placeholder="Selecione o perfil" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">Aluno</SelectItem>
+                <SelectItem value="ROLE_ADMIN">Admin</SelectItem>
+                <SelectItem value="ROLE_USER">Aluno</SelectItem>
               </SelectContent>
             </Select>
-            {errors.role && (
+            {errors.roleName && (
               <div className="flex items-center gap-1 text-red-500 text-xs mt-1">
                 <AlertCircle className="w-3 h-3" />
-                {errors.role}
+                {errors.roleName}
               </div>
             )}
           </div>

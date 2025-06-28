@@ -1,33 +1,40 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { api } from '../api';
 import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
-type useCreateUserProps = {
+export type CreateUserPayload = {
     name: string
-    cpf: string
     userName: string
-    roleName: "ROLE_ADMIN" | "ROLE_USER"
+    roleName: RoleNameProps
+    cpf: string
     email: string
     isFirstLogin: boolean
 };
 
+export type RoleNameProps = {
+    id: number
+    name: string
+}
 
 export function useCreateUser() {
-    const queryClient = useQueryClient();
-
     return useMutation({
-        mutationFn: (payload: useCreateUserProps) =>
-            api.post(Endpoints.Users.List, payload),
+        mutationFn: async (payload: CreateUserPayload) => {
+            const token = localStorage.getItem('token');
+
+            return api.post(Endpoints.Users.List, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        },
 
         onSuccess: () => {
-            toast.success('Usuário cadastrado com sucesso!');
-            queryClient.invalidateQueries();
+            toast.success('Senha atualizada com sucesso!');
         },
 
         onError: () => {
-            toast.error('Erro ao cadastrar usuário.');
+            toast.error('Erro ao atualizar senha.');
         },
     });
 }
-
