@@ -12,6 +12,7 @@ import { useTabStore } from '@/store/tabStore';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 
 const StudentForm = () => {
   const selectedTab = useTabStore((state) => state.selectedTab);
@@ -21,9 +22,9 @@ const StudentForm = () => {
 
   useEffect(() => {
     if (firstLogin) {
-      console.log('cheguei');
-      setChangePasswordModal(!changePasswordModal);
+      setChangePasswordModal(true);
     }
+    useScholarshipFormStore.getState().clearFormData();
   }, []);
 
   return (
