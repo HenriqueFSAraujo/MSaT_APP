@@ -9,6 +9,14 @@ import { useGetUsers } from '@/services/queries/useGetUsers';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { User } from '@/services/queries/useGetUsers';
+import { RoleNameProps } from '@/services/queries/useCreateUser';
+
+export enum RoleFilter {
+  Aluno = 'ROLE_USER',
+  Gestor = 'ROLE_ADMIN',
+  Todos = 'Todos',
+}
 
 export default function UsuariosPage() {
   const [filters, setFilters] = useState({
@@ -17,7 +25,28 @@ export default function UsuariosPage() {
     searchTerm: '',
   });
 
+  const searchableFields: (keyof User)[] = ['name', 'email', 'cpf'];
+
   const { data: users = [] } = useGetUsers();
+
+  const normalizedUsers: User[] = users.map((user) => {
+    let roleName = user.roleName;
+
+    if (typeof roleName === 'string') {
+      roleName = {
+        id: roleName === 'ROLE_ADMIN' ? 1 : 2,
+        name: roleName,
+      };
+    }
+
+    return {
+      ...user,
+      roleName: roleName as RoleNameProps,
+      cpf: user.cpf ?? null,
+      email: user.email ?? null,
+    };
+  });
+
 
   const [changePasswordModal, setChangePasswordModal] = useState(false);
 
@@ -25,7 +54,7 @@ export default function UsuariosPage() {
 
   useEffect(() => {
     if (firstLogin) {
-      setChangePasswordModal(!changePasswordModal);
+      setChangePasswordModal(true);
     }
     useScholarshipFormStore.getState().clearFormData();
   }, []);
@@ -69,42 +98,30 @@ export default function UsuariosPage() {
 
     const apiRole = roleLabelToApi[filters.role];
 
-    return users.filter((user) => {
-      const matchesRole = apiRole === 'Todos' || user.roleName === apiRole;
+    return normalizedUsers.filter((user: User) => {
+      const matchesRole = apiRole === 'Todos' || user.roleName.name === apiRole;
 
       const searchTerm = filters.searchTerm.toLowerCase();
-      const matchesSearch =
-        searchTerm === '' ||
-        Object.values(user).some((value) =>
-          String(value ?? '')
-            .toLowerCase()
-            .includes(searchTerm)
-        );
+      const matchesSearch = searchableFields.some((field) =>
+        String(user[field] ?? '').toLowerCase().includes(searchTerm)
+      );
 
       const matchesStatus =
         filters.status.length === 0 || filters.status.includes(user.active ? 'ativo' : 'inativo');
 
       return matchesRole && matchesSearch && matchesStatus;
     });
-  }, [users, filters]);
+  }, [normalizedUsers, filters]);
 
-  // Calculate metrics
   const metrics = useMemo(() => {
-    const totalAlunos = users.filter((user) => user.roleName === 'ROLE_USER').length;
-    // const alunosAtivos = users.filter(user => user.roleName === 'ROLE_USER' && user.status === 'ativo').length;
-    const totalGestores = users.filter((user) => user.roleName === 'ROLE_ADMIN').length;
-
-    // const percentageAtivos = totalAlunos > 0
-    //   ? Math.round((alunosAtivos / totalAlunos) * 100)
-    //   : 0;
+    const totalAlunos = filteredUsers.filter((user) => user.roleName.name === 'ROLE_USER').length;
+    const totalGestores = filteredUsers.filter((user) => user.roleName.name === 'ROLE_ADMIN').length;
 
     return {
       totalAlunos,
-      // alunosAtivos,
       totalGestores,
-      // percentageAtivos
     };
-  }, [users]);
+  }, [filteredUsers]);
 
   return (
     <main className="p-4 space-y-6 min-h-auto">
@@ -135,7 +152,9 @@ export default function UsuariosPage() {
           />
         </CardContent>
       </Card>
+
       <DialogCreateUser open={openModal} onOpenChange={setOpenModal} />
+
       <DialogPerfilAction
         open={changePasswordModal}
         onOpenChange={setChangePasswordModal}

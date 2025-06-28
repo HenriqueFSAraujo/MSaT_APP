@@ -74,7 +74,7 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                 key={index}
                 className={`hover:bg-blue-100 hover:cursor-pointer transition-colors ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
               >
-                <TableCell className="text-gray-800 flex items-center gap-2">
+                <TableCell className="text-gray-800 flex items-center gap-2 mt-[0.3rem]">
                   {user.userId}
                 </TableCell>
                 <TableCell className="text-gray-800">{user.name}</TableCell>
@@ -82,18 +82,17 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                 <TableCell className="text-gray-800">{user.email}</TableCell>
                 <TableCell>
                   <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-sm capitalize px-3 py-1 rounded-full font-medium">
-                    {user.roleName === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
+                    {user.roleName.name === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge
-                    className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${
-                      user.active === true
-                        ? 'bg-green-100 text-green-800 border-green-200'
-                        : user.active === false
-                          ? 'bg-red-100 text-red-800 border-red-200'
-                          : 'bg-gray-100 text-gray-700 border-gray-300'
-                    }`}
+                    className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${user.active === true
+                      ? 'bg-green-100 text-green-800 border-green-200'
+                      : user.active === false
+                        ? 'bg-red-100 text-red-800 border-red-200'
+                        : 'bg-gray-100 text-gray-700 border-gray-300'
+                      }`}
                   >
                     {user.active ? 'Ativo' : 'Inativo'}
                   </Badge>

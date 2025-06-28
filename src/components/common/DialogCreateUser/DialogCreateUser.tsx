@@ -70,10 +70,11 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
       userSchema.parse(formData);
 
       const payload = {
+        id: '',
         name: formData.fullName,
         userName: formData.cpf,
         cpf: formData.cpf.replace(/\D/g, ''),
-        roleName: formData.roleName,
+        roleName: formData.roleName.name,
         email: formData.email,
         isFirstLogin: formData.isFirstLogin,
       };

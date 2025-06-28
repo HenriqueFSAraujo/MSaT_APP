@@ -4,6 +4,7 @@ import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
 export type CreateUserPayload = {
+    id: string
     name: string
     userName: string
     roleName: RoleNameProps
