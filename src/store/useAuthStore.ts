@@ -2,7 +2,12 @@ import type { UserInfo } from '@/Auth/Login/useLogin'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export const useAuthStore = create<UserInfo>()(
+type AuthStore = UserInfo & {
+    setAuthData: (data: UserInfo) => void;
+    clearAuthData: () => void;
+};
+
+export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             id: '',
