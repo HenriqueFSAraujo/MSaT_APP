@@ -4,7 +4,7 @@ import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
 type ChangePasswordPayload = {
-    currentPassword: string;
+    currentPassWord: string;
     newPassword: string;
 };
 

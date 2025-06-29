@@ -10,7 +10,6 @@ import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/Dialo
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { User } from '@/services/queries/useGetUsers';
-import { RoleNameProps } from '@/services/queries/useCreateUser';
 
 export enum RoleFilter {
   Aluno = 'ROLE_USER',
@@ -33,15 +32,11 @@ export default function UsuariosPage() {
     let roleName = user.roleName;
 
     if (typeof roleName === 'string') {
-      roleName = {
-        id: roleName === 'ROLE_ADMIN' ? 1 : 2,
-        name: roleName,
-      };
+      roleName = '';
     }
 
     return {
       ...user,
-      roleName: roleName as RoleNameProps,
       cpf: user.cpf ?? null,
       email: user.email ?? null,
     };
@@ -99,7 +94,7 @@ export default function UsuariosPage() {
     const apiRole = roleLabelToApi[filters.role];
 
     return normalizedUsers.filter((user: User) => {
-      const matchesRole = apiRole === 'Todos' || user.roleName.name === apiRole;
+      const matchesRole = apiRole === 'Todos' || user.roleName === apiRole;
 
       const searchTerm = filters.searchTerm.toLowerCase();
       const matchesSearch = searchableFields.some((field) =>
@@ -114,8 +109,8 @@ export default function UsuariosPage() {
   }, [normalizedUsers, filters]);
 
   const metrics = useMemo(() => {
-    const totalAlunos = filteredUsers.filter((user) => user.roleName.name === 'ROLE_USER').length;
-    const totalGestores = filteredUsers.filter((user) => user.roleName.name === 'ROLE_ADMIN').length;
+    const totalAlunos = filteredUsers.filter((user) => user.roleName === 'ROLE_USER').length;
+    const totalGestores = filteredUsers.filter((user) => user.roleName === 'ROLE_ADMIN').length;
 
     return {
       totalAlunos,

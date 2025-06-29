@@ -12,7 +12,7 @@ import { formatCpf } from '@/utils/transformMasks';
 
 const loginSchema = z.object({
   userName: z.string().min(11, 'O CPF é obrigatório'),
-  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  password: z.string().min(5, 'A senha deve ter pelo menos 5 caracteres'),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;

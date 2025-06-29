@@ -41,7 +41,7 @@ export default function MobileMenu() {
               className="h-17 w-auto object-contain cursor-pointer"
             />
           </div>
-          {role.name === "ROLE_ADMIN" &&
+          {role === "ROLE_ADMIN" &&
             <Button
               variant="ghost"
               className="w-full flex justify-start gap-2 text-white"

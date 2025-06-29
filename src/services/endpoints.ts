@@ -2,8 +2,8 @@ export const Endpoints = {
     Users: {
         List: '/api/users',
         Profile: '/users/profile',
-        DisableUser: `/api/users/reset-password`,
-        ResetPassword: `/api/users/deactivate`
+        ResetPassword: `/api/users/reset-password`,
+        DisableUser: `/api/users/deactivate`
     },
     Auth: {
         Login: '/auth/login',

@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api';
 import { Endpoints } from '../endpoints';
-import { RoleNameProps } from './useCreateUser';
 
 export type User = {
     userId: number
     name: string
-    roleName: RoleNameProps
+    roleName: string
     cpf: null
     email: null
     active: boolean

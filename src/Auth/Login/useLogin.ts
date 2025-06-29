@@ -24,14 +24,9 @@ export interface UserInfoProps {
     email: string
     userName: string
     token: string
-    role: RoleProps
+    role: string
     active: boolean
     firstLogin: boolean
-}
-
-export interface RoleProps {
-    id: string
-    name: string
 }
 
 export interface UserInfo {
@@ -41,14 +36,9 @@ export interface UserInfo {
     email: string
     userName: string
     token: string
-    role: RoleProps
+    role: string
     active: boolean
     firstLogin: boolean
-}
-
-export interface UserRole {
-    id: number;
-    name: string;
 }
 
 export function useLogin() {
@@ -68,7 +58,7 @@ export function useLogin() {
                 email: data.userInfo.email,
                 userName: data.userInfo.userName,
                 token: data.userInfo.token,
-                role: data.userInfo.role,
+                role: data.role,
                 active: data.userInfo.active,
                 firstLogin: data.userInfo.firstLogin,
             })

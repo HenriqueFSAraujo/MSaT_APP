@@ -22,11 +22,11 @@ const AppRoutes = () => {
         <Route path="/" element={<Login />} />
         <Route
           path="/students-form"
-          element={isAuthenticated && role.name === "ROLE_USER" || role.name === "ROLE_ADMIN" ? <StudentForm /> : <Navigate to="/" />}
+          element={isAuthenticated && role === "ROLE_USER" || role === "ROLE_ADMIN" ? <StudentForm /> : <Navigate to="/" />}
         />
         <Route
           path="/dashboard-Users"
-          element={isAuthenticated && role.name === "ROLE_ADMIN" ? <Users /> : <Navigate to="/" />}
+          element={isAuthenticated && role === "ROLE_ADMIN" ? <Users /> : <Navigate to="/" />}
         />
 
         <Route path="*" element={<NotFoundPage />} />

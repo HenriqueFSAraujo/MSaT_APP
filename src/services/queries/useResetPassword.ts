@@ -5,7 +5,7 @@ import { toast } from '@/utils/toast';
 
 type useResetPasswordProps = {
     id: string
-    currentPassword: string
+    currentPassWord: string
     newPassword: string
 };
 
@@ -15,7 +15,7 @@ export function useResetPassword() {
 
     return useMutation({
         mutationFn: ({ id, ...payload }: useResetPasswordProps) =>
-            api.post(`${Endpoints.Users.ResetPassword}/${id}`, payload),
+            api.put(`${Endpoints.Users.ResetPassword}/${id}`, payload),
 
 
         onSuccess: () => {

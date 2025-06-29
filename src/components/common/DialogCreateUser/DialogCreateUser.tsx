@@ -40,7 +40,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
   const [formData, setFormData] = useState({
     name: '',
     fullName: '',
-    roleName: { id: 0, name: '' },
+    roleName: '',
     cpf: '',
     email: '',
     isFirstLogin: true
@@ -55,8 +55,8 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
     if (field === 'cpf' && typeof value === 'string') {
       newValue = formatCpf(value);
     }
-    if (field === 'roleName' && typeof value === 'object' && value !== null) {
-      newValue = { ...formData.roleName, ...value };
+    if (field === 'roleName' && value !== null) {
+      newValue = formData.roleName;
     }
     setFormData((prev) => ({ ...prev, [field]: newValue }));
     setIsDirty(true);
@@ -74,7 +74,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
         name: formData.fullName,
         userName: formData.cpf,
         cpf: formData.cpf.replace(/\D/g, ''),
-        roleName: formData.roleName.name,
+        roleName: formData.roleName,
         email: formData.email,
         isFirstLogin: formData.isFirstLogin,
       };
@@ -85,7 +85,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
           setFormData({
             name: '',
             cpf: '',
-            roleName: { id: 0, name: '' },
+            roleName: '',
             fullName: '',
             email: '',
             isFirstLogin: false,
@@ -138,7 +138,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
       setFormData({
         name: '',
         cpf: '',
-        roleName: { id: 0, name: '' },
+        roleName: '',
         fullName: '',
         email: '',
         isFirstLogin: false,
@@ -194,7 +194,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
           <div className="space-y-2">
             <Label className="text-sm font-medium">Perfil</Label>
             <Select
-              value={formData.roleName.name}
+              value={formData.roleName}
               onValueChange={(value) => {
                 handleInputChange('roleName', { name: value });
               }}

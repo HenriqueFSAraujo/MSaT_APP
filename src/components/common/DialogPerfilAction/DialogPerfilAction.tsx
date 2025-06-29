@@ -13,7 +13,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 const passwordSchema = z
   .object({
-    currentPassword: z.string().min(1, 'A senha atual é obrigatória'),
+    currentPassWord: z.string().min(1, 'A senha atual é obrigatória'),
     newPassword: z.string().min(1, 'A nova senha é obrigatória'),
     confirmPassword: z.string().min(1, 'A confirmação da senha é obrigatória'),
   })
@@ -21,7 +21,7 @@ const passwordSchema = z
     message: 'As senhas não coincidem',
     path: ['confirmPassword'],
   })
-  .refine((data) => data.newPassword !== data.currentPassword, {
+  .refine((data) => data.newPassword !== data.currentPassWord, {
     message: 'A nova senha não pode ser igual à senha atual',
     path: ['newPassword'],
   });
@@ -34,7 +34,7 @@ type DialogPerfilActionProps = {
 
 export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfilActionProps) => {
   const { mutate: updatePassword } = useUpdatePassword();
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [currentPassWord, setcurrentPassWord] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -60,9 +60,9 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
 
   const handleSave = () => {
     setIsDirty(true);
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!currentPassWord || !newPassword || !confirmPassword) {
       const newErrors: Record<string, string> = {};
-      if (!currentPassword) newErrors.currentPassword = 'A senha atual é obrigatória';
+      if (!currentPassWord) newErrors.currentPassWord = 'A senha atual é obrigatória';
       if (!newPassword) newErrors.newPassword = 'A nova senha é obrigatória';
       if (!confirmPassword) newErrors.confirmPassword = 'A confirmação da senha é obrigatória';
       setErrors(newErrors);
@@ -71,12 +71,12 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
     }
 
     try {
-      passwordSchema.parse({ currentPassword, newPassword, confirmPassword });
+      passwordSchema.parse({ currentPassWord, newPassword, confirmPassword });
 
       resetPassword(
         {
           id,
-          currentPassword,
+          currentPassWord,
           newPassword,
         },
         {
@@ -84,15 +84,16 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
             onOpenChange(false);
             toast.success('Senha atualizada com sucesso!');
             // Reset form
-            setCurrentPassword('');
+            setcurrentPassWord('');
             setNewPassword('');
             setConfirmPassword('');
             setErrors({});
             setIsFormValid(false);
             setIsDirty(false);
           },
-          onError: () => {
-            toast.error('Erro ao atualizar a senha. Verifique os dados e tente novamente.');
+          onError: (error: any) => {
+            const message = error?.response?.data?.message || 'Erro ao atualizar a senha. Verifique os dados.';
+            toast.error(message);
           },
         }
       );
@@ -113,31 +114,32 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
   useEffect(() => {
     if (!isDirty) return;
 
-    try {
-      passwordSchema.parse({
-        currentPassword,
-        newPassword,
-        confirmPassword,
-      });
-      setErrors({});
-      setIsFormValid(true);
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        err.errors.forEach((error) => {
-          if (error.path[0]) {
-            newErrors[error.path[0] as string] = error.message;
-          }
-        });
-        setErrors(newErrors);
-        setIsFormValid(false);
+    const timeout = setTimeout(() => {
+      try {
+        passwordSchema.parse({ currentPassWord, newPassword, confirmPassword });
+        setErrors({});
+        setIsFormValid(true);
+      } catch (err) {
+        if (err instanceof z.ZodError) {
+          const newErrors: Record<string, string> = {};
+          err.errors.forEach((error) => {
+            if (error.path[0]) {
+              newErrors[error.path[0] as string] = error.message;
+            }
+          });
+          setErrors(newErrors);
+          setIsFormValid(false);
+        }
       }
-    }
-  }, [currentPassword, newPassword, confirmPassword, isDirty]);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeout);
+  }, [currentPassWord, newPassword, confirmPassword, isDirty]);
+
 
   useEffect(() => {
     if (!open) {
-      setCurrentPassword('');
+      setcurrentPassWord('');
       setNewPassword('');
       setConfirmPassword('');
       setErrors({});
@@ -182,14 +184,14 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
                   type={showCurrent ? 'text' : 'password'}
                   name="fake-password-field"
                   autoComplete="off"
-                  value={currentPassword}
+                  value={currentPassWord}
                   onChange={(e) =>
-                    handleInputChange(e.target.value, setCurrentPassword, currentPassword)
+                    handleInputChange(e.target.value, setcurrentPassWord, currentPassWord)
                   }
                   placeholder="Digite sua senha atual"
                   className={cn(
                     'pl-9 pr-9',
-                    errors.currentPassword ? 'border-red-500 focus-visible:ring-red-500' : ''
+                    errors.currentPassWord ? 'border-red-500 focus-visible:ring-red-500' : ''
                   )}
                 />
                 <button
@@ -200,10 +202,10 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
                   {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.currentPassword && (
+              {errors.currentPassWord && (
                 <div className="flex items-center gap-1 text-red-500 text-xs mt-1">
                   <AlertCircle className="w-3 h-3" />
-                  {errors.currentPassword}
+                  {errors.currentPassWord}
                 </div>
               )}
             </div>
@@ -279,7 +281,7 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
             </Button>
             <Button
               onClick={handleSave}
-              disabled={!isFormValid}
+              disabled={!isFormValid || !isDirty}
               className="px-6 bg-blue-600 hover:bg-blue-700"
             >
               Salvar

@@ -82,7 +82,7 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                 <TableCell className="text-gray-800">{user.email}</TableCell>
                 <TableCell>
                   <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-sm capitalize px-3 py-1 rounded-full font-medium">
-                    {user.roleName.name === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
+                    {user.roleName === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
                   </Badge>
                 </TableCell>
                 <TableCell>

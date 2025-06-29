@@ -7,16 +7,12 @@ export type CreateUserPayload = {
     id: string
     name: string
     userName: string
-    roleName: RoleNameProps
+    roleName: string
     cpf: string
     email: string
     isFirstLogin: boolean
 };
 
-export type RoleNameProps = {
-    id: number
-    name: string
-}
 
 export function useCreateUser() {
     return useMutation({
