@@ -6,9 +6,8 @@ import { useState, useEffect } from 'react';
 import { User, LockKeyhole, Eye, EyeOff, AlertCircle, Shield } from 'lucide-react';
 import { toast } from '@/utils/toast';
 import { z } from 'zod';
-import { useUpdatePassword } from '@/services/queries/useChangePassword';
 import { cn } from "@/lib/utils";
-import { useResetPassword } from "@/services/queries/useResetPassword";
+import { useChangePassword } from "@/services/queries/useChangePassword";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const passwordSchema = z
@@ -33,7 +32,6 @@ type DialogPerfilActionProps = {
 };
 
 export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfilActionProps) => {
-  const { mutate: updatePassword } = useUpdatePassword();
   const [currentPassWord, setcurrentPassWord] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,7 +43,7 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { id } = useAuthStore();
-  const { mutate: resetPassword } = useResetPassword();
+  const { mutate: resetPassword } = useChangePassword();
 
   const handleInputChange = (
     value: string,

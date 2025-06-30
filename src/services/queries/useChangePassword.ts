@@ -1,26 +1,31 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api';
 import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
-type ChangePasswordPayload = {
-    currentPassWord: string;
-    newPassword: string;
+type useChangePasswordProps = {
+    id: string
+    currentPassWord: string
+    newPassword: string
 };
 
-export function useUpdatePassword() {
-    return useMutation({
 
-        mutationFn: (payload: ChangePasswordPayload) =>
-            api.post(Endpoints.Profile.ChangePassword, payload),
+export function useChangePassword() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, ...payload }: useChangePasswordProps) =>
+            api.put(`${Endpoints.Users.ResetPassword}/${id}`, payload),
 
         onSuccess: () => {
-            toast.success('Senha atualizada com sucesso!');
+            toast.success('Senha redefinida com sucesso!');
+            queryClient.invalidateQueries();
         },
 
         onError: () => {
-            toast.error('Erro ao atualizar senha.');
+            toast.error('Erro ao redefinir a senha.');
         },
     });
 }
+
 

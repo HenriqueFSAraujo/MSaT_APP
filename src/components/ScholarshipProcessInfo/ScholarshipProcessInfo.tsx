@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { useTabStore } from '@/store/tabStore';
+import { postScholarshipProcess } from '@/services/queries/forms/ScholarshipProcess/postScholarshipProcess';
+import { useAuthStore } from "@/store/useAuthStore";
 
 type ScholarshipProcessInfoProps = {
   onNext: () => void;
@@ -16,7 +18,8 @@ export function ScholarshipProcessInfo({
   onNext,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBack,
-}: ScholarshipProcessInfoProps): JSX.Element {
+}: ScholarshipProcessInfoProps) {
+  const { id: userId } = useAuthStore();
   // estados no componente
   const [wantsToParticipate, setWantsToParticipate] = useState<'sim' | 'nao' | ''>('');
   const [hadScholarshipLastYear, setHadScholarshipLastYear] = useState<'sim' | 'nao' | ''>('');
@@ -24,13 +27,20 @@ export function ScholarshipProcessInfo({
     '50' | '100' | ''
   >('');
 
+  const { mutate: FormSubmit } = postScholarshipProcess();
+
   const { setFormData, formData } = useScholarshipFormStore();
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   const handleDownloadEdital = () => {
-    // TODO: Implement the download functionality when the file is available
     console.log('Download Edital');
   };
+
+  useEffect(() => {
+    if (hadScholarshipLastYear === 'nao') {
+      setPreviousScholarshipPercentage('');
+    }
+  }, [hadScholarshipLastYear]);
 
   const scholarshipProcessData = formData.scholarship_info;
 
@@ -43,16 +53,29 @@ export function ScholarshipProcessInfo({
   }, [scholarshipProcessData]);
 
   const handleContinue = () => {
-    if (wantsToParticipate !== '' && hadScholarshipLastYear !== '') {
-      setFormData('scholarship_info', {
-        wantsToParticipate: wantsToParticipate as 'sim' | 'nao',
-        hadScholarshipLastYear: hadScholarshipLastYear as 'sim' | 'nao',
-        previousScholarshipPercentage: previousScholarshipPercentage || undefined,
-      });
-    }
+    try {
+      if (wantsToParticipate !== '' && hadScholarshipLastYear !== '') {
+        setFormData('scholarship_info', {
+          wantsToParticipate: wantsToParticipate as 'sim' | 'nao',
+          hadScholarshipLastYear: hadScholarshipLastYear as 'sim' | 'nao',
+          previousScholarshipPercentage: previousScholarshipPercentage || undefined,
+        });
 
-    setSelectedTab('personal_data');
-  };
+        const payload = {
+          userId: Number(userId),
+          currentvaiParticiparPassWord: wantsToParticipate === 'sim',
+          jaFoiContemplado: hadScholarshipLastYear === 'sim',
+          percentual: Number(previousScholarshipPercentage),
+        };
+
+        console.log(payload)
+        FormSubmit(payload);
+        setSelectedTab('personal_data');
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <Card>
@@ -105,11 +128,11 @@ export function ScholarshipProcessInfo({
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="sim" id="participate-yes" />
-                <Label htmlFor="participate-yes">Sim</Label>
+                <Label htmlFor="participate-yes" className='cursor-pointer'>Sim</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="nao" id="participate-no" />
-                <Label htmlFor="participate-no">Não</Label>
+                <Label htmlFor="participate-no" className='cursor-pointer'>Não</Label>
               </div>
             </RadioGroup>
           </div>
@@ -126,11 +149,11 @@ export function ScholarshipProcessInfo({
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="sim" id="scholarship-yes" />
-                <Label htmlFor="scholarship-yes">Sim</Label>
+                <Label htmlFor="scholarship-yes" className='cursor-pointer'>Sim</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="nao" id="scholarship-no" />
-                <Label htmlFor="scholarship-no">Não</Label>
+                <Label htmlFor="scholarship-no" className='cursor-pointer'>Não</Label>
               </div>
             </RadioGroup>
           </div>
@@ -145,11 +168,11 @@ export function ScholarshipProcessInfo({
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="50" id="percentage-50" />
-                  <Label htmlFor="percentage-50">50%</Label>
+                  <Label htmlFor="percentage-50" className='cursor-pointer'>50%</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="100" id="percentage-100" />
-                  <Label htmlFor="percentage-100">100%</Label>
+                  <Label htmlFor="percentage-100" className='cursor-pointer'>100%</Label>
                 </div>
               </RadioGroup>
             </div>

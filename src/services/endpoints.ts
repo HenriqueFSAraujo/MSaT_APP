@@ -9,25 +9,14 @@ export const Endpoints = {
         Login: '/auth/login',
         Logout: '/auth/logout',
     },
-    Profile: {
-        ChangePassword: '/profile/change-password',
-    },
     Forms: {
-        Personal_Data: {
-            List: '/forms',
-            Update: '/personal-data/update',
-        },
-        Relative_Data: {
-            List: '',
-            Update: '/parentes',
-        },
-        Housing_Conditions: {
-            List: '',
-            Update: '/form-condicoes-habitacionais',
-        },
-        Candidates_Address: {
-            List: '',
-            Update: '/enderecos',
-        }
+        SchoolarShip_data: '/api/processo-bolsas',
+        Personal_Data: '/api/forms',
+        Parental_Data: '/api/parentes',
+        Address_Data: '/api/enderecos',
+        //TODO: Ajustar rota dos Docs
+
+        Housing_Data: '/api/form-condicoes-habitacionais',
+        Property_Data: '/api/bens-posses'
     }
 } as const;

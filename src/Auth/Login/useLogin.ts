@@ -18,7 +18,7 @@ export interface LoginResponse {
 }
 
 export interface UserInfoProps {
-    id: string
+    id: number
     name: string
     cpf: string
     email: string
@@ -30,7 +30,7 @@ export interface UserInfoProps {
 }
 
 export interface UserInfo {
-    id: string
+    id: number
     name: string
     cpf: string
     email: string

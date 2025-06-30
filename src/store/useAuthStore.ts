@@ -10,7 +10,7 @@ type AuthStore = UserInfo & {
 export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
-            id: '',
+            id: 0,
             name: '',
             cpf: '',
             email: '',
@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthStore>()(
 
             clearAuthData: () =>
                 set({
-                    id: '',
+                    id: 0,
                     name: '',
                     cpf: '',
                     email: '',
