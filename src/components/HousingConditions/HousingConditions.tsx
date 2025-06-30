@@ -11,7 +11,7 @@ import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { HousingDataPayload, postHousingData } from '@/services/queries/forms/HousingData/postHousingData';
 import { useAuthStore } from '@/store/useAuthStore';
 
-type FormData = z.infer<typeof housingConditionsSchema>;
+type FormData = housingConditionsInfo;
 
 export const HousingConditions = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
@@ -27,7 +27,7 @@ export const HousingConditions = ({ label }: { label: string }) => {
 
   const { handleSubmit } = methods;
 
-  const onSubmit = async (data: housingConditionsInfo) => {
+  const onSubmit = async (data: FormData) => {
     try {
       setFormData('housing_conditions', data);
 
