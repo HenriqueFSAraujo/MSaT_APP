@@ -21,11 +21,8 @@ const userSchema = z.object({
   fullName: z.string().min(1, 'O nome completo é obrigatório'),
   cpf: z.string().min(1, 'O CPF é obrigatório'),
   email: z.string().email('E-mail inválido'),
-  roleName: z.object({
-    name: z.enum(['ROLE_ADMIN', 'ROLE_USER'], {
-      required_error: 'O perfil é obrigatório',
-    }),
-    id: z.number().optional(),
+  roleName: z.enum(['ROLE_ADMIN', 'ROLE_USER'], {
+    required_error: 'O perfil é obrigatório',
   }),
 });
 
@@ -43,7 +40,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
     roleName: '',
     cpf: '',
     email: '',
-    isFirstLogin: true
+    isFirstLogin: true,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -51,17 +48,13 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
   const [isDirty, setIsDirty] = useState(false);
 
   const handleInputChange = (field: string, value: string | { name: string }) => {
-    let newValue: any = value;
+    let newValue: unknown = value;
     if (field === 'cpf' && typeof value === 'string') {
       newValue = formatCpf(value);
-    }
-    if (field === 'roleName' && value !== null) {
-      newValue = formData.roleName;
     }
     setFormData((prev) => ({ ...prev, [field]: newValue }));
     setIsDirty(true);
   };
-
 
   const handleSave = () => {
     setIsDirty(true);
@@ -107,7 +100,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
           }
         });
         setErrors(newErrors);
-        console.log(newErrors)
+        console.log(newErrors);
         toast.error('Por favor, corrija os erros do formulário.');
       }
     }
@@ -176,7 +169,11 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                 {field === 'email' && 'E-mail'}
               </Label>
               <Input
-                value={typeof formData[field as keyof typeof formData] === 'string' ? formData[field as keyof typeof formData] as string : ''}
+                value={
+                  typeof formData[field as keyof typeof formData] === 'string'
+                    ? (formData[field as keyof typeof formData] as string)
+                    : ''
+                }
                 onChange={(e) => handleInputChange(field, e.target.value)}
                 placeholder={`Digite o ${field === 'name' ? 'nome completo' : field}`}
                 className={cn(errors[field] && 'border-red-500 focus-visible:ring-red-500')}
@@ -195,9 +192,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
             <Label className="text-sm font-medium">Perfil</Label>
             <Select
               value={formData.roleName}
-              onValueChange={(value) => {
-                handleInputChange('roleName', { name: value });
-              }}
+              onValueChange={(value) => handleInputChange('roleName', value)}
             >
               <SelectTrigger
                 className={cn(errors.roleName && 'border-red-500 focus-visible:ring-red-500')}
