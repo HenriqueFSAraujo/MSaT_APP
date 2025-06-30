@@ -4,7 +4,7 @@ import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
 type useChangePasswordProps = {
-    id: string
+    id: number
     currentPassWord: string
     newPassword: string
 };
