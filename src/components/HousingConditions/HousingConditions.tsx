@@ -6,13 +6,17 @@ import { toast } from '@/utils/toast';
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
 import { radioGroups } from './form.ds';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { housingConditionsSchema, housingConditionsInfo } from './type/formData';
+import { housingConditionsInfo, housingConditionsSchema } from './type/formData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { HousingDataPayload, postHousingData } from '@/services/queries/forms/HousingData/postHousingData';
+import { useAuthStore } from '@/store/useAuthStore';
 
 type FormData = z.infer<typeof housingConditionsSchema>;
 
 export const HousingConditions = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
+  const { mutate: FormSubmit } = postHousingData();
+  const { id: userId } = useAuthStore();
   const methods = useForm<FormData>({
     resolver: zodResolver(housingConditionsSchema),
     defaultValues: {
@@ -25,14 +29,20 @@ export const HousingConditions = ({ label }: { label: string }) => {
 
   const onSubmit = async (data: housingConditionsInfo) => {
     try {
-      console.log('Dados enviados:', data);
       setFormData('housing_conditions', data);
-      toast.success('Sucesso!', 'Condições de moradia salvas com sucesso!');
+
+      const payload: HousingDataPayload = {
+        userId,
+        ...data,
+      };
+
+      FormSubmit(payload);
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro', 'Ocorreu um erro ao salvar as condições de moradia.');
     }
   };
+
 
   return (
     <FormProvider {...methods}>

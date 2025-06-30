@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const personalDataSchema = z.object({
-  username: z.string().nonempty('Nome completo é obrigatório'),
+  fullName: z.string().nonempty('Nome completo é obrigatório'),
   email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
   cpf: z.string().min(1, 'CPF é obrigatório'),
   rg: z.string().min(1, 'RG é obrigatório'),

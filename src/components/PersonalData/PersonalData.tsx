@@ -10,15 +10,19 @@ import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 import { personalDataSchema, PersonalDataType } from './type/formData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { postPersonalData } from '@/services/queries/forms/PersonalData/postPersonalData';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export const PersonalData = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+  const { mutate: FormSubmit } = postPersonalData();
+  const { id: userId } = useAuthStore();
 
   const methods = useForm<PersonalDataType>({
     resolver: zodResolver(personalDataSchema),
     defaultValues: {
-      username: '',
+      fullName: '',
       email: '',
       cpf: '',
       rg: '',
@@ -40,12 +44,26 @@ export const PersonalData = ({ label }: { label: string }) => {
   const onSubmit = async (data: PersonalDataType) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
+    try {
+      setFormData('personal_data', data);
+      setSelectedTab('parents_data');
 
-    setFormData('personal_data', data);
-    toast.success('Sucesso!', 'Dados enviados com sucesso!');
-    setSelectedTab('parents_data');
-
-    console.log('Dados do formulário:', data);
+      const payload = {
+        userId: userId,
+        fullName: data.fullName,
+        email: data.email,
+        cpf: data.cpf,
+        cpfScholarship: data.cpfScholarship ?? '',
+        phone: data.phone,
+        gender: data.gender,
+        dateBirth: data.dateBirth ? data.dateBirth.toISOString() : '',
+        deficiency: data.deficiency,
+        educasenso: data.educacenso ?? '',
+      }
+      FormSubmit(payload)
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   return (
@@ -61,10 +79,10 @@ export const PersonalData = ({ label }: { label: string }) => {
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 <FormInput
-                  name="username"
+                  name="fullName"
                   label="Nome completo"
                   required
-                  error={errors.username?.message}
+                  error={errors.fullName?.message}
                 />
                 <FormDate
                   name="dateBirth"

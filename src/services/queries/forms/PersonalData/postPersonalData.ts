@@ -3,17 +3,23 @@ import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
 import { toast } from '@/utils/toast';
 
-type getPersonalDataPayload = {
+type postPersonalDataPayload = {
     userId: number
-    currentvaiParticiparPassWord: boolean
-    jaFoiContemplado: boolean
-    percentual: number
+    fullName: string
+    email: string
+    cpf: string
+    cpfScholarship: string
+    phone: string
+    gender: string
+    dateBirth: string
+    deficiency: string
+    educasenso: string
 };
 
-export function getPersonalData() {
+export function postPersonalData() {
     return useMutation({
 
-        mutationFn: (payload: getPersonalDataPayload) =>
+        mutationFn: (payload: postPersonalDataPayload) =>
             api.post(Endpoints.Forms.Personal_Data, payload),
 
         onSuccess: () => {

@@ -9,9 +9,13 @@ import { useViaCep } from '@/hooks/useViaCep';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 import { addressInfoSchema, AddressInfo } from './type/formData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { postAddressData } from '@/services/queries/forms/AddressData/postAddressData';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export const AddressResidence = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
+  const { mutate: FormSubmit } = postAddressData();
+  const { id: userId } = useAuthStore();
   const methods = useForm({
     mode: 'onSubmit',
 
@@ -23,18 +27,6 @@ export const AddressResidence = ({ label }: { label: string }) => {
       zipCode: '',
       referencePoint: '',
       residenceType: '',
-
-      transportUsage: '',
-      travelTime: '',
-      extracurricularActivities: '',
-
-      homePhone: '',
-      workPhone: '',
-      mobilePhone: '',
-      email: '',
-
-      legalGuardian: '',
-      studySegment: '',
       ...(formData.address_info as Partial<AddressInfo>),
     },
   });
@@ -69,16 +61,22 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
   const onSubmit = async (data: AddressInfo) => {
     const isValid = await methods.trigger();
-    console.log('cheguei');
     if (!isValid) {
       toast.error('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
-    setFormData('address_info', data);
-    toast.success('Sucesso!', 'Dados enviados com sucesso!');
-    setSelectedTab('required_documents');
-    console.log('Dados do formulário:', data);
+    try {
+      setFormData('address_info', data);
+      setSelectedTab('required_documents');
+      const payload = {
+        userId: userId,
+        ...data
+      }
+      FormSubmit(payload)
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   return (

@@ -5,7 +5,7 @@ import { toast } from '@/utils/toast';
 
 type postScholarshipProcessPayload = {
     userId: number
-    currentvaiParticiparPassWord: boolean
+    vaiParticipar: boolean
     jaFoiContemplado: boolean
     percentual?: number
 };

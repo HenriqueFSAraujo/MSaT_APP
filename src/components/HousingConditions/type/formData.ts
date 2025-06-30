@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { radioGroups } from '../form.ds';
+import { HousingDataPayload } from '@/services/queries/forms/HousingData/postHousingData';
 
 export const housingConditionsSchema = z.object(
   Object.fromEntries(
@@ -10,4 +11,6 @@ export const housingConditionsSchema = z.object(
   )
 );
 
-export type housingConditionsInfo = z.infer<typeof housingConditionsSchema>;
+export type housingConditionsInfo = Omit<HousingDataPayload, 'userId'>;
+
+

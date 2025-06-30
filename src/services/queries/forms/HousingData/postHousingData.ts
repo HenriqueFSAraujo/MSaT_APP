@@ -3,11 +3,16 @@ import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
 import { toast } from '@/utils/toast';
 
-type HousingDataPayload = {
-    userId: string
-    currentvaiParticiparPassWord: boolean
-    jaFoiContemplado: boolean
-    percentual: number
+export type HousingDataPayload = {
+    userId: number
+    situacaoImovel: string
+    tipoImovel: string
+    estruturaFisica: string
+    esgotoSanitario: string
+    fornecimentoEnergia: string
+    abastecimentoAgua: string
+    doencaCronicaFamilia: string
+    deficienciaFamilia: string
 };
 
 export function postHousingData() {

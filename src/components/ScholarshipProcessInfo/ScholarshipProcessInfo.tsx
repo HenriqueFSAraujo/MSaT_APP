@@ -63,7 +63,7 @@ export function ScholarshipProcessInfo({
 
         const payload = {
           userId: Number(userId),
-          currentvaiParticiparPassWord: wantsToParticipate === 'sim',
+          vaiParticipar: wantsToParticipate === 'sim',
           jaFoiContemplado: hadScholarshipLastYear === 'sim',
           percentual: Number(previousScholarshipPercentage),
         };

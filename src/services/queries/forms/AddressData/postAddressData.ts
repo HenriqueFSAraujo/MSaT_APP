@@ -5,9 +5,12 @@ import { toast } from '@/utils/toast';
 
 type AddressDataPayload = {
     userId: number
-    currentvaiParticiparPassWord: boolean
-    jaFoiContemplado: boolean
-    percentual: number
+    zipCode: string;
+    address: string;
+    neighborhood: string;
+    city: string;
+    referencePoint?: string;
+    residenceType: string;
 };
 
 export function postAddressData() {

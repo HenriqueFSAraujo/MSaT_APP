@@ -9,9 +9,13 @@ import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/opt
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 import { ParentalData, parentalDataSchema } from './type/formData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { postParentalData } from '@/services/queries/forms/ParentalData/postParentalData';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export const ParentalDataForm = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
+  const { mutate: FormSubmit } = postParentalData();
+  const { id: userId } = useAuthStore();
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(parentalDataSchema),
@@ -37,11 +41,27 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
     const isValid = await methods.trigger();
 
     if (!isValid) return;
-
-    setFormData('parents_data', data);
-    toast.success('Sucesso!', 'Dados enviados com sucesso!');
-    console.log('Dados do formulário:', data);
-    setSelectedTab('address_info');
+    try {
+      setFormData('parents_data', data);
+      toast.success('Sucesso!', 'Dados enviados com sucesso!');
+      console.log('Dados do formulário:', data);
+      setSelectedTab('address_info');
+      const payload = {
+        userId: userId,
+        parent1FullName: data.parent1FullName,
+        parent1Cpf: data.parent1Cpf,
+        parent1Phone: data.parent1Phone,
+        parent1MaritalStatus: data.parent1MaritalStatus,
+        parent2FullName: data.parent2FullName,
+        parent2Cpf: data.parent2Cpf,
+        parent2Phone: data.parent2Phone,
+        parent2MaritalStatus: data.parent2MaritalStatus,
+        residesWithBothParents: data.residesWithBothParents,
+      }
+      FormSubmit(payload)
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   return (
