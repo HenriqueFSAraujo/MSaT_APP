@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, Clipboard, X, BookOpenText } from 'lucide-react';
+import { Menu, Clipboard, X, BookOpenText, ClipboardList } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function MobileMenu() {
@@ -10,7 +10,7 @@ export default function MobileMenu() {
   const navigate = useNavigate();
   const closeMenu = () => setOpen(!open);
 
-  const { role } = useAuthStore.getState()
+  const { role } = useAuthStore.getState();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -41,18 +41,30 @@ export default function MobileMenu() {
               className="h-17 w-auto object-contain cursor-pointer"
             />
           </div>
-          {role === "ROLE_ADMIN" &&
-            <Button
-              variant="ghost"
-              className="w-full flex justify-start gap-2 text-white"
-              onClick={() => {
-                navigate('/dashboard-users');
-                closeMenu();
-              }}
-            >
-              <BookOpenText className="h-5 w-5" /> Painel de usuários
-            </Button>
-          }
+          {role === 'ROLE_ADMIN' && (
+            <>
+              <Button
+                variant="ghost"
+                className="w-full flex justify-start gap-2 text-white"
+                onClick={() => {
+                  navigate('/dashboard-users');
+                  closeMenu();
+                }}
+              >
+                <BookOpenText className="h-5 w-5" /> Painel de usuários
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full flex justify-start gap-2 text-white"
+                onClick={() => {
+                  navigate('/socioeconomic-report');
+                  closeMenu();
+                }}
+              >
+                <ClipboardList className="h-5 w-5" /> Parecer Socioeconômico
+              </Button>
+            </>
+          )}
           <Button
             variant="ghost"
             className="w-full flex justify-start gap-2 text-white"

@@ -22,3 +22,35 @@ export const maskCurrency = (value: string) => {
   const reais = (n / 100).toFixed(2);
   return `R$ ${Number(reais).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 };
+
+export const moneyMask = (rawValue: string): (string | RegExp)[] => {
+  // Remove tudo que não é dígito
+  const numbers = rawValue.replace(/\D+/g, '');
+
+  // Se não tem valor, retorna máscara inicial
+  if (numbers.length === 0) {
+    return ['R', '$', ' ', /\d/, ',', /\d/, /\d/];
+  }
+
+  // Converte para número e divide em reais e centavos
+  const amount = parseInt(numbers, 10) / 100;
+
+  // Formata o valor como string no formato monetário
+  const formattedValue = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(amount);
+
+  // Converte a string formatada em uma máscara
+  const mask: (string | RegExp)[] = [];
+  for (let i = 0; i < formattedValue.length; i++) {
+    const char = formattedValue[i];
+    if (/\d/.test(char)) {
+      mask.push(/\d/);
+    } else {
+      mask.push(char);
+    }
+  }
+
+  return mask;
+};

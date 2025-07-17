@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { useFormContext } from 'react-hook-form';
 import { forwardRef } from 'react';
+import { moneyMask } from '@/utils/transformMasks';
 
 interface FormInputProps {
   name: string;
@@ -10,7 +11,7 @@ interface FormInputProps {
   type?: string;
   required?: boolean;
   error?: string;
-  mask?: 'cpf' | 'rg' | 'phone' | 'cep';
+  mask?: 'cpf' | 'rg' | 'phone' | 'cep' | 'money';
   description?: string;
   withMarginTop?: boolean;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -21,12 +22,14 @@ const maskPatterns = {
   cpf: [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   rg: [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
-  cep: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/], // Corrigido para 8 dígitos
+  cep: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/],
+  money: moneyMask,
 };
 
 interface CustomMaskedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  mask: (string | RegExp)[];
+  mask: (string | RegExp)[] | ((value: string) => (string | RegExp)[]);
   guide?: boolean;
+  keepCharPositions?: boolean;
 }
 
 const CustomMaskedInput = forwardRef<HTMLInputElement, CustomMaskedInputProps>((props, ref) => (
@@ -74,12 +77,14 @@ const FormInput = ({
           {mask ? (
             <CustomMaskedInput
               {...field}
-              mask={maskPatterns[mask]}
+              mask={mask === 'money' ? (value) => moneyMask(value) : maskPatterns[mask]}
               guide={false}
-              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
-                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                }`}
+              keepCharPositions={mask === 'money'} // Importante para a máscara de dinheiro
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
+                fieldState.error
+                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+              }`}
               onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 field.onChange(value);
@@ -98,10 +103,11 @@ const FormInput = ({
             <Input
               {...field}
               type={type}
-              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${fieldState.error
-                ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                }`}
+              className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
+                fieldState.error
+                  ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+              }`}
               placeholder="Digite..."
               onBlur={async (e) => {
                 field.onBlur();
