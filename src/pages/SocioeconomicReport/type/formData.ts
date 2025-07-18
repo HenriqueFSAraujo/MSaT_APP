@@ -19,7 +19,47 @@ export const formularioSocioeconomicoSchema = z.object({
   percentualLc187: z.enum(['100%', 'Indeferido'], {
     required_error: 'Percentual conforme a Lei Complementar é obrigatório',
   }),
+
+  beneficiarioProgramaRenda: z.enum(['Sim', 'Não'], {
+    required_error: 'Informe se é beneficiário de Programa de Transferência de Renda',
+  }),
+
+  resideProximoUnidadeEscolar: z.enum(['Sim', 'Não'], {
+    required_error: 'Informe se reside próximo da Unidade Escolar',
+  }),
+
+  candidatoComDeficiencia: z.enum(['Sim', 'Não'], {
+    required_error: 'Informe se o(a) candidato(a)/aluno(a) possui deficiência',
+  }),
+
+  doencaGraveOuDeficienciaFamiliar: z.enum(['Sim', 'Não'], {
+    required_error: 'Informe se há ocorrência de doença grave/deficiência no grupo familiar',
+  }),
+
+  quantidadeMenoresDezoitoAnos: z
+    .string()
+    .min(1, 'Quantidade de membros no grupo familiar com idade inferior a 18 anos é obrigatória'),
+
+  aspectosRelevantes: z.string().optional(),
+
+  resultadoSocioeconomico: z.enum(['Deferido', 'Indeferido'], {
+    required_error: 'Resultado da avaliação socioeconômica é obrigatório',
+  }),
+
+  dataFinalizacaoParecer: z
+    .string()
+    .min(1, 'Data da finalização do parecer é obrigatória'),
 });
+
+export const simNaoOptions = [
+  { value: 'Sim', label: 'Sim' },
+  { value: 'Não', label: 'Não' },
+];
+
+export const avaliacaoOptions = [
+  { value: 'Deferido', label: 'Deferido' },
+  { value: 'Indeferido', label: 'Indeferido' },
+];
 
 export const segmentoCursar2025Options = [
   { value: 'Educação infantil', label: 'Educação infantil' },
