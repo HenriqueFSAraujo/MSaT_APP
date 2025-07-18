@@ -1,6 +1,5 @@
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '../ui/button';
 import { toast } from '@/utils/toast';
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
@@ -8,7 +7,10 @@ import { radioGroups } from './form.ds';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
 import { housingConditionsInfo, housingConditionsSchema } from './type/formData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { HousingDataPayload, postHousingData } from '@/services/queries/forms/HousingData/postHousingData';
+import {
+  HousingDataPayload,
+  postHousingData,
+} from '@/services/queries/forms/HousingData/postHousingData';
 import { useAuthStore } from '@/store/useAuthStore';
 
 type FormData = housingConditionsInfo;
@@ -42,7 +44,6 @@ export const HousingConditions = ({ label }: { label: string }) => {
       toast.error('Erro', 'Ocorreu um erro ao salvar as condições de moradia.');
     }
   };
-
 
   return (
     <FormProvider {...methods}>

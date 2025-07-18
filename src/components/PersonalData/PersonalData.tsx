@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import FormSelect from '../common/FormSelect/FormSelect';
 import FormDate from '../common/FormDate/FormDate';
 import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
 import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/utils/optionsMock';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
@@ -59,10 +58,10 @@ export const PersonalData = ({ label }: { label: string }) => {
         dateBirth: data.dateBirth ? data.dateBirth.toISOString() : '',
         deficiency: data.deficiency,
         educasenso: data.educacenso ?? '',
-      }
-      FormSubmit(payload)
+      };
+      FormSubmit(payload);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
 
