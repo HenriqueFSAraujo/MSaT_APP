@@ -1,17 +1,17 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { BookOpenText } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { Role, UsersFilters } from '@/components/UsersFilters/UsersFilters';
 import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCards';
-import { UsersFilters, Role } from '@/components/UsersFilters/UsersFilters';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
 import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
-import { useGetUsers } from '@/services/queries/useGetUsers';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
+import { Card, CardContent } from '@/components/ui/card';
+import { useGetUsers, User } from '@/services/queries/useGetUsers';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { User } from '@/services/queries/useGetUsers';
+import { BookOpenText } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
-export enum RoleFilter {
+// eslint-disable-next-line react-refresh/only-export-components
+export enum RoleFilter  {
   Aluno = 'ROLE_USER',
   Gestor = 'ROLE_ADMIN',
   Todos = 'Todos',
@@ -45,7 +45,7 @@ export default function UsuariosPage() {
 
   const [changePasswordModal, setChangePasswordModal] = useState(false);
 
-  const { firstLogin, name: nameUser } = useAuthStore();
+  const { firstLogin } = useAuthStore();
 
   useEffect(() => {
     if (firstLogin) {
@@ -153,7 +153,6 @@ export default function UsuariosPage() {
       <DialogPerfilAction
         open={changePasswordModal}
         onOpenChange={setChangePasswordModal}
-        userName={nameUser || ''}
       />
     </main>
   );

@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { cn } from "@/lib/utils";
 import { useChangePassword } from "@/services/queries/useChangePassword";
 import { useAuthStore } from "@/store/useAuthStore";
+import { maskCpfCustom } from '@/utils/transformMasks';
 
 const passwordSchema = z
   .object({
@@ -28,10 +29,10 @@ const passwordSchema = z
 type DialogPerfilActionProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  userName: string;
 };
 
-export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfilActionProps) => {
+export const DialogPerfilAction = ({ open, onOpenChange }: DialogPerfilActionProps) => {
+  const { id, name, email, cpf } = useAuthStore();
   const [currentPassWord, setcurrentPassWord] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -42,7 +43,6 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { id } = useAuthStore();
   const { mutate: resetPassword } = useChangePassword();
 
   const handleInputChange = (
@@ -89,8 +89,23 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
             setIsFormValid(false);
             setIsDirty(false);
           },
-          onError: (error: any) => {
-            const message = error?.response?.data?.message || 'Erro ao atualizar a senha. Verifique os dados.';
+          onError: (error: unknown) => {
+            let message = 'Erro ao atualizar a senha. Verifique os dados.';
+            type ErrorWithResponse = {
+              response?: {
+                data?: {
+                  message?: string;
+                };
+              };
+            };
+            if (
+              typeof error === 'object' &&
+              error !== null &&
+              'response' in error &&
+              (error as ErrorWithResponse).response?.data?.message
+            ) {
+              message = (error as ErrorWithResponse).response?.data?.message as string;
+            }
             toast.error(message);
           },
         }
@@ -155,8 +170,8 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-              <Shield className="h-6 w-6" />
-              Atualização de Senha
+              <User className="h-6 w-6" />
+              Meu perfil
             </DialogTitle>
             <p className="text-blue-100 text-sm mt-2">
               Para sua segurança, escolha uma senha forte e única
@@ -164,14 +179,34 @@ export const DialogPerfilAction = ({ open, onOpenChange, userName }: DialogPerfi
           </DialogHeader>
         </div>
 
-        <div className="p-6">
-          <div className="flex items-center gap-2 mb-6 p-3 bg-blue-50 rounded-lg">
-            <User className="text-blue-600 w-5 h-5" />
+        <div className="flex gap-6 flex-col sm:flex-row sm:items-start p-4 bg-blue-50 rounded-lg text-sm text-blue-900">
+          <User className="text-blue-600 w-5 h-5 mt-1" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
             <div>
-              <Label className="text-sm text-blue-900">Usuário</Label>
-              <p className="text-sm font-medium text-blue-700">{userName}</p>
+              <Label className="text-xs text-blue-700">Nome completo</Label>
+              <p>{name}</p>
+            </div>
+            <div>
+              <Label className="text-xs text-blue-700">E-mail</Label>
+              <p>{email}</p>
+            </div>
+            <div>
+              <Label className="text-xs text-blue-700">CPF</Label>
+              <p>{maskCpfCustom(cpf)}</p>
             </div>
           </div>
+        </div>
+
+        <div className="px-6 pt-4">
+          <div className="text-sm font-semibold text-muted-foreground mb-2 flex gap-1 items-center">
+            <Shield className="h-6 w-6" />
+            <span>Alterar senha</span>
+          </div>
+          <hr />
+        </div>
+
+
+        <div className="p-6">
 
           <div className="space-y-4">
             <div className="space-y-2">

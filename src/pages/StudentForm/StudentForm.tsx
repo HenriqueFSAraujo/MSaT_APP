@@ -18,7 +18,7 @@ const StudentForm = () => {
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
-  const { firstLogin, name: nameUser } = useAuthStore();
+  const { firstLogin } = useAuthStore();
 
   useEffect(() => {
     if (firstLogin) {
@@ -85,7 +85,6 @@ const StudentForm = () => {
       <DialogPerfilAction
         open={changePasswordModal}
         onOpenChange={setChangePasswordModal}
-        userName={nameUser || ''}
       />
     </div>
   );

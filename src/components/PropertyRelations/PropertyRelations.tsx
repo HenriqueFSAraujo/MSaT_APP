@@ -1,29 +1,60 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
-import { dynamicSections, fieldMasksMap } from './form.ds';
-import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { PropertyRelationsSchema, PropertyRelationsInfo } from './type/formData';
+import { postPropertyData } from '@/services/queries/forms/PropertyData/postPropertyData';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { toast } from '@/utils/toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider, useForm } from 'react-hook-form';
+import type { z } from 'zod';
+import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { dynamicSections, fieldMasksMap } from './form.ds';
+import { type PropertyRelationsInfo, PropertyRelationsSchema } from './type/formData';
 
 export const PropertyRelations = ({ label }: { label: string }) => {
+  const { mutate: FormSubmit } = postPropertyData();
+  const { id: userId } = useAuthStore();
   const { setFormData, formData } = useScholarshipFormStore();
   const methods = useForm<z.infer<typeof PropertyRelationsSchema>>({
     resolver: zodResolver(PropertyRelationsSchema),
     mode: 'onSubmit',
     defaultValues: {
-      vehicles: [{ model: '', year: '', usage: '' }],
-      peopleSchool: [{ name: '', school: '', monthlyValue: '' }],
-      peopleDeficiency: [{ name: '', tDeficiency: '', monthlyValue: '' }],
-      expenseBreakdown: [{ expense: '', realValue: '' }],
+      veiculos: [{ marcaModelo: '', anoFabricacao: '', utilizacao: '' }],
+      familiaresEscola: [{ nome: '', escola: '', valorMensal: '' }],
+      pessoasComDeficiencia: [{ nome: '', tipoDeficiencia: '', despesaMensal: '' }],
+      despesasMensais: [{ descricao: '', valor: '' }],
       ...(formData.property_relations as Partial<PropertyRelationsInfo>),
     },
   });
 
   const { handleSubmit } = methods;
+
+
+  const unmaskDigits = (value: string) =>
+    value.replace(/\D/g, '');
+
+
+  const formatPayload = (data: PropertyRelationsInfo, userId: number) => {
+    return {
+      userInfoId: userId,
+      familiaresEscola: data.familiaresEscola.map((item) => ({
+        ...item,
+        valorMensal: unmaskDigits(item.valorMensal),
+      })),
+      pessoasComDeficiencia: data.pessoasComDeficiencia.map((item) => ({
+        ...item,
+        despesaMensal: unmaskDigits(item.despesaMensal),
+      })),
+      despesasMensais: data.despesasMensais.map((item) => ({
+        ...item,
+        valor: unmaskDigits(item.valor),
+      })),
+      veiculos: data.veiculos.map((item) => ({
+        ...item,
+        anoFabricacao: unmaskDigits(item.anoFabricacao).slice(0, 4),
+      })),
+    };
+  };
 
   const getMasksForSection = (fields: string[]) => {
     const masks: Record<string, 'date' | 'currency'> = {};
@@ -40,6 +71,11 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       console.log('Dados enviados:', data);
       setFormData('property_relations', data);
       toast.success('Sucesso!', 'salva com sucesso!');
+
+
+      const payload = formatPayload(data, userId);
+      FormSubmit(payload);
+
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro', 'Ocorreu um erro ao salvar.');

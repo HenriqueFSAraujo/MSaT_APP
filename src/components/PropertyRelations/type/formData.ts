@@ -1,38 +1,41 @@
 import { z } from 'zod';
 
 export const PropertyRelationsSchema = z.object({
-  vehicles: z
+  veiculos: z
     .array(
       z.object({
-        model: z.string().min(1, 'Campo obrigatório'),
-        year: z.string().min(1, 'Campo obrigatório'),
-        usage: z.string().min(1, 'Campo obrigatório'),
+        marcaModelo: z.string().min(1, 'Campo obrigatório'),
+        anoFabricacao: z
+          .string()
+          .min(4, 'Ano inválido')
+          .regex(/^\d{4}$/, 'Ano deve conter 4 dígitos numéricos'),
+        utilizacao: z.string().min(1, 'Campo obrigatório'),
       })
     )
     .min(1, 'Pelo menos uma linha é obrigatória'),
-  peopleSchool: z
+  familiaresEscola: z
     .array(
       z.object({
-        name: z.string().min(1, 'Campo obrigatório'),
-        school: z.string().min(1, 'Campo obrigatório'),
-        monthlyValue: z.string().min(1, 'Campo obrigatório'),
+        nome: z.string().min(1, 'Campo obrigatório'),
+        escola: z.string().min(1, 'Campo obrigatório'),
+        valorMensal: z.string().min(1, 'Campo obrigatório'),
       })
     )
     .min(1, 'Pelo menos uma linha é obrigatória'),
-  peopleDeficiency: z
+  pessoasComDeficiencia: z
     .array(
       z.object({
-        name: z.string().min(1, 'Campo obrigatório'),
-        tDeficiency: z.string().min(1, 'Campo obrigatório'),
-        monthlyValue: z.string().min(1, 'Campo obrigatório'),
+        nome: z.string().min(1, 'Campo obrigatório'),
+        tipoDeficiencia: z.string().min(1, 'Campo obrigatório'),
+        despesaMensal: z.string().min(1, 'Campo obrigatório'),
       })
     )
     .min(1, 'Pelo menos uma linha é obrigatória'),
-  expenseBreakdown: z
+  despesasMensais: z
     .array(
       z.object({
-        expense: z.string().min(1, 'Campo obrigatório'),
-        realValue: z.string().min(1, 'Campo obrigatório'),
+        descricao: z.string().min(1, 'Campo obrigatório'),
+        valor: z.string().min(1, 'Campo obrigatório'),
       })
     )
     .min(1, 'Pelo menos uma linha é obrigatória'),

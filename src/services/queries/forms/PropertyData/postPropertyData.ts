@@ -4,11 +4,38 @@ import { Endpoints } from '../../../endpoints';
 import { toast } from '@/utils/toast';
 
 type PropertyDataPayload = {
-    userId: number
-    currentvaiParticiparPassWord: boolean;
-    jaFoiContemplado: boolean;
-    percentual: number
+    userInfoId: number,
+    veiculos?: Array<veiculoProps>,
+    familiaresEscola?: Array<familiaresEscolaProps>,
+    pessoasComDeficiencia?: Array<pessoasComDeficiencia>,
+    despesasMensais?: Array<despesasMensais>
 };
+
+
+// TODO: Tipar corretamente o payload
+type veiculoProps = {
+    marcaModelo: string
+    anoFabricacao: string
+    utilizacao: string
+}
+
+type familiaresEscolaProps = {
+    nome: string
+    escola: string
+    valorMensal: string
+}
+
+type pessoasComDeficiencia = {
+    nome: string
+    tipoDeficiencia: string
+    despesaMensal: string
+}
+
+type despesasMensais = {
+    descricao: string
+    valor: string
+}
+
 
 export function postPropertyData() {
     return useMutation({

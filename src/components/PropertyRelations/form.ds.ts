@@ -1,37 +1,38 @@
-export const fieldMasksMap: Record<string, 'date' | 'currency'> = {
-  year: 'date',
-  monthlyValue: 'currency',
-  realValue: 'currency',
+export const fieldMasksMap: Record<string, 'currency' | 'date'> = {
+  valorMensal: 'currency',
+  despesaMensal: 'currency',
+  valor: 'currency',
+  anoFabricacao: 'date',
 };
 
 export const dynamicSections = [
   {
-    key: 'vehicles',
+    key: 'veiculos',
     title: 'Relação de Veículos:',
     columns: ['Marca/Modelo', 'Ano de Fabricação', 'Utilização'],
-    fields: ['model', 'year', 'usage'],
+    fields: ['marcaModelo', 'anoFabricacao', 'utilizacao'],
     required: true,
   },
   {
-    key: 'peopleSchool',
+    key: 'familiaresEscola',
     title: 'Familiares em outras escolas particulares:',
     columns: ['Nome', 'Escola', 'Valor da Mensal'],
-    fields: ['name', 'school', 'monthlyValue'],
+    fields: ['nome', 'escola', 'valorMensal'],
     required: true,
   },
   {
-    key: 'peopleDeficiency',
+    key: 'pessoasComDeficiencia',
     title: 'Pessoas com deficiência:',
     columns: ['Nome', 'Tipo de Deficiência', 'Despesa Mensal'],
-    fields: ['name', 'tDeficiency', 'monthlyValue'],
+    fields: ['nome', 'tipoDeficiencia', 'despesaMensal'],
     required: true,
   },
   {
-    key: 'expenseBreakdown',
+    key: 'despesasMensais',
     info: 'Instrução para o preenchimento do quadro: Tipo de despesa a ser informada no campo Discriminação da despesa (ex: Aluguel, Energia elétrica, Telefone fixo e celular, Alimentação, Aquisição, Combustível, Plano de saúde, IPTU, IPVA, imposto de renda, INSS, Transporte escolar, Internet, Educação, Outro tipo de financiamento - favor especificar. Outras despesas).',
     title: 'Despesas mensais básicas:',
     columns: ['Discriminação da Despesa', 'Valores em Reais'],
-    fields: ['expense', 'realValue'],
+    fields: ['descricao', 'valor'],
     required: true,
   },
 ];

@@ -15,10 +15,27 @@ export const maskDate = (value: string) => {
   return '';
 };
 
-export const maskCurrency = (value: string) => {
-  const v = value.replace(/\D/g, '');
-  if (!v) return '';
-  const n = parseInt(v, 10);
-  const reais = (n / 100).toFixed(2);
-  return `R$ ${Number(reais).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-};
+export function maskCurrency(value: string) {
+  const onlyNumbers = value.replace(/\D/g, '');
+
+  if (!onlyNumbers) return '';
+
+  const number = parseInt(onlyNumbers, 10);
+
+  const numberFloat = number / 100;
+
+  return numberFloat.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+}
+
+export function maskCpfCustom(cpf: string): string {
+  const digits = cpf.replace(/\D/g, '');
+
+  if (digits.length !== 11) return cpf;
+
+  return `***.${digits.slice(3, 6)}.***-${digits.slice(9)}`;
+}
+
+

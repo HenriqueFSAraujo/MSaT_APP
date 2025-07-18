@@ -13,6 +13,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown } from 'lucide-react';
 import { User } from '@/services/queries/useGetUsers';
 import { formatCpf } from '@/utils/transformMasks';
+import { DialogChangeStatusUser } from '../common/DialogChangeStatusUser/DialogChangeStatusUser';
+import { useState } from 'react';
 
 interface UsersTableProps {
   users: User[];
@@ -21,9 +23,23 @@ interface UsersTableProps {
   onEdit: (user: User) => void;
 }
 
+type handleStatusModalProps = {
+  status: boolean,
+  userId: number
+}
+
 const statusOptions = ['ativo', 'inativo'];
 
 export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: UsersTableProps) {
+  const [UserStatus, setUserStatus] = useState(false)
+  const [selectedUserID, setSelectedUserID] = useState<number | undefined>()
+  const [openStatusModal, setOpenStatusModal] = useState(false)
+
+  const handleStatusModal = ({ status, userId }: handleStatusModalProps) => {
+    setSelectedUserID(userId)
+    setUserStatus(status)
+    setOpenStatusModal(!openStatusModal)
+  }
   return (
     <div className="overflow-x-auto rounded-2xl border border-gray-200">
       <Table className="w-full rounded-2xl overflow-hidden">
@@ -85,10 +101,10 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                     {user.roleName === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={() => handleStatusModal({ status: user.active, userId: user.userId })}>
                   <Badge
                     className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${user.active === true
-                      ? 'bg-green-100 text-green-800 border-green-200'
+                      ? 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100 hover:text-green-900 hover:border-green-300'
                       : user.active === false
                         ? 'bg-red-100 text-red-800 border-red-200'
                         : 'bg-gray-100 text-gray-700 border-gray-300'
@@ -107,6 +123,7 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
           )}
         </TableBody>
       </Table>
+      <DialogChangeStatusUser status={UserStatus} open={openStatusModal} onOpenChange={setOpenStatusModal} userId={selectedUserID} />
     </div>
   );
 }

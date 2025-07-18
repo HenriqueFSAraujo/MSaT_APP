@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import MenuComponent from '@/components/Menu/menu';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { User, LogOut } from 'lucide-react';
-import MenuComponent from '@/components/Menu/menu';
 import { useTabStore } from '@/store/tabStore';
-import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
 import { useAuthStore } from '@/store/useAuthStore';
+import { LogOut, User } from 'lucide-react';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { DialogLogOut } from '../common/DialogLogOut/DialogLogOut';
+import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
 
 interface HeaderProps {
   shouldRender?: boolean;
@@ -127,7 +127,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <DialogPerfilAction open={openModal} onOpenChange={setOpenModal} userName={nameUser || ''} />
+      <DialogPerfilAction open={openModal} onOpenChange={setOpenModal} />
       <DialogLogOut open={openModalLogOut} onOpenChange={setOpenModalLogOut} />
     </header>
   );
