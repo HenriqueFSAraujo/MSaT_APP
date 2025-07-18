@@ -35,7 +35,7 @@ const AppRoutes = () => {
           element={isAuthenticated && role === 'ROLE_ADMIN' ? <Users /> : <Navigate to="/" />}
         />
         <Route
-          path="/socioeconomic-report"
+          path="/socioeconomic-report/:id"
           element={
             isAuthenticated && role === 'ROLE_ADMIN' ? <SocioeconomicReport /> : <Navigate to="/" />
           }

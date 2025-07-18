@@ -10,36 +10,42 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ClipboardList } from 'lucide-react';
 import { User } from '@/services/queries/useGetUsers';
 import { formatCpf } from '@/utils/transformMasks';
 import { DialogChangeStatusUser } from '../common/DialogChangeStatusUser/DialogChangeStatusUser';
+import { TooltipAction } from '../common/TooltipAction/TooltipAction';
 import { useState } from 'react';
 
 interface UsersTableProps {
   users: User[];
   statusFilter?: string[];
   onStatusChange: (status: string) => void;
-  onEdit: (user: User) => void;
+  generateOpinion: (studantId: number) => void;
 }
 
 type handleStatusModalProps = {
-  status: boolean,
-  userId: number
-}
+  status: boolean;
+  userId: number;
+};
 
 const statusOptions = ['ativo', 'inativo'];
 
-export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: UsersTableProps) {
-  const [UserStatus, setUserStatus] = useState(false)
-  const [selectedUserID, setSelectedUserID] = useState<number | undefined>()
-  const [openStatusModal, setOpenStatusModal] = useState(false)
+export function UsersTable({
+  users,
+  statusFilter,
+  onStatusChange,
+  generateOpinion,
+}: UsersTableProps) {
+  const [UserStatus, setUserStatus] = useState(false);
+  const [selectedUserID, setSelectedUserID] = useState<number | undefined>();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
 
   const handleStatusModal = ({ status, userId }: handleStatusModalProps) => {
-    setSelectedUserID(userId)
-    setUserStatus(status)
-    setOpenStatusModal(!openStatusModal)
-  }
+    setSelectedUserID(userId);
+    setUserStatus(status);
+    setOpenStatusModal(!openStatusModal);
+  };
   return (
     <div className="overflow-x-auto rounded-2xl border border-gray-200">
       <Table className="w-full rounded-2xl overflow-hidden">
@@ -101,29 +107,44 @@ export function UsersTable({ users, statusFilter, onStatusChange, onEdit }: User
                     {user.roleName === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
                   </Badge>
                 </TableCell>
-                <TableCell onClick={() => handleStatusModal({ status: user.active, userId: user.userId })}>
+                <TableCell
+                  onClick={() => handleStatusModal({ status: user.active, userId: user.userId })}
+                >
                   <Badge
-                    className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${user.active === true
-                      ? 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100 hover:text-green-900 hover:border-green-300'
-                      : user.active === false
-                        ? 'bg-red-100 text-red-800 border-red-200'
-                        : 'bg-gray-100 text-gray-700 border-gray-300'
-                      }`}
+                    className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${
+                      user.active === true
+                        ? 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100 hover:text-green-900 hover:border-green-300'
+                        : user.active === false
+                          ? 'bg-red-100 text-red-800 border-red-200'
+                          : 'bg-gray-100 text-gray-700 border-gray-300'
+                    }`}
                   >
                     {user.active ? 'Ativo' : 'Inativo'}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  <Button size="sm" variant="outline" onClick={() => onEdit(user)}>
-                    Editar
-                  </Button>
+                <TableCell className="flex align-center gap-2">
+                  <TooltipAction text="Gerar parecer do aluno">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => generateOpinion(user.userId)}
+                      className="p-2"
+                    >
+                      <ClipboardList className="h-5 w-5" />
+                    </Button>
+                  </TooltipAction>
                 </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
-      <DialogChangeStatusUser status={UserStatus} open={openStatusModal} onOpenChange={setOpenStatusModal} userId={selectedUserID} />
+      <DialogChangeStatusUser
+        status={UserStatus}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+        userId={selectedUserID}
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import {
   avaliacaoOptions,
   FormularioSocioeconomicoData,
@@ -17,6 +18,7 @@ import {
 } from './type/formData';
 
 export default function SocioeconomicReport() {
+  const { id: StudentId } = useParams<{ id: string }>();
   const methods = useForm<FormularioSocioeconomicoData>({
     mode: 'onSubmit',
     resolver: zodResolver(formularioSocioeconomicoSchema),
@@ -50,6 +52,7 @@ export default function SocioeconomicReport() {
   const onSubmit = (data: FormularioSocioeconomicoData) => {
     console.log('Form Data:', data);
   };
+  console.log(StudentId);
 
   return (
     <div className="min-h-auto bg-background">
@@ -143,7 +146,7 @@ export default function SocioeconomicReport() {
                       required
                     />
                   </div>
-                   <CardDescription className="text-md text-center my-5 text-muted-foreground font-bold p-2">
+                  <CardDescription className="text-md text-center my-5 text-muted-foreground font-bold p-2">
                     INFORMAÇÕES ADICIONAIS
                   </CardDescription>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 items-start">
@@ -161,7 +164,7 @@ export default function SocioeconomicReport() {
                       options={simNaoOptions}
                       required
                     />
-                     <RadioButtonGroup
+                    <RadioButtonGroup
                       name="candidatoComDeficiencia"
                       label="Candidato/Aluno com deficiência"
                       orientation="horizontal"

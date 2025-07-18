@@ -9,9 +9,10 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { BookOpenText } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line react-refresh/only-export-components
-export enum RoleFilter  {
+export enum RoleFilter {
   Aluno = 'ROLE_USER',
   Gestor = 'ROLE_ADMIN',
   Todos = 'Todos',
@@ -28,6 +29,8 @@ export default function UsuariosPage() {
 
   const { data: users = [] } = useGetUsers();
 
+  const navigate = useNavigate();
+
   const normalizedUsers: User[] = users.map((user) => {
     let roleName = user.roleName;
 
@@ -41,7 +44,6 @@ export default function UsuariosPage() {
       email: user.email ?? null,
     };
   });
-
 
   const [changePasswordModal, setChangePasswordModal] = useState(false);
 
@@ -80,8 +82,8 @@ export default function UsuariosPage() {
     setOpenModal(!openModal);
   };
 
-  const handleEditUser = (user: unknown) => {
-    console.log('Edit user:', user);
+  const handleEditUser = (StudantId: number) => {
+    navigate(`/socioeconomic-report/${StudantId}`);
   };
 
   const filteredUsers = useMemo(() => {
@@ -98,7 +100,9 @@ export default function UsuariosPage() {
 
       const searchTerm = filters.searchTerm.toLowerCase();
       const matchesSearch = searchableFields.some((field) =>
-        String(user[field] ?? '').toLowerCase().includes(searchTerm)
+        String(user[field] ?? '')
+          .toLowerCase()
+          .includes(searchTerm)
       );
 
       const matchesStatus =
@@ -143,17 +147,14 @@ export default function UsuariosPage() {
             users={filteredUsers}
             statusFilter={filters.status}
             onStatusChange={toggleStatus}
-            onEdit={handleEditUser}
+            generateOpinion={handleEditUser}
           />
         </CardContent>
       </Card>
 
       <DialogCreateUser open={openModal} onOpenChange={setOpenModal} />
 
-      <DialogPerfilAction
-        open={changePasswordModal}
-        onOpenChange={setChangePasswordModal}
-      />
+      <DialogPerfilAction open={changePasswordModal} onOpenChange={setChangePasswordModal} />
     </main>
   );
 }
