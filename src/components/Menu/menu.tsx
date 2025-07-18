@@ -15,13 +15,7 @@ export default function MobileMenu() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-          className="group p-2 h-10 w-10"
-          onClick={() => {
-            navigate('/');
-          }}
-        >
+        <Button variant="ghost" className="group p-2 h-10 w-10">
           <Menu className="h-6 w-6 text-white group-hover:text-slate-800" />
         </Button>
       </SheetTrigger>

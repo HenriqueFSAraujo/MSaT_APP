@@ -10,7 +10,7 @@ import { useTabStore } from '@/store/tabStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { LogOut, User } from 'lucide-react';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DialogLogOut } from '../common/DialogLogOut/DialogLogOut';
 import { DialogPerfilAction } from '../common/DialogPerfilAction/DialogPerfilAction';
 
@@ -19,6 +19,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ shouldRender = true }: HeaderProps) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -26,7 +27,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const closeMenu = () => setOpen(!open);
 
-  const { name: nameUser } = useAuthStore.getState();
+  const { name: nameUser, role } = useAuthStore();
 
   const isLoginPage =
     location.pathname === '/login' || location.pathname.startsWith('/cadastrarSenha/');
@@ -42,8 +43,11 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
     }
   };
 
-  const backToFirstTab = () => {
+  const handleClickMenu = () => {
     setSelectedTab('scholarship_info');
+
+    if (role === 'ROLE_ADMIN') return navigate('/dashboard-Users');
+    navigate('/students-form');
   };
 
   if (!shouldRender) return null;
@@ -80,7 +84,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           src="https://agostinianas.com.br/wp-content/uploads/2020/12/logo-congregacao-branco.svg"
           alt="Logo"
           className="h-16 w-auto object-contain cursor-pointer"
-          onClick={backToFirstTab}
+          onClick={handleClickMenu}
         />
       </div>
 
