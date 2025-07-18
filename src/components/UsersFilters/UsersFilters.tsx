@@ -33,14 +33,18 @@ export function UsersFilters({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-4">
       <div className="relative w-full sm:w-[250px]">
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder="Pesquisar"
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-4 pr-10 py-2 border rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
+        <form autoComplete="off">
+          <input
+            type="text"
+            name="search-filter"
+            autoComplete="new-password"
+            placeholder="Pesquisar"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="w-full pl-4 pr-10 py-2 border rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+        </form>
+
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
           <svg
             xmlns="http://www.w3.org/2000/svg"

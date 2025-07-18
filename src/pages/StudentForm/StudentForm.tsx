@@ -13,14 +13,17 @@ import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/Dialo
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { useParams } from 'react-router-dom';
 
 const StudentForm = () => {
+  const { id: StudentId } = useParams<{ id: string }>();
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
   const { firstLogin } = useAuthStore();
 
   useEffect(() => {
+    console.log(StudentId);
     if (firstLogin) {
       setChangePasswordModal(true);
     }
@@ -82,10 +85,7 @@ const StudentForm = () => {
           </Tabs>
         </div>
       </div>
-      <DialogPerfilAction
-        open={changePasswordModal}
-        onOpenChange={setChangePasswordModal}
-      />
+      <DialogPerfilAction open={changePasswordModal} onOpenChange={setChangePasswordModal} />
     </div>
   );
 };

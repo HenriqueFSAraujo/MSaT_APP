@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronDown, ClipboardList } from 'lucide-react';
+import { ChevronDown, ClipboardList, FilePenLine } from 'lucide-react';
 import { User } from '@/services/queries/useGetUsers';
 import { formatCpf } from '@/utils/transformMasks';
 import { DialogChangeStatusUser } from '../common/DialogChangeStatusUser/DialogChangeStatusUser';
@@ -22,6 +22,7 @@ interface UsersTableProps {
   statusFilter?: string[];
   onStatusChange: (status: string) => void;
   generateOpinion: (studantId: number) => void;
+  goesForm: (studantId: number) => void;
 }
 
 type handleStatusModalProps = {
@@ -36,10 +37,44 @@ export function UsersTable({
   statusFilter,
   onStatusChange,
   generateOpinion,
+  goesForm,
 }: UsersTableProps) {
   const [UserStatus, setUserStatus] = useState(false);
   const [selectedUserID, setSelectedUserID] = useState<number | undefined>();
   const [openStatusModal, setOpenStatusModal] = useState(false);
+
+  const OpinionButton = (user: User) => (
+    <TooltipAction text="Gerar parecer do aluno">
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => generateOpinion(user.userId)}
+        className="p-2"
+      >
+        <ClipboardList className="h-5 w-5" />
+      </Button>
+    </TooltipAction>
+  );
+
+  const StudentButton = (user: User) => (
+    <TooltipAction text="Visualizar formulário">
+      <Button size="sm" variant="outline" onClick={() => goesForm(user.userId)} className="p-2">
+        <FilePenLine className="h-5 w-5" />
+      </Button>
+    </TooltipAction>
+  );
+
+  const renderActionButtons = (user: User) => {
+    if (user.roleName === 'ROLE_ADMIN') {
+      return <></>;
+    } else {
+      return (
+        <>
+          {StudentButton(user)} {OpinionButton(user)}
+        </>
+      );
+    }
+  };
 
   const handleStatusModal = ({ status, userId }: handleStatusModalProps) => {
     setSelectedUserID(userId);
@@ -123,16 +158,7 @@ export function UsersTable({
                   </Badge>
                 </TableCell>
                 <TableCell className="flex align-center gap-2">
-                  <TooltipAction text="Gerar parecer do aluno">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => generateOpinion(user.userId)}
-                      className="p-2"
-                    >
-                      <ClipboardList className="h-5 w-5" />
-                    </Button>
-                  </TooltipAction>
+                  {renderActionButtons(user)}
                 </TableCell>
               </TableRow>
             ))

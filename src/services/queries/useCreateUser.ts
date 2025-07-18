@@ -1,37 +1,40 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api';
 import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
 export type CreateUserPayload = {
-    id: string
-    name: string
-    userName: string
-    roleName: string
-    cpf: string
-    email: string
-    isFirstLogin: boolean
+  id: string;
+  name: string;
+  userName: string;
+  roleName: string;
+  cpf: string;
+  email: string;
+  isFirstLogin: boolean;
 };
 
-
 export function useCreateUser() {
-    return useMutation({
-        mutationFn: async (payload: CreateUserPayload) => {
-            const token = localStorage.getItem('token');
+  const queryClient = useQueryClient();
 
-            return api.post(Endpoints.Users.List, payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-        },
+  return useMutation({
+    mutationKey: ['create-user'],
+    mutationFn: async (payload: CreateUserPayload) => {
+      const token = localStorage.getItem('token');
 
-        onSuccess: () => {
-            toast.success('Senha atualizada com sucesso!');
+      return api.post(Endpoints.Users.List, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
+      });
+    },
 
-        onError: () => {
-            toast.error('Erro ao atualizar senha.');
-        },
-    });
+    onSuccess: () => {
+      toast.success('Senha atualizada com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+
+    onError: () => {
+      toast.error('Erro ao atualizar senha.');
+    },
+  });
 }

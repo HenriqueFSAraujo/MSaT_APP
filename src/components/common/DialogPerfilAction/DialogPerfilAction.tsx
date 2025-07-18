@@ -6,9 +6,9 @@ import { useState, useEffect } from 'react';
 import { User, LockKeyhole, Eye, EyeOff, AlertCircle, Shield } from 'lucide-react';
 import { toast } from '@/utils/toast';
 import { z } from 'zod';
-import { cn } from "@/lib/utils";
-import { useChangePassword } from "@/services/queries/useChangePassword";
-import { useAuthStore } from "@/store/useAuthStore";
+import { cn } from '@/lib/utils';
+import { useChangePassword } from '@/services/queries/useChangePassword';
+import { useAuthStore } from '@/store/useAuthStore';
 import { maskCpfCustom } from '@/utils/transformMasks';
 
 const passwordSchema = z
@@ -80,7 +80,6 @@ export const DialogPerfilAction = ({ open, onOpenChange }: DialogPerfilActionPro
         {
           onSuccess: () => {
             onOpenChange(false);
-            toast.success('Senha atualizada com sucesso!');
             // Reset form
             setcurrentPassWord('');
             setNewPassword('');
@@ -149,7 +148,6 @@ export const DialogPerfilAction = ({ open, onOpenChange }: DialogPerfilActionPro
     return () => clearTimeout(timeout);
   }, [currentPassWord, newPassword, confirmPassword, isDirty]);
 
-
   useEffect(() => {
     if (!open) {
       setcurrentPassWord('');
@@ -205,9 +203,7 @@ export const DialogPerfilAction = ({ open, onOpenChange }: DialogPerfilActionPro
           <hr />
         </div>
 
-
         <div className="p-6">
-
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm font-medium">Senha Atual</Label>

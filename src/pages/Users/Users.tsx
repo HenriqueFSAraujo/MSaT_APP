@@ -86,6 +86,10 @@ export default function UsuariosPage() {
     navigate(`/socioeconomic-report/${StudantId}`);
   };
 
+  const goesForm = (StudantId: number) => {
+    navigate(`/students-form/${StudantId}`);
+  };
+
   const filteredUsers = useMemo(() => {
     const roleLabelToApi: Record<Role, string> = {
       Aluno: 'ROLE_USER',
@@ -148,6 +152,7 @@ export default function UsuariosPage() {
             statusFilter={filters.status}
             onStatusChange={toggleStatus}
             generateOpinion={handleEditUser}
+            goesForm={goesForm}
           />
         </CardContent>
       </Card>

@@ -4,28 +4,26 @@ import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
 type useChangePasswordProps = {
-    id: number
-    currentPassWord: string
-    newPassword: string
+  id: number;
+  currentPassWord: string;
+  newPassword: string;
 };
 
-
 export function useChangePassword() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: ({ id, ...payload }: useChangePasswordProps) =>
-            api.put(`${Endpoints.Users.ResetPassword}/${id}`, payload),
+  return useMutation({
+    mutationKey: ['status-user'],
+    mutationFn: ({ id, ...payload }: useChangePasswordProps) =>
+      api.put(`${Endpoints.Users.ResetPassword}/${id}`, payload),
 
-        onSuccess: () => {
-            toast.success('Senha redefinida com sucesso!');
-            queryClient.invalidateQueries();
-        },
+    onSuccess: () => {
+      toast.success('Senha redefinida com sucesso!');
+      queryClient.invalidateQueries();
+    },
 
-        onError: () => {
-            toast.error('Erro ao redefinir a senha.');
-        },
-    });
+    onError: () => {
+      toast.error('Erro ao redefinir a senha.');
+    },
+  });
 }
-
-

@@ -2,15 +2,44 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, Clipboard, X, BookOpenText } from 'lucide-react';
+import { Menu, X, BookOpenText, LayoutDashboard } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const closeMenu = () => setOpen(!open);
-
+  const closeMenu = () => setOpen(false);
   const { role } = useAuthStore.getState();
+
+  const menuAdminButtons = (
+    <>
+      <Button
+        variant="ghost"
+        className="w-full flex justify-start gap-2 text-white"
+        onClick={() => {
+          navigate('/dashboard-users');
+          closeMenu();
+        }}
+      >
+        <BookOpenText className="h-5 w-5" />
+        Painel de usuários
+      </Button>
+    </>
+  );
+
+  const menuStudentButton = (
+    <Button
+      variant="ghost"
+      className="w-full flex justify-start gap-2 text-white"
+      onClick={() => {
+        navigate('/student-portal/undefined');
+        closeMenu();
+      }}
+    >
+      <LayoutDashboard className="h-5 w-5" />
+      Painel do aluno
+    </Button>
+  );
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -33,6 +62,7 @@ export default function MobileMenu() {
         >
           <X className="w-4 h-4" />
         </Button>
+
         <nav className="mt-8 space-y-4">
           <div className="flex items-center justify-center mb-4">
             <img
@@ -41,31 +71,7 @@ export default function MobileMenu() {
               className="h-17 w-auto object-contain cursor-pointer"
             />
           </div>
-          {role === 'ROLE_ADMIN' && (
-            <>
-              <Button
-                variant="ghost"
-                className="w-full flex justify-start gap-2 text-white"
-                onClick={() => {
-                  navigate('/dashboard-users');
-                  closeMenu();
-                }}
-              >
-                <BookOpenText className="h-5 w-5" /> Painel de usuários
-              </Button>
-            </>
-          )}
-          <Button
-            variant="ghost"
-            className="w-full flex justify-start gap-2 text-white"
-            onClick={() => {
-              navigate('/students-form');
-              closeMenu();
-            }}
-          >
-            <Clipboard className="h-5 w-5" />
-            Formulário do cadidato
-          </Button>
+          {role === 'ROLE_ADMIN' ? menuAdminButtons : menuStudentButton}
         </nav>
       </SheetContent>
     </Sheet>

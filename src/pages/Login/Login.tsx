@@ -39,6 +39,7 @@ export default function LoginPage() {
         password: formData.password,
       };
       await loginMutation.mutateAsync(payload);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setError('Usuário ou senha inválidos.');
     }

@@ -1,8 +1,5 @@
-import AppRoutes from '@/routes';
+import { AppRoutes } from '@/routes/index';
 import { Toaster } from 'sonner';
-import { QueryClient } from '@tanstack/react-query'
-
-const queryClient = new QueryClient();
 
 function App() {
   return (
@@ -10,8 +7,7 @@ function App() {
       <AppRoutes />
       <Toaster position="bottom-right" richColors closeButton expand={false} />
     </>
-  )
+  );
 }
 
-export default App
-
+export default App;
