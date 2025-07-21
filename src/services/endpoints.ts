@@ -1,22 +1,22 @@
 export const Endpoints = {
     Users: {
-        List: '/api/users',
+        List: '/users',
         Profile: '/users/profile',
-        ResetPassword: `/api/users/reset-password`,
-        DisableUser: `/api/users/deactivate`
+        ResetPassword: `/users/reset-password`,
+        DisableUser: `/users/deactivate`
     },
     Auth: {
         Login: '/auth/login',
         Logout: '/auth/logout',
     },
     Forms: {
-        SchoolarShip_data: '/api/processo-bolsas',
-        Personal_Data: '/api/forms',
-        Parental_Data: '/api/parentes',
-        Address_Data: '/api/enderecos',
+        SchoolarShip_data: '/processo-bolsas',
+        Personal_Data: '/forms',
+        Parental_Data: '/parentes',
+        Address_Data: '/enderecos',
         //TODO: Ajustar rota dos Docs
 
-        Housing_Data: '/api/form-condicoes-habitacionais',
-        Property_Data: '/api/bens-posses'
+        Housing_Data: '/form-condicoes-habitacionais',
+        Property_Data: '/bens-posses'
     }
 } as const;
