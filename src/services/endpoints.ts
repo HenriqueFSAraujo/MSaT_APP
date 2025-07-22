@@ -3,7 +3,9 @@ export const Endpoints = {
         List: '/users',
         Profile: '/users/profile',
         ResetPassword: `/users/reset-password`,
-        DisableUser: `/users/deactivate`
+        DisableUser: `/users/deactivate`,
+        Parecer: '/parecer-socioeconomico',
+        PDFParecer: '/gerar-parecer'
     },
     Auth: {
         Login: '/auth/login',

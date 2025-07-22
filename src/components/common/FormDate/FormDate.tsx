@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
-import { FieldError, Merge, FieldErrorsImpl, useFormContext } from 'react-hook-form';
+import React, { useState } from 'react';
+import { FieldError, FieldErrorsImpl, Merge, useFormContext } from 'react-hook-form';
 
 interface FormDateProps {
   name: string;
@@ -67,8 +67,8 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, erro
                 }`}
               >
                 {field.value
-                  ? format(new Date(field.value), 'dd/MM/yyyy', { locale: ptBR })
-                  : 'clique para selecionar data'}
+                ? format(field.value, 'dd/MM/yyyy', { locale: ptBR })
+                : 'Clique para selecionar data'}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -109,7 +109,7 @@ const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, erro
 
               <Calendar
                 mode="single"
-                selected={field.value ? new Date(field.value) : undefined}
+                selected={field.value instanceof Date ? field.value : undefined}
                 onSelect={(date) => {
                   setValue(name, date);
                   setOpen(false);

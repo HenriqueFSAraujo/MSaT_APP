@@ -5,6 +5,7 @@ import FormTextarea from '@/components/common/FormTextarea/FormTextarea';
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSocioeconomic } from '@/services/queries/useSocioeconomic';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
@@ -19,29 +20,30 @@ import {
 
 export default function SocioeconomicReport() {
   const { id: StudentId } = useParams<{ id: string }>();
+  const { mutate } = useSocioeconomic();
   const methods = useForm<FormularioSocioeconomicoData>({
     mode: 'onSubmit',
     resolver: zodResolver(formularioSocioeconomicoSchema),
     defaultValues: {
       nomeAluno: '',
-      dataNascimentoAluno: '',
+      dataNascimentoAluno: undefined,
       segmentoCursar2025: '',
       nomeResponsavel: '',
       cpfResponsavel: '',
       telefoneResponsavel: '',
-      rendaBrutaFamiliar: '',
-      quantidadePessoasFamilia: '',
-      rendaPerCapita: '',
-      rendaPerCapitaSalarioMinimo: '',
+      rendaBrutaFamiliar: undefined,
+      totalComponentesFamilar: undefined,
+      rendaPerCapita: undefined,
+      rendaPerCapitaSalarioMinimo: undefined,
       percentualLc187: undefined,
       beneficiarioProgramaRenda: undefined,
       resideProximoUnidadeEscolar: undefined,
       candidatoComDeficiencia: undefined,
       doencaGraveOuDeficienciaFamiliar: undefined,
-      quantidadeMenoresDezoitoAnos: '',
+      quantidadeMenoresDezoitoAnos: undefined,
       aspectosRelevantes: '',
       resultadoSocioeconomico: undefined,
-      dataFinalizacaoParecer: '',
+      dataFinalizacaoParecer: new Date(),
     },
   });
 
@@ -50,9 +52,19 @@ export default function SocioeconomicReport() {
   } = methods;
 
   const onSubmit = (data: FormularioSocioeconomicoData) => {
-    console.log('Form Data:', data);
+    console.log('cheguei')
+    // const cleanedData = {
+    //   ...data,
+    //   rendaBrutaFamiliar: parseCurrency(data.rendaBrutaFamiliar),
+    //   rendaPerCapita: parseCurrency(data.rendaPerCapita),
+    //   rendaPerCapitaSalarioMinimo: parseCurrency(data.rendaPerCapitaSalarioMinimo),
+    // };
+
+    mutate({
+      userId: Number(StudentId),
+      ...data,
+    });
   };
-  console.log(StudentId);
 
   return (
     <div className="min-h-auto bg-background">
@@ -121,9 +133,9 @@ export default function SocioeconomicReport() {
                       required
                     />
                     <FormInput
-                      name="quantidadePessoasFamilia"
+                      name="totalComponentesFamilar"
                       label="Total de componentes no grupo familiar"
-                      mask="money"
+                      type='number'
                       required
                     />
                     <FormInput

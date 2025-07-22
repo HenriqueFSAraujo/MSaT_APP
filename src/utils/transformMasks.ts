@@ -69,3 +69,12 @@ export const moneyMask = (rawValue: string): (string | RegExp)[] => {
 
   return mask;
 };
+
+export function parseCurrency(value: string): string {
+  return value
+    .replace(/\s/g, '')
+    .replace('R$', '')        // Remove o símbolo de moeda
+    .replace(/\./g, '')       // Remove pontos de milhar
+    .replace(',', '.');       // Troca vírgula decimal por ponto
+}
+

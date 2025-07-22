@@ -44,7 +44,7 @@ const FormTextarea = ({
     <FormField
       control={control}
       name={name}
-      render={({ fieldState }) => (
+      render={({ field, fieldState }) => (
         <FormItem
           className={`relative flex flex-col w-full ${withMarginTop ? 'mt-6' : ''}`}
         >
@@ -56,6 +56,7 @@ const FormTextarea = ({
           </FormLabel>
 
           <textarea
+           {...field}
             className={cn(
               'w-full resize-none overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm',
               'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -64,9 +65,14 @@ const FormTextarea = ({
             onInput={(e) => {
               e.currentTarget.style.height = '46.22px'
               e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`
+              field.onChange(e);
             }}
             rows={1}
             placeholder="Digite..."
+            ref={(el) => {
+              textareaRef.current = el;
+              field.ref(el);
+            }}
           />
 
 

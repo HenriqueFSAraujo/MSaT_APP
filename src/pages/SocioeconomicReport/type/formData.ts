@@ -2,53 +2,90 @@ import { z } from 'zod';
 
 export const formularioSocioeconomicoSchema = z.object({
   nomeAluno: z.string().min(1, 'Nome do(a) aluno(a) é obrigatório'),
-  dataNascimentoAluno: z.string().min(1, 'Data de nascimento é obrigatória'),
+  dataNascimentoAluno: z
+   .date({
+      required_error: 'Data de nascimento é obrigatória',
+      invalid_type_error: 'Formato inválido de data',
+    })
+     .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
+
   segmentoCursar2025: z.string().min(1, 'Segmento a cursar é obrigatório'),
 
   nomeResponsavel: z.string().min(1, 'Nome do(a) responsável é obrigatório'),
   cpfResponsavel: z.string().min(1, 'CPF do(a) responsável é obrigatório'),
   telefoneResponsavel: z.string().optional(),
 
-  rendaBrutaFamiliar: z.string().min(1, 'Renda bruta mensal familiar é obrigatória'),
-  quantidadePessoasFamilia: z
-    .string()
-    .min(1, 'Número de componentes do grupo familiar é obrigatório'),
-  rendaPerCapita: z.string().optional(),
-  rendaPerCapitaSalarioMinimo: z.string().optional(),
+  rendaBrutaFamiliar:z
+  .string()
+  .min(1, 'Renda bruta mensal familiar é obrigatória')
+  .transform((val) => Number(val.replace(/\D/g, '')))
+  .pipe(z.number().min(1, 'Deve ser no mínimo 1')),
+
+  totalComponentesFamilar: z
+  .string()
+  .min(1, 'Total de componentes é obrigatório')
+  .transform((val) => Number(val.replace(/\D/g, '')))
+  .pipe(z.number().min(1, 'Deve ser no mínimo 1')),
+
+  rendaPerCapita: z
+  .string()
+  .transform((val) => Number(val.replace(/\D/g, '')))
+  .pipe(z.number().min(0, 'Valor inválido')),
+
+  rendaPerCapitaSalarioMinimo: z
+  .string()
+  .transform((val) => Number(val.replace(/\D/g, '')))
+  .pipe(z.number().min(0, 'Valor inválido')),
+
 
   percentualLc187: z.enum(['100%', 'Indeferido'], {
     required_error: 'Percentual conforme a Lei Complementar é obrigatório',
   }),
 
-  beneficiarioProgramaRenda: z.enum(['Sim', 'Não'], {
+  beneficiarioProgramaRenda: z
+  .enum(['Sim', 'Não'], {
     required_error: 'Informe se é beneficiário de Programa de Transferência de Renda',
-  }),
+  })
+  .transform((value) => value === 'Sim'),
 
-  resideProximoUnidadeEscolar: z.enum(['Sim', 'Não'], {
+  resideProximoUnidadeEscolar: z
+  .enum(['Sim', 'Não'], {
     required_error: 'Informe se reside próximo da Unidade Escolar',
-  }),
+  })
+  .transform((value) => value === 'Sim'),
 
-  candidatoComDeficiencia: z.enum(['Sim', 'Não'], {
+
+  candidatoComDeficiencia: z
+  .enum(['Sim', 'Não'], {
     required_error: 'Informe se o(a) candidato(a)/aluno(a) possui deficiência',
-  }),
+  })
+  .transform((value) => value === 'Sim'),
 
-  doencaGraveOuDeficienciaFamiliar: z.enum(['Sim', 'Não'], {
+  doencaGraveOuDeficienciaFamiliar: z
+  .enum(['Sim', 'Não'], {
     required_error: 'Informe se há ocorrência de doença grave/deficiência no grupo familiar',
-  }),
+  })
+  .transform((value) => value === 'Sim'),
 
   quantidadeMenoresDezoitoAnos: z
-    .string()
-    .min(1, 'Quantidade de membros no grupo familiar com idade inferior a 18 anos é obrigatória'),
+  .string()
+  .min(1, 'Campo obrigatório')
+  .transform((val) => Number(val.replace(/\D/g, '')))
+  .pipe(z.number().min(0, 'Valor inválido')),
+
 
   aspectosRelevantes: z.string().optional(),
 
   resultadoSocioeconomico: z.enum(['Deferido', 'Indeferido'], {
     required_error: 'Resultado da avaliação socioeconômica é obrigatório',
-  }),
+  }).optional(),
 
   dataFinalizacaoParecer: z
-    .string()
-    .min(1, 'Data da finalização do parecer é obrigatória'),
+    .date({
+      required_error: 'Data de finalização é obrigatória',
+      invalid_type_error: 'Formato inválido de data',
+    })
+     .refine((date) => date !== null, { message: 'Data da finalização do parecer é obrigatória' }),
 });
 
 export const simNaoOptions = [
