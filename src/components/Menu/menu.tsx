@@ -1,15 +1,15 @@
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useAuthStore } from '@/store/useAuthStore';
+import { BookOpenText, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Menu, X, BookOpenText, LayoutDashboard } from 'lucide-react';
-import { useAuthStore } from '@/store/useAuthStore';
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const closeMenu = () => setOpen(false);
-  const { role } = useAuthStore.getState();
+  const { role, id } = useAuthStore();
 
   const menuAdminButtons = (
     <>
@@ -32,7 +32,7 @@ export default function MobileMenu() {
       variant="ghost"
       className="w-full flex justify-start gap-2 text-white"
       onClick={() => {
-        navigate('/student-portal/undefined');
+        navigate(`/student-portal/${id}`);
         closeMenu();
       }}
     >

@@ -28,7 +28,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const closeMenu = () => setOpen(!open);
 
-  const { name: nameUser, role } = useAuthStore();
+  const { id, name: nameUser, role } = useAuthStore();
 
   const isLoginPage =
     location.pathname === '/login' || location.pathname.startsWith('/cadastrarSenha/');
@@ -48,7 +48,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
     setSelectedTab('scholarship_info');
 
     if (role === 'ROLE_ADMIN') return navigate('/dashboard-Users');
-    navigate('/students-form');
+    navigate(`/student-portal/${id}`);
   };
 
   const handleLogOut = () => {
