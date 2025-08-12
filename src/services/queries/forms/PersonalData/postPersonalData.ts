@@ -1,7 +1,7 @@
+import { api } from '@/services/api';
+import { Endpoints } from '@/services/endpoints';
 import { toast } from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
-import { api } from '../../../api';
-import { Endpoints } from '../../../endpoints';
 
 type postPersonalDataPayload = {
     userId: number

@@ -10,6 +10,7 @@
     "strict": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

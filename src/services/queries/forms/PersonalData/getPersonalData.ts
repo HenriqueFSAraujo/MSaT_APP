@@ -1,6 +1,6 @@
+import { api } from '@/services/api';
+import { Endpoints } from '@/services/endpoints';
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../../../api';
-import { Endpoints } from '../../../endpoints';
 
 export function usePersonalData(userId: number) {
   return useQuery({

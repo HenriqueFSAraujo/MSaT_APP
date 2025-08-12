@@ -1,5 +1,4 @@
-import { useParentalData } from '@/services/queries/forms/ParentalData/getParentalData';
-import { PostParentalData } from '@/services/queries/forms/ParentalData/postParentalData';
+import { PostParentalData, useParentalData } from '@/services/queries/forms/index';
 import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';

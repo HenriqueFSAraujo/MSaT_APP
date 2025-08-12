@@ -1,5 +1,4 @@
-import { usePersonalData } from '@/services/queries/forms/PersonalData/GetPersonalData';
-import { PostPersonalData } from '@/services/queries/forms/PersonalData/PostPersonalData';
+import { PostPersonalData, usePersonalData } from '@/services/queries/forms/index';
 import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { Birthplace, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';

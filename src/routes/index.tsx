@@ -1,5 +1,5 @@
 import { routeRoles } from '@/Auth/Login/Routes/routeRoles';
-import { Header } from '@/components/Header/Header';
+import { Layout } from '@/components/Layout/Layout';
 import Login from '@/pages/Login/Login';
 import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
 import SocioeconomicReport from '@/pages/SocioeconomicReport/SocioeconomicReport';
@@ -8,7 +8,7 @@ import StudentPortal from '@/pages/StudentPortal/StudentPortal';
 import Users from '@/pages/Users/Users';
 import { useAuthStore } from '@/store/useAuthStore';
 import type { ReactElement } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 interface PrivateRouteProps {
   element: ReactElement;
@@ -22,15 +22,8 @@ const PrivateRoute = ({ element, allowedRoles }: PrivateRouteProps) => {
 };
 
 export const AppRoutes = () => {
-  const { token: isAuthenticated } = useAuthStore();
-  const location = useLocation();
-
-  const isLoginPage = location.pathname === '/';
-
   return (
-    <>
-      {!isLoginPage && isAuthenticated && <Header shouldRender />}
-
+    <Layout>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -59,6 +52,6 @@ export const AppRoutes = () => {
           element={<PrivateRoute element={<StudentForm />} allowedRoles={routeRoles.users} />}
         />
       </Routes>
-    </>
+    </Layout>
   );
 };

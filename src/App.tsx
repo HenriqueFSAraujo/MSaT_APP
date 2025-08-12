@@ -1,9 +1,12 @@
+import { routeRoles } from '@/Auth/Login/Routes/routeRoles';
+import { Layout } from '@/components/Layout/Layout';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Suspense, lazy } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
-import LoadingSpinner from '@/components/LoadingSpinner';
-
+// Lazy imports
 const Login = lazy(() => import('@/pages/Login/Login'));
 const StudentPortal = lazy(() => import('@/pages/StudentPortal/StudentPortal'));
 const Users = lazy(() => import('@/pages/Users/Users'));
@@ -13,17 +16,48 @@ const NotFoundPage = lazy(() =>
 );
 const SocioeconomicReport = lazy(() => import('@/pages/SocioeconomicReport/SocioeconomicReport'));
 
+interface PrivateRouteProps {
+  element: React.ReactElement;
+  allowedRoles: string[];
+}
+
+const PrivateRoute = ({ element, allowedRoles }: PrivateRouteProps) => {
+  const { token, role } = useAuthStore();
+  return token && allowedRoles.includes(role) ? element : <Navigate to="/" />;
+};
+
 function App() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/student-portal/:id" element={<StudentPortal />} />
-        <Route path="/dashboard-users" element={<Users />} />
-        <Route path="/students-form/:id" element={<StudentForm />} />
-        <Route path="/socioeconomic-report/:id" element={<SocioeconomicReport />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Login />} />
+
+          {/* ADMIN ROUTES */}
+          <Route
+            path="/dashboard-users"
+            element={<PrivateRoute element={<Users />} allowedRoles={routeRoles.admin} />}
+          />
+          <Route
+            path="/socioeconomic-report/:id"
+            element={
+              <PrivateRoute element={<SocioeconomicReport />} allowedRoles={routeRoles.admin} />
+            }
+          />
+
+          {/* USER ROUTES */}
+          <Route
+            path="/student-portal/:id"
+            element={<PrivateRoute element={<StudentPortal />} allowedRoles={routeRoles.users} />}
+          />
+          <Route
+            path="/students-form/:id"
+            element={<PrivateRoute element={<StudentForm />} allowedRoles={routeRoles.users} />}
+          />
+
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Layout>
       <Toaster position="bottom-right" richColors closeButton expand={false} />
     </Suspense>
   );

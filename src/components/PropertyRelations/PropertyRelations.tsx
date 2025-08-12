@@ -1,5 +1,4 @@
-import { usePropertyData } from '@/services/queries/forms/PropertyData/getPropertyData';
-import { PostPropertyData } from '@/services/queries/forms/PropertyData/postPropertyData';
+import { PostPropertyData, usePropertyData } from '@/services/queries/forms/index';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';

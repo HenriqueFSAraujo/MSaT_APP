@@ -5,7 +5,7 @@ import {
 import {
   HousingDataPayload,
   PostHousingData,
-} from '@/services/queries/forms/HousingData/postHousingData';
+} from '@/services/queries/forms/index';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';

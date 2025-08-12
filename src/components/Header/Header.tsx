@@ -20,6 +20,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ shouldRender = true }: HeaderProps) => {
+  console.log(shouldRender)
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -36,10 +37,16 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const getPageTitle = () => {
     switch (location.pathname) {
       case '/students':
-        return '';
+        return 'Alunos';
       case '/dashboard/consulta':
-        return '';
+        return 'Consulta';
       case '/dashboard-users':
+        return 'Usuários';
+      case `/student-portal/${id}`:
+        return 'Portal do Aluno';
+      case `/students-form/${id}`:
+        return 'Formulário de Inscrição';
+      default:
         return '';
     }
   };
