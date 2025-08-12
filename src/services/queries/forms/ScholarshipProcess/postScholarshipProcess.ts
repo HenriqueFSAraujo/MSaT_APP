@@ -1,7 +1,7 @@
+import { toast } from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
 type postScholarshipProcessPayload = {
     userId: number
@@ -10,7 +10,7 @@ type postScholarshipProcessPayload = {
     percentual?: number
 };
 
-export function postScholarshipProcess() {
+export function PostScholarshipProcess() {
     return useMutation({
 
         mutationFn: (payload: postScholarshipProcessPayload) =>

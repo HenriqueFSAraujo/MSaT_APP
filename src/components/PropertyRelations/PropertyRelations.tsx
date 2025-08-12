@@ -1,5 +1,5 @@
+import { usePropertyData } from '@/services/queries/forms/PropertyData/getPropertyData';
 import { PostPropertyData } from '@/services/queries/forms/PropertyData/postPropertyData';
-import { useScholarShipData } from '@/services/queries/forms/ScholarshipProcess/getScholarshipProcess';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,7 +16,7 @@ import { type PropertyRelationsInfo, PropertyRelationsSchema } from './type/form
 export const PropertyRelations = ({ label }: { label: string }) => {
   const { mutate: FormSubmit } = PostPropertyData();
   const { id: StudentId } = useParams<{ id: string }>();
-    const { data } = useScholarShipData(Number(StudentId));
+    const { data } = usePropertyData(Number(StudentId));
   const { setFormData, formData } = useScholarshipFormStore();
   const methods = useForm<z.infer<typeof PropertyRelationsSchema>>({
     resolver: zodResolver(PropertyRelationsSchema),
@@ -80,14 +80,13 @@ export const PropertyRelations = ({ label }: { label: string }) => {
 
   const onSubmit = async (data: PropertyRelationsInfo) => {
     try {
-      console.log('Dados enviados:', data);
       setFormData('property_relations', data);
-      toast.success('Sucesso!', 'salva com sucesso!');
-
-
+      
+      
       const payload = formatPayload(data, Number(StudentId));
       FormSubmit(payload);
-
+      
+      toast.success('Sucesso!', 'salva com sucesso!');
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro', 'Ocorreu um erro ao salvar.');
