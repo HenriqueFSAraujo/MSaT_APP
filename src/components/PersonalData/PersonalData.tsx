@@ -1,4 +1,4 @@
-import { GetPersonalData } from '@/services/queries/forms/PersonalData/GetPersonalData';
+import { usePersonalData } from '@/services/queries/forms/PersonalData/GetPersonalData';
 import { PostPersonalData } from '@/services/queries/forms/PersonalData/PostPersonalData';
 import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
@@ -19,7 +19,7 @@ export const PersonalData = ({ label }: { label: string }) => {
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const { mutate: FormSubmit } = PostPersonalData();
   const { id: StudentId } = useParams<{ id: string }>();
-  const { data } = GetPersonalData(Number(StudentId));
+  const { data } = usePersonalData(Number(StudentId));
 
   const methods = useForm<PersonalDataType>({
     resolver: zodResolver(personalDataSchema),
