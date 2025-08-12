@@ -99,26 +99,26 @@ export const PersonalData = ({ label }: { label: string }) => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 <FormInput
                   name="fullName"
-                  label="Nome completo"
+                  label="Nome completo do(a) candidato(a)"
                   required
                   error={errors.fullName?.message}
                 />
                 <FormDate
                   name="dateBirth"
-                  label="Data de Nascimento"
+                  label="Data de Nascimento do(a) candidato(a)"
                   required
                   error={errors.dateBirth?.message}
                 />
-                <FormInput name="cpf" label="CPF" mask="cpf" required error={errors.cpf?.message} />
+                <FormInput name="cpf" label="CPF do(a) candidato(a)" mask="cpf" required error={errors.cpf?.message} />
                 <FormInput
                   name="rg"
-                  label="RG do candidato(a)"
+                  label="RG do candidato(a) do(a) candidato(a)"
                   mask="rg"
                   error={errors.rg?.message}
                 />
                 <FormSelect
                   name="nationality"
-                  label="Nacionalidade"
+                  label="Nacionalidade do(a) candidato(a)"
                   required
                   description="Selecione uma das opções abaixo."
                   options={Nationality}
@@ -126,7 +126,7 @@ export const PersonalData = ({ label }: { label: string }) => {
                 />
                 <FormSelect
                   name="birthplace"
-                  label="Naturalidade"
+                  label="Naturalidade do(a) candidato(a)"
                   required
                   description="Selecione uma das opções abaixo."
                   options={Birthplace}
@@ -142,7 +142,7 @@ export const PersonalData = ({ label }: { label: string }) => {
                 />
                 <FormSelect
                   name="gender"
-                  label="Escolha seu Gênero"
+                  label="Escolha o Gênero do(a) candidato(a)"
                   required
                   description="Selecione uma das opções abaixo."
                   options={genderOptions}
