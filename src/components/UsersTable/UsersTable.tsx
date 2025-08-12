@@ -111,6 +111,9 @@ export function UsersTable({
     tap: { scale: 0.95 }
   };
 
+  // Add this check to see if all users are admins
+  const allUsersAreAdmin = users.every(user => user.roleName === 'ROLE_ADMIN');
+
   return (
     <motion.div 
       className="overflow-x-auto rounded-2xl border border-gray-200"
@@ -154,7 +157,9 @@ export function UsersTable({
                 </PopoverContent>
               </Popover>
             </TableHead>
-            <TableHead className="text-white">Ações</TableHead>
+            {!allUsersAreAdmin && (
+              <TableHead className="text-white">Ações</TableHead>
+            )}
           </motion.tr>
         </TableHeader>
         <TableBody>
@@ -195,6 +200,7 @@ export function UsersTable({
                   </TableCell>
                   <TableCell
                     onClick={() => handleStatusModal({ status: user.active, userId: user.userId })}
+                    className='hover:cursor-pointer'
                   >
                     <motion.div whileHover="hover" variants={badgeVariants}>
                       <Badge
@@ -208,20 +214,18 @@ export function UsersTable({
                       </Badge>
                     </motion.div>
                   </TableCell>
-                  <TableCell className="flex align-center gap-2">
-                    <motion.div className="flex gap-2">
-                      {user.roleName !== 'ROLE_ADMIN' && (
-                        <>
-                          <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                            {StudentButton(user)}
-                          </motion.div>
-                          <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                            {OpinionButton(user)}
-                          </motion.div>
-                        </>
-                      )}
-                    </motion.div>
-                  </TableCell>
+                  {user.roleName !== 'ROLE_ADMIN' && (
+                    <TableCell className="flex align-center gap-2">
+                      <motion.div className="flex gap-2">
+                        <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
+                          {StudentButton(user)}
+                        </motion.div>
+                        <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
+                          {OpinionButton(user)}
+                        </motion.div>
+                      </motion.div>
+                    </TableCell>
+                  )}
                 </motion.tr>
               ))
             )}
