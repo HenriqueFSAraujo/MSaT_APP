@@ -1,16 +1,17 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Login from '@/pages/Login/Login';
-import Users from '@/pages/Users/Users';
-import StudentForm from '@/pages/StudentForm/StudentForm';
-import { Header } from '@/components/Header/Header';
-import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
-import { useAuthStore } from '@/store/useAuthStore';
-import SocioeconomicReport from '@/pages/SocioeconomicReport/SocioeconomicReport';
-import StudentPortal from '@/pages/StudentPortal/StudentPortal';
 import { routeRoles } from '@/Auth/Login/Routes/routeRoles';
+import { Header } from '@/components/Header/Header';
+import Login from '@/pages/Login/Login';
+import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
+import SocioeconomicReport from '@/pages/SocioeconomicReport/SocioeconomicReport';
+import StudentForm from '@/pages/StudentForm/StudentForm';
+import StudentPortal from '@/pages/StudentPortal/StudentPortal';
+import Users from '@/pages/Users/Users';
+import { useAuthStore } from '@/store/useAuthStore';
+import type { ReactElement } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 interface PrivateRouteProps {
-  element: JSX.Element;
+  element: ReactElement;
   allowedRoles: string[];
 }
 
