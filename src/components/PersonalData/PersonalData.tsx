@@ -1,22 +1,25 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from '../common/FormInput/FormInput';
-import { zodResolver } from '@hookform/resolvers/zod';
-import FormSelect from '../common/FormSelect/FormSelect';
-import FormDate from '../common/FormDate/FormDate';
-import { Button } from '../ui/button';
+import { GetPersonalData } from '@/services/queries/forms/PersonalData/GetPersonalData';
+import { PostPersonalData } from '@/services/queries/forms/PersonalData/PostPersonalData';
 import { useTabStore } from '@/store/tabStore';
-import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/utils/optionsMock';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { personalDataSchema, PersonalDataType } from './type/formData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { postPersonalData } from '@/services/queries/forms/PersonalData/postPersonalData';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Birthplace, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import FormDate from '../common/FormDate/FormDate';
+import FormInput from '../common/FormInput/FormInput';
+import FormSelect from '../common/FormSelect/FormSelect';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { personalDataSchema, PersonalDataType } from './type/formData';
 
 export const PersonalData = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
-  const { mutate: FormSubmit } = postPersonalData();
-  const { id: userId } = useAuthStore();
+  const { mutate: FormSubmit } = PostPersonalData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = GetPersonalData(Number(StudentId));
 
   const methods = useForm<PersonalDataType>({
     resolver: zodResolver(personalDataSchema),
@@ -40,25 +43,42 @@ export const PersonalData = ({ label }: { label: string }) => {
 
   const { errors } = methods.formState;
 
-  const onSubmit = async (data: PersonalDataType) => {
+  useEffect(() => {
+    if (data) {
+      methods.reset({
+        ...methods.getValues(),
+        ...(data as Partial<PersonalDataType>),
+      });
+    }
+  }, [data, methods]);
+
+  const onSubmit = async (formValues: PersonalDataType) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
+
     try {
-      setFormData('personal_data', data);
+      setFormData('personal_data', formValues);
       setSelectedTab('parents_data');
 
       const payload = {
-        userId: userId,
-        fullName: data.fullName,
-        email: data.email,
-        cpf: data.cpf,
-        cpfScholarship: data.cpfScholarship ?? '',
-        phone: data.phone,
-        gender: data.gender,
-        dateBirth: data.dateBirth ? data.dateBirth.toISOString() : '',
-        deficiency: data.deficiency,
-        educasenso: data.educacenso ?? '',
+        userId: Number(StudentId),
+        fullName: formValues.fullName,
+        email: formValues.email,
+        cpf: formValues.cpf,
+        rg: formValues.rg ?? '',
+        nationality: formValues.nationality ?? '',
+        birthplace: formValues.birthplace ?? '',
+        race: formValues.race ?? '',
+        cpfScholarship: formValues.cpfScholarship ?? '',
+        phone: formValues.phone,
+        gender: formValues.gender,
+        dateBirth: formValues.dateBirth
+          ? formValues.dateBirth.toISOString()
+          : '',
+        deficiency: formValues.deficiency,
+        educasenso: formValues.educacenso ?? '',
       };
+
       FormSubmit(payload);
     } catch (error) {
       console.error(error);

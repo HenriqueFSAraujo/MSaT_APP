@@ -1,7 +1,7 @@
+import { toast } from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
 type AddressDataPayload = {
     userId: number
@@ -13,7 +13,7 @@ type AddressDataPayload = {
     residenceType: string;
 };
 
-export function postAddressData() {
+export function PostAddressData() {
     return useMutation({
 
         mutationFn: (payload: AddressDataPayload) =>

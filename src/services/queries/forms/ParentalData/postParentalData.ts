@@ -1,7 +1,7 @@
+import { toast } from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
 type ParentalDataPayload = {
     userId: number
@@ -16,7 +16,7 @@ type ParentalDataPayload = {
     residesWithBothParents: string
 };
 
-export function postParentalData() {
+export function PostParentalData() {
     return useMutation({
 
         mutationFn: (payload: ParentalDataPayload) =>

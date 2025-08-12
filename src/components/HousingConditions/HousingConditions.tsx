@@ -1,24 +1,29 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
-import { radioGroups } from './form.ds';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { housingConditionsInfo, housingConditionsSchema } from './type/formData';
-import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import {
+  UseHousingData
+} from '@/services/queries/forms/HousingData/getHousingData';
 import {
   HousingDataPayload,
-  postHousingData,
+  PostHousingData,
 } from '@/services/queries/forms/HousingData/postHousingData';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { toast } from '@/utils/toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { radioGroups } from './form.ds';
+import { housingConditionsInfo, housingConditionsSchema } from './type/formData';
 
 type FormData = housingConditionsInfo;
 
 export const HousingConditions = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
-  const { mutate: FormSubmit } = postHousingData();
-  const { id: userId } = useAuthStore();
+  const { mutate: FormSubmit } = PostHousingData();
+  const { id: StudentId } = useParams<{ id: string }>();
+   const { data } = UseHousingData(Number(StudentId));
   const methods = useForm<FormData>({
     resolver: zodResolver(housingConditionsSchema),
     defaultValues: {
@@ -27,6 +32,15 @@ export const HousingConditions = ({ label }: { label: string }) => {
     },
   });
 
+   useEffect(() => {
+        if (data) {
+          methods.reset({
+            ...methods.getValues(),
+            ...(data as Partial<FormData>),
+          });
+        }
+      }, [data, methods]);
+
   const { handleSubmit } = methods;
 
   const onSubmit = async (data: FormData) => {
@@ -34,7 +48,7 @@ export const HousingConditions = ({ label }: { label: string }) => {
       setFormData('housing_conditions', data);
 
       const payload: HousingDataPayload = {
-        userId,
+        userId: Number(StudentId),
         ...data,
       };
 

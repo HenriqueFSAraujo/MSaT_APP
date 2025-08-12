@@ -1,9 +1,11 @@
-import { postPropertyData } from '@/services/queries/forms/PropertyData/postPropertyData';
-import { useAuthStore } from '@/store/useAuthStore';
+import { PostPropertyData } from '@/services/queries/forms/PropertyData/postPropertyData';
+import { useScholarShipData } from '@/services/queries/forms/ScholarshipProcess/getScholarshipProcess';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import type { z } from 'zod';
 import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
 import { Button } from '../ui/button';
@@ -12,8 +14,9 @@ import { dynamicSections, fieldMasksMap } from './form.ds';
 import { type PropertyRelationsInfo, PropertyRelationsSchema } from './type/formData';
 
 export const PropertyRelations = ({ label }: { label: string }) => {
-  const { mutate: FormSubmit } = postPropertyData();
-  const { id: userId } = useAuthStore();
+  const { mutate: FormSubmit } = PostPropertyData();
+  const { id: StudentId } = useParams<{ id: string }>();
+    const { data } = useScholarShipData(Number(StudentId));
   const { setFormData, formData } = useScholarshipFormStore();
   const methods = useForm<z.infer<typeof PropertyRelationsSchema>>({
     resolver: zodResolver(PropertyRelationsSchema),
@@ -28,6 +31,15 @@ export const PropertyRelations = ({ label }: { label: string }) => {
   });
 
   const { handleSubmit } = methods;
+
+  useEffect(() => {
+    if (data) {
+      methods.reset({
+        ...methods.getValues(),
+        ...(data as Partial<PropertyRelationsInfo>),
+      });
+    }
+  }, [data, methods]);
 
 
   const unmaskDigits = (value: string) =>
@@ -73,7 +85,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       toast.success('Sucesso!', 'salva com sucesso!');
 
 
-      const payload = formatPayload(data, userId);
+      const payload = formatPayload(data, Number(StudentId));
       FormSubmit(payload);
 
     } catch (error) {

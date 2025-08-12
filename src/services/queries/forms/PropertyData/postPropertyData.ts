@@ -1,7 +1,7 @@
+import { toast } from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
 type PropertyDataPayload = {
     userInfoId: number,
@@ -37,7 +37,7 @@ type despesasMensais = {
 }
 
 
-export function postPropertyData() {
+export function PostPropertyData() {
     return useMutation({
 
         mutationFn: (payload: PropertyDataPayload) =>

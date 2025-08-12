@@ -1,4 +1,3 @@
-import { FieldError, Merge, FieldErrorsImpl, useFormContext } from 'react-hook-form';
 import {
   Select,
   SelectContent,
@@ -6,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { FieldError, FieldErrorsImpl, Merge, useFormContext } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 
 interface FormSelectProps {
@@ -57,10 +57,10 @@ const FormSelect = ({ name, label, options, required = false, error }: FormSelec
           <FormControl>
             <Select
               onValueChange={(value) => handleChange(value, field)}
-              defaultValue={field.value}
+              value={field.value || ""}
             >
               <SelectTrigger
-                className={`peer w-full border border-gray-300 text-muted-foreground rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
+                className={`peer w-full border border-gray-300 text-black rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
               >
                 <SelectValue placeholder="Digite..." />
               </SelectTrigger>

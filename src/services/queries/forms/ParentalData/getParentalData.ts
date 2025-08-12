@@ -1,23 +1,18 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
-type ParentalDataPayload = {
-    userId: number
-};
-
-export function getParentalData() {
-    return useMutation({
-        mutationFn: (payload: ParentalDataPayload) =>
-            api.get(`${Endpoints.Forms.Parental_Data}/${payload.userId}`),
-
-        onSuccess: () => { },
-
-        onError: (error) => {
-            toast.error('Erro ao carregar informações do formulário.');
-            console.error(error)
+export function useParentalData(userId: number) {
+    return useQuery({
+    queryKey: ['get-parental-data', userId],
+    queryFn: async () => {
+        const { data } = await api.get(`${Endpoints.Forms.Parental_Data}/${userId}`);
+        return data;
         },
+        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        retry: false
     });
 }
+
 

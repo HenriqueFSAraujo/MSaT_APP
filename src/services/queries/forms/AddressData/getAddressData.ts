@@ -1,23 +1,18 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
-type AddressDataPayload = {
-    userId: number
-};
-
-export function getAddressData() {
-    return useMutation({
-        mutationFn: (payload: AddressDataPayload) =>
-            api.get(`${Endpoints.Forms.Address_Data}/${payload.userId}`),
-
-        onSuccess: () => { },
-
-        onError: (error) => {
-            toast.error('Erro ao carregar informações do formulário.');
-            console.error(error)
+export function useAddressData(userId: number) {
+    return useQuery({
+    queryKey: ['get-address-data', userId],
+    queryFn: async () => {
+        const { data } = await api.get(`${Endpoints.Forms.Address_Data}/${userId}`);
+        return data;
         },
+        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        retry: false
     });
 }
+
 

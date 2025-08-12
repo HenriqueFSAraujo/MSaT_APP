@@ -1,4 +1,4 @@
-import { maskCurrency, maskDate } from '@/utils/transformMasks';
+import { maskCurrency } from '@/utils/transformMasks';
 import autoAnimate from '@formkit/auto-animate';
 import { Info, Plus, Trash } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -81,7 +81,7 @@ export const DynamicInputSection = ({
       if (mask === 'year') {
         val = val.replace(/\D/g, '').slice(0, 4);
       } else if (mask === 'date') {
-        val = maskDate(val);
+        val = val.replace(/\D/g, '');
       } else if (mask === 'currency') {
         val = maskCurrency(val);
       }

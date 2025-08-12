@@ -1,21 +1,24 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from '../common/FormInput/FormInput';
+import { useViaCep } from '@/hooks/useViaCep';
+import { useAddressData } from '@/services/queries/forms/AddressData/getAddressData';
+import { PostAddressData } from '@/services/queries/forms/AddressData/postAddressData';
+import { useTabStore } from '@/store/tabStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import FormInput from '../common/FormInput/FormInput';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
-import { useTabStore } from '@/store/tabStore';
-import { useViaCep } from '@/hooks/useViaCep';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { addressInfoSchema, AddressInfo } from './type/formData';
-import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { postAddressData } from '@/services/queries/forms/AddressData/postAddressData';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { AddressInfo, addressInfoSchema } from './type/formData';
 
 export const AddressResidence = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
-  const { mutate: FormSubmit } = postAddressData();
-  const { id: userId } = useAuthStore();
+  const { mutate: FormSubmit } = PostAddressData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = useAddressData(Number(StudentId));
   const methods = useForm({
     mode: 'onSubmit',
 
@@ -59,6 +62,15 @@ export const AddressResidence = ({ label }: { label: string }) => {
     }
   };
 
+   useEffect(() => {
+        if (data) {
+          methods.reset({
+            ...methods.getValues(),
+            ...(data as Partial<AddressInfo>),
+          });
+        }
+      }, [data, methods]);
+
   const onSubmit = async (data: AddressInfo) => {
     const isValid = await methods.trigger();
     if (!isValid) {
@@ -70,7 +82,7 @@ export const AddressResidence = ({ label }: { label: string }) => {
       setFormData('address_info', data);
       setSelectedTab('required_documents');
       const payload = {
-        userId: userId,
+        userId: Number(StudentId),
         ...data
       }
       FormSubmit(payload)
