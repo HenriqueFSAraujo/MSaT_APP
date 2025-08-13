@@ -105,9 +105,9 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           whileTap={{ scale: 0.95 }}
         >
           <motion.img
-            src="https://agostinianas.com.br/wp-content/uploads/2020/12/logo-congregacao-branco.svg"
+            src="https://pbs.twimg.com/profile_images/440769852/Logo_Eb_400x400.jpg"
             alt="Logo"
-            className="h-auto max-w-full max-h-[100px] md:max-h-[32px]"
+            className="h-14 max-w-full max-h-[100px] md:max-h-[32px]"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
@@ -130,9 +130,9 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
       >
         <MenuComponent />
         <motion.img
-          src="https://agostinianas.com.br/wp-content/uploads/2020/12/logo-congregacao-branco.svg"
+          src="https://pbs.twimg.com/profile_images/440769852/Logo_Eb_400x400.jpg"
           alt="Logo"
-          className="h-16 w-auto object-contain cursor-pointer"
+          className="h-14 w-auto object-contain cursor-pointer"
           onClick={handleClickMenu}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
