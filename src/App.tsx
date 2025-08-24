@@ -23,7 +23,15 @@ interface PrivateRouteProps {
 
 const PrivateRoute = ({ element, allowedRoles }: PrivateRouteProps) => {
   const { token, role } = useAuthStore();
-  return token && allowedRoles.includes(role) ? element : <Navigate to="/" />;
+  
+  // Verificar se o token existe e se o usuário tem permissão
+  const hasPermission = token && 
+    typeof role === 'string' && 
+    role !== '' && 
+    Array.isArray(allowedRoles) && 
+    allowedRoles.includes(role);
+    
+  return hasPermission ? element : <Navigate to="/" />;
 };
 
 function App() {

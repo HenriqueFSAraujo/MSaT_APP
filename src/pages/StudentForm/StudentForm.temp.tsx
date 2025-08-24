@@ -146,16 +146,14 @@ const StudentForm = () => {
                         <ParentalDataForm label="Dados dos Pais" />
                       ) : tab.value === 'address_info' ? (
                         <AddressResidence label="Endereço" />
-                      ) : tab.value === 'required_documents' ? (
-                        <DocumentData label="Documentos" />
-                      ) : tab.value === 'family_composition' ? (
-                        <FamilyComposition label="Composição Familiar" />
                       ) : tab.value === 'housing_conditions' ? (
                         <HousingConditions label="Condições de Moradia" />
                       ) : tab.value === 'property_relations' ? (
                         <PropertyRelations label="Relação de Bens" />
+                      ) : tab.value === 'document_data' ? (
+                        <DocumentData label="Documentos" />
                       ) : (
-                        <div>Componente não encontrado</div>
+                        <FamilyComposition label="Composição Familiar" />
                       )}
                     </motion.div>
                   </TabsContent>

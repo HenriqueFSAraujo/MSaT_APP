@@ -372,13 +372,6 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
   ],
   [
     {
-      name: 'familyComposition',
-      label: 'Composição Familiar',
-      desc: 'Documento obrigatório contendo todos os residentes no mesmo domicílio',
-      downloadLabel: 'Modelo de Quadro Familiar (PDF)',
-      downloadLink: '/docs/quadro_familiar.pdf',
-    },
-    {
       name: 'governmentProgram',
       label: 'Acesso a programas governamentais de renda mínima',
       desc: 'Federal, Estadual ou Municipal',

@@ -62,13 +62,13 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       })),
       veiculos: data.veiculos.map((item) => ({
         ...item,
-        anoFabricacao: unmaskDigits(item.anoFabricacao).slice(0, 4),
+        anoFabricacao: item.anoFabricacao ? item.anoFabricacao.replace(/\D/g, '').slice(0, 4) : '',
       })),
     };
   };
 
   const getMasksForSection = (fields: string[]) => {
-    const masks: Record<string, 'date' | 'currency'> = {};
+    const masks: Record<string, 'date' | 'currency' | 'year'> = {};
     fields.forEach((field) => {
       if (fieldMasksMap[field]) {
         masks[field] = fieldMasksMap[field];
