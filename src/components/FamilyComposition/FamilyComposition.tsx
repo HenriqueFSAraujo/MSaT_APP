@@ -43,9 +43,12 @@ export const FamilyComposition = ({ label }: { label: string }) => {
     if (formData.family_composition?.composicaoFamiliar?.length) {
       return formData.family_composition;
     } 
-    // Caso contrário, crie 10 linhas vazias
+    // Caso contrário, crie 5 linhas vazias
     return {
-      composicaoFamiliar: createEmptyRows(5)
+      composicaoFamiliar: createEmptyRows(5),
+      familiaresEscola: [],
+      pessoasComDeficiencia: [],
+      despesasMensais: []
     };
   };
   
@@ -56,7 +59,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
     defaultValues: initialValues(),
   });
 
-  const { handleSubmit, formState: { errors, isSubmitting }, trigger } = methods;
+  const { handleSubmit, formState: { isSubmitting } } = methods;
 
 
   const getMasksForSection = (fields: string[]) => {
@@ -98,11 +101,10 @@ export const FamilyComposition = ({ label }: { label: string }) => {
       
       // Salvar no store local
       setFormData('family_composition', {
-        veiculos: formData.family_composition?.veiculos ?? [],
+        composicaoFamiliar: filteredData.composicaoFamiliar,
         familiaresEscola: formData.family_composition?.familiaresEscola ?? [],
         pessoasComDeficiencia: formData.family_composition?.pessoasComDeficiencia ?? [],
-        despesasMensais: formData.family_composition?.despesasMensais ?? [],
-        ...filteredData
+        despesasMensais: formData.family_composition?.despesasMensais ?? []
       });
       
       // Formatar e enviar dados para API
@@ -154,8 +156,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
                 className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
                 disabled={isSubmitting || familyDataMutation.isPending}
                 onClick={() => {
-                  // Forçar validação de todos os campos ao clicar no botão
-                  methods.trigger();
+                  // Validação já acontece automaticamente no submit
                 }}
               >
                 {familyDataMutation.isPending ? "Salvando..." : "Salvar e continuar"}
