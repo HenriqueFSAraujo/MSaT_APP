@@ -10,6 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Info } from 'lucide-react';
 import {
   avaliacaoOptions,
   FormularioSocioeconomicoData,
@@ -18,6 +20,7 @@ import {
   segmentoCursar2025Options,
   simNaoOptions,
 } from './type/formData';
+import { toast } from '@/utils/toast';
 
 export default function SocioeconomicReport() {
   const { id: StudentId } = useParams<{ id: string }>();
@@ -47,24 +50,132 @@ export default function SocioeconomicReport() {
       dataFinalizacaoParecer: new Date(),
     },
   });
+  
+  const rendaPerCapita = methods.watch('rendaPerCapita');
+  const rendaBrutaFamiliar = methods.watch('rendaBrutaFamiliar');
+  const totalComponentesFamilar = methods.watch('totalComponentesFamilar');
+  
+  useEffect(() => {
+    if (rendaBrutaFamiliar && totalComponentesFamilar) {
+      try {
+        let rendaTotal = 0;
+        if (typeof rendaBrutaFamiliar === 'string') {
+          const valorLimpo = rendaBrutaFamiliar.replace(/[^\d.,]/g, '');
+          const valorAmericano = valorLimpo.replace(/\./g, '').replace(',', '.');
+          rendaTotal = parseFloat(valorAmericano) || 0;
+        } else if (typeof rendaBrutaFamiliar === 'number') {
+          rendaTotal = rendaBrutaFamiliar;
+        }
+        
+        let componentes = 0;
+        if (typeof totalComponentesFamilar === 'string') {
+          componentes = parseInt(totalComponentesFamilar, 10) || 0;
+        } else if (typeof totalComponentesFamilar === 'number') {
+          componentes = totalComponentesFamilar;
+        }
+        
+        if (rendaTotal > 0 && componentes > 0) {
+          const rendaPerCapitaCalculada = rendaTotal / componentes;
+          
+          const rendaPerCapitaFormatada = rendaPerCapitaCalculada.toLocaleString('pt-BR', {
+            style: 'currency', 
+            currency: 'BRL'
+          });
+          
+          methods.setValue('rendaPerCapita', rendaPerCapitaFormatada);
+          console.log(`Renda: ${rendaTotal}, Componentes: ${componentes}, Per Capita: ${rendaPerCapitaFormatada}`);
+        }
+      } catch (error) {
+        console.error("Erro ao calcular renda per capita:", error);
+      }
+    }
+  }, [rendaBrutaFamiliar, totalComponentesFamilar, methods]);
+  
+  useEffect(() => {
+    const salarioMinimo = 1518;
+    
+    if (rendaPerCapita !== undefined && rendaPerCapita !== null) {
+      try {
+        let rendaPerCapitaNumero = 0;
+        
+        if (typeof rendaPerCapita === 'string') {
+          const valorLimpo = rendaPerCapita.replace(/[^\d.,]/g, '');
+          const valorAmericano = valorLimpo.replace(/\./g, '').replace(',', '.');
+          
+          rendaPerCapitaNumero = parseFloat(valorAmericano) || 0;
+        } else if (typeof rendaPerCapita === 'number') {
+          rendaPerCapitaNumero = rendaPerCapita;
+        }
+        
+        const rendaEmSalariosMinimos = rendaPerCapitaNumero / salarioMinimo;
+        const valorFormatado = rendaEmSalariosMinimos.toFixed(4);
+        
+        methods.setValue('rendaPerCapitaSalarioMinimo', valorFormatado);
+      } catch (error) {
+        console.error("Erro ao calcular renda em salários mínimos:", error);
+        methods.setValue('rendaPerCapitaSalarioMinimo', "0");
+      }
+    } else {
+      methods.setValue('rendaPerCapitaSalarioMinimo', "0");
+    }
+  }, [rendaPerCapita, methods]);
 
   const {
     formState: { errors },
   } = methods;
 
   const onSubmit = (data: FormularioSocioeconomicoData) => {
-    console.log('cheguei')
-    // const cleanedData = {
-    //   ...data,
-    //   rendaBrutaFamiliar: parseCurrency(data.rendaBrutaFamiliar),
-    //   rendaPerCapita: parseCurrency(data.rendaPerCapita),
-    //   rendaPerCapitaSalarioMinimo: parseCurrency(data.rendaPerCapitaSalarioMinimo),
-    // };
-
-    mutate({
-      userId: Number(StudentId),
-      ...data,
-    });
+    try {
+      if (!data.dataNascimentoAluno) {
+        toast.error('A data de nascimento do aluno é obrigatória.');
+        return;
+      }
+      
+      const getBooleanValue = (value: string | undefined): boolean => {
+        if (!value) return false;
+        return value === 'Sim';
+      };
+      
+      const payload = {
+        userId: Number(StudentId),
+        nomeAluno: data.nomeAluno,
+        dataNascimentoAluno: data.dataNascimentoAluno,
+        segmentoCursar2025: data.segmentoCursar2025,
+        nomeResponsavel: data.nomeResponsavel,
+        cpfResponsavel: data.cpfResponsavel,
+        telefoneResponsavel: data.telefoneResponsavel,
+        rendaBrutaFamiliar: typeof data.rendaBrutaFamiliar === 'string' 
+          ? parseFloat(data.rendaBrutaFamiliar.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) 
+          : Number(data.rendaBrutaFamiliar),
+        totalComponentesFamilar: typeof data.totalComponentesFamilar === 'string'
+          ? parseInt(data.totalComponentesFamilar, 10)
+          : Number(data.totalComponentesFamilar),
+        rendaPerCapita: typeof data.rendaPerCapita === 'string'
+          ? parseFloat(data.rendaPerCapita.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.'))
+          : Number(data.rendaPerCapita),
+        rendaPerCapitaSalarioMinimo: typeof data.rendaPerCapitaSalarioMinimo === 'string'
+          ? parseFloat(data.rendaPerCapitaSalarioMinimo.replace(/[^\d.,]/g, '').replace(',', '.'))
+          : Number(data.rendaPerCapitaSalarioMinimo || 0),
+        beneficiarioProgramaRenda: getBooleanValue(data.beneficiarioProgramaRenda),
+        resideProximoUnidadeEscolar: getBooleanValue(data.resideProximoUnidadeEscolar),
+        candidatoComDeficiencia: getBooleanValue(data.candidatoComDeficiencia),
+        doencaGraveOuDeficienciaFamiliar: data.doencaGraveOuDeficienciaFamiliar ? 
+          getBooleanValue(data.doencaGraveOuDeficienciaFamiliar) : undefined,
+        percentualLc187: data.percentualLc187 || '',
+        quantidadeMenoresDezoitoAnos: typeof data.quantidadeMenoresDezoitoAnos === 'string' 
+          ? parseInt(data.quantidadeMenoresDezoitoAnos, 10) 
+          : data.quantidadeMenoresDezoitoAnos,
+        aspectosRelevantes: data.aspectosRelevantes,
+        resultadoSocioeconomico: data.resultadoSocioeconomico,
+        dataFinalizacaoParecer: data.dataFinalizacaoParecer || new Date(),
+      };
+      
+      console.log('Enviando dados:', payload);
+      mutate(payload);
+    } catch (error) {
+      console.error("Erro ao processar dados do formulário:", error);
+      toast.error("Ocorreu um erro ao processar os dados. Por favor, verifique os campos e tente novamente.");
+    }
   };
 
   const containerVariants = {
@@ -208,15 +319,24 @@ export default function SocioeconomicReport() {
                       />
                       <FormInput
                         name="rendaPerCapita"
-                        label="Renda per capita bruta"
+                        label={<>Renda per capita bruta <span className="text-blue-500 font-normal text-sm">(calculado)</span></>}
                         mask="money"
+                        disabled={true}
                         required
+                        description={<span className="flex items-center">
+                          <Info className="h-4 w-4 mr-1 text-blue-600" />
+                          Renda bruta familiar ÷ total de componentes
+                        </span>}
                       />
                       <FormInput
                         name="rendaPerCapitaSalarioMinimo"
-                        label="Renda per capita bruta em salários mínimos"
-                        mask="money"
+                        label={<>Renda per capita bruta em salários mínimos <span className="text-blue-500 font-normal text-sm">(calculado: renda per capita/1.518)</span></>}
+                        disabled={true}
                         required
+                        description={<span className="flex items-center">
+                          <Info className="h-4 w-4 mr-1 text-blue-600" />
+                          Campo calculado automaticamente
+                        </span>}
                       />
                       <RadioButtonGroup
                         name="percentualLc187"
