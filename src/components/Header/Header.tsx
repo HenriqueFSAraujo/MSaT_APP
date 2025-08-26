@@ -54,7 +54,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   const handleClickMenu = () => {
     setSelectedTab('scholarship_info');
 
-    if (role === 'ROLE_ADMIN') return navigate('/dashboard-Users');
+    if (role === 'ROLE_ADMIN') return navigate('/dashboard-users');
     navigate(`/student-portal/${id}`);
   };
 

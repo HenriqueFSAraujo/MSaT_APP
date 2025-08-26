@@ -62,7 +62,7 @@ export function useLogin() {
         firstLogin: data.userInfo.firstLogin,
       });
       if (data.role === 'ROLE_ADMIN') {
-        navigate('/dashboard-Users');
+        navigate('/dashboard-users');
       } else {
         navigate(`/student-portal/${data.userInfo.id}`);
       }

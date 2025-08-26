@@ -30,7 +30,7 @@ export const AppRoutes = () => {
 
         {/* ADMIN ROLE */}
         <Route
-          path="/dashboard-Users"
+          path="/dashboard-users"
           element={<PrivateRoute element={<Users />} allowedRoles={routeRoles.admin} />}
         />
 
