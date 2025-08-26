@@ -11,6 +11,17 @@ type AddressDataPayload = {
     city: string;
     referencePoint?: string;
     residenceType: string;
+    structureType: string;
+    structureTypeOthers?: string;
+    hasSewage: string;
+    electricitySource: string;
+    waterSupply: string;
+    transportType: string;
+    transportTypeOthers?: string;
+    commutingTime: string;
+    afterSchoolActivities: string;
+    activityDescription?: string;
+    weeklyFrequency?: string;
 };
 
 export function PostAddressData() {

@@ -4,10 +4,11 @@ import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '..
 import { useFormContext } from 'react-hook-form';
 import { forwardRef } from 'react';
 import { moneyMask } from '@/utils/transformMasks';
+import React from 'react';
 
 interface FormInputProps {
   name: string;
-  label: string;
+  label: string | React.ReactNode;
   type?: string;
   required?: boolean;
   error?: string;
