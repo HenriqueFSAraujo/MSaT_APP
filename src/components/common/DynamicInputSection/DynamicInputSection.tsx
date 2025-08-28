@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { type FieldError, useFieldArray, useFormContext } from 'react-hook-form';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
+import FormDate from '../FormDate/FormDate'; // Importe o componente FormDate
 
 type MaskType = 'date' | 'currency' | 'year';
 
@@ -16,6 +17,7 @@ type DynamicInputSectionProps = {
   required: boolean;
   fieldMasks?: Record<string, MaskType>;
   footerMessage?: string;
+  dateFields?: string[]; // Nova prop para especificar quais campos são de data
 };
 
 export const DynamicInputSection = ({
@@ -26,7 +28,8 @@ export const DynamicInputSection = ({
   namePrefix = '',
   required = false,
   fieldMasks = {},
-  footerMessage, // Nova prop
+  footerMessage,
+  dateFields = [],
 }: DynamicInputSectionProps) => {
   const {
     control,
@@ -64,13 +67,29 @@ export const DynamicInputSection = ({
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))
     : false;
 
-  const renderInputWithMask = (
+  const renderField = (
     fieldName: string,
     rowIdx: number,
     fieldError?: FieldError,
     placeholder?: string
   ) => {
     const path = `${namePrefix}.${rowIdx}.${fieldName}` as const;
+
+    // Se é um campo de data, use o FormDate sem label
+    if (dateFields.includes(fieldName)) {
+      return (
+        <div className="w-full">
+          <FormDate
+            name={path}
+            label=""
+            required={required}
+            error={fieldError?.message}
+            compact={true}
+          />
+        </div>
+      );
+    }
+
     const mask = fieldMasks[fieldName];
     const value = watch(path) || '';
 
@@ -153,9 +172,8 @@ export const DynamicInputSection = ({
       </div>
 
       <div className="rounded-lg overflow-hidden border border-gray-200">
-        {/* Adicionamos uma altura máxima para evitar saltos de página */}
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
-          {/* Exibição para mobile em cards */}
+          {/* Mobile view */}
           <div className="md:hidden">
             {fields.map((field, rowIdx) => (
               <div key={field.id} className="p-3 border-b last:border-b-0 bg-white">
@@ -181,28 +199,7 @@ export const DynamicInputSection = ({
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         {columns[colIdx]}
                       </label>
-                      {fieldMasks[fieldName] ? (
-                        renderInputWithMask(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)
-                      ) : (
-                        <div className="relative">
-                          <input
-                            {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
-                              required: required ? 'Campo obrigatório' : false,
-                            })}
-                            placeholder={`${columns[colIdx]}...`}
-                            className={`
-                                p-3 text-sm border w-full rounded-md
-                                focus:outline-none focus:ring-1 focus:ring-blue-500
-                                ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
-                              `}
-                          />
-                          {fieldError && (
-                            <span className="text-red-500 text-xs mt-1 block">
-                              {fieldError.message}
-                            </span>
-                          )}
-                        </div>
-                      )}
+                      {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)}
                     </div>
                   );
                 })}
@@ -210,7 +207,7 @@ export const DynamicInputSection = ({
             ))}
           </div>
 
-          {/* Exibição para tablet e desktop como tabela */}
+          {/* Desktop table view */}
           <table className="w-full table-fixed hidden md:table">
             <thead className="bg-blue-500 text-white sticky top-0 z-10">
               <tr>
@@ -222,7 +219,6 @@ export const DynamicInputSection = ({
                 <th className="w-10"></th>
               </tr>
             </thead>
-            {/* Tabela para tablet e desktop */}
             <tbody ref={tableBodyRef} className="divide-y divide-gray-200">
               {fields.map((field, rowIdx) => (
                 <tr key={field.id} className="hover:bg-gray-50">
@@ -233,34 +229,7 @@ export const DynamicInputSection = ({
 
                     return (
                       <td key={`${field.id}-${fieldName}`} className="p-3 align-top">
-                        {fieldMasks[fieldName] ? (
-                          renderInputWithMask(
-                            fieldName,
-                            rowIdx,
-                            fieldError,
-                            `${columns[colIdx]}...`
-                          )
-                        ) : (
-                          <div className="relative">
-                            <input
-                              {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
-                                required: required ? 'Campo obrigatório' : false,
-                              })}
-                              placeholder={`${columns[colIdx]}...`}
-                              className={`
-                                  p-3 text-sm border w-full min-w-[80px] text-gray-700
-                                  placeholder-gray-400 rounded-md
-                                  focus:outline-none focus:ring-1 focus:ring-blue-500
-                                  ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
-                                `}
-                            />
-                            {fieldError && (
-                              <span className="text-red-500 text-xs absolute -bottom-4 left-0">
-                                {fieldError.message}
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)}
                       </td>
                     );
                   })}
@@ -283,7 +252,7 @@ export const DynamicInputSection = ({
           </table>
         </div>
 
-        {/* Botão adicionar para mobile */}
+        {/* Add buttons */}
         <div className="p-3 md:hidden">
           <button
             onClick={handleAddRow}
@@ -295,7 +264,6 @@ export const DynamicInputSection = ({
           </button>
         </div>
 
-        {/* Botão adicionar para desktop */}
         <div className="hidden md:flex justify-end p-3 bg-gray-50">
           <button
             onClick={handleAddRow}

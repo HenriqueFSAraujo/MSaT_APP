@@ -10,20 +10,18 @@ import type { z } from 'zod';
 import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { dynamicSections, fieldMasksMap } from './form.ds';
+import { dateFieldsMap, dynamicSections, fieldMasksMap } from './form.ds';
 import { type FamilyCompositionInfo, FamilyCompositionSchema } from './type/formData';
 
 export const FamilyComposition = ({ label }: { label: string }) => {
   const { id: studentId } = useParams<{ id: string }>();
   const { setFormData, formData } = useScholarshipFormStore();
 
-  // Mutation para submeter os dados da composição familiar
   const familyDataMutation = useMutation({
     mutationKey: ['send-family-data'],
     mutationFn: (payload: unknown) => api.post(Endpoints.Forms.Family_Composition, payload),
   });
 
-  // Criar 10 linhas vazias para a composição familiar
   const createEmptyRows = (count: number) => {
     return Array.from({ length: count }, () => ({
       nomeCompleto: '',
@@ -36,13 +34,11 @@ export const FamilyComposition = ({ label }: { label: string }) => {
     }));
   };
 
-  // Determinar os valores iniciais para composição familiar
   const initialValues = () => {
-    // Se já existe dados salvos, use-os
     if (formData.family_composition?.composicaoFamiliar?.length) {
       return formData.family_composition;
     }
-    // Caso contrário, crie 5 linhas vazias
+
     return {
       composicaoFamiliar: createEmptyRows(5),
       familiaresEscola: [],
@@ -64,7 +60,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
   } = methods;
 
   const getMasksForSection = (fields: string[]) => {
-    const masks: Record<string, 'date' | 'currency'> = {};
+    const masks: Record<string, 'date' | 'currency' | 'year'> = {};
     fields.forEach((field) => {
       if (fieldMasksMap[field]) {
         masks[field] = fieldMasksMap[field];
@@ -75,12 +71,11 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
   const onSubmit = async (data: FamilyCompositionInfo) => {
     try {
-      // Verificar se alguma linha está preenchida parcialmente
       const partiallyFilledRows = data.composicaoFamiliar.some((row) => {
         const filledFields = Object.values(row).filter(
           (value) => value && value.trim() !== ''
         ).length;
-        return filledFields > 0 && filledFields < 7; // Se tem algum campo preenchido, mas não todos
+        return filledFields > 0 && filledFields < 7;
       });
 
       if (partiallyFilledRows) {
@@ -91,7 +86,6 @@ export const FamilyComposition = ({ label }: { label: string }) => {
         return;
       }
 
-      // Filtrar linhas vazias antes de salvar
       const filteredData = {
         ...data,
         composicaoFamiliar: data.composicaoFamiliar.filter(
@@ -106,7 +100,6 @@ export const FamilyComposition = ({ label }: { label: string }) => {
         ),
       };
 
-      // Salvar no store local
       setFormData('family_composition', {
         composicaoFamiliar: filteredData.composicaoFamiliar,
         familiaresEscola: formData.family_composition?.familiaresEscola ?? [],
@@ -114,7 +107,6 @@ export const FamilyComposition = ({ label }: { label: string }) => {
         despesasMensais: formData.family_composition?.despesasMensais ?? [],
       });
 
-      // Formatar e enviar dados para API
       const payload = {
         userInfoId: Number(studentId),
         composicaoFamiliar: filteredData.composicaoFamiliar.map((item) => ({
@@ -125,7 +117,6 @@ export const FamilyComposition = ({ label }: { label: string }) => {
         })),
       };
 
-      // Executar a mutação
       await familyDataMutation.mutateAsync(payload);
       toast.success('Sucesso!', 'Composição familiar salva com sucesso!');
     } catch (error) {
@@ -158,6 +149,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
                     required={section.required}
                     fieldMasks={getMasksForSection(section.fields)}
                     footerMessage={footerMessage}
+                    dateFields={dateFieldsMap[section.key] || []}
                   />
                 </div>
               ))}
