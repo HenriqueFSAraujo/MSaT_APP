@@ -8,11 +8,13 @@ export const formatCpf = (value: string) => {
 };
 
 export const maskDate = (value: string) => {
+  // Remover todos os caracteres não numéricos
   const v = value.replace(/\D/g, '').slice(0, 8);
-  if (v.length >= 5) return `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
-  if (v.length >= 3) return `${v.slice(0, 2)}/${v.slice(2)}`;
-  if (v.length >= 1) return v;
-  return '';
+  
+  // Aplicar a formatação de data DD/MM/AAAA
+  if (v.length > 4) return `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+  if (v.length > 2) return `${v.slice(0, 2)}/${v.slice(2)}`;
+  return v;
 };
 
 export function maskCurrency(value: string) {

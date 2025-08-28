@@ -1,33 +1,47 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from '../common/FormInput/FormInput';
+import { useViaCep } from '@/hooks/useViaCep';
+import { useAddressData } from '@/services/queries/forms/AddressData/getAddressData';
+import { PostAddressData } from '@/services/queries/forms/AddressData/postAddressData';
+import { useTabStore } from '@/store/tabStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import FormInput from '../common/FormInput/FormInput';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
-import { useTabStore } from '@/store/tabStore';
-import { useViaCep } from '@/hooks/useViaCep';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-import { addressInfoSchema, AddressInfo } from './type/formData';
-import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { postAddressData } from '@/services/queries/forms/AddressData/postAddressData';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { AddressInfo, addressInfoSchema } from './type/formData';
 
 export const AddressResidence = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
-  const { mutate: FormSubmit } = postAddressData();
-  const { id: userId } = useAuthStore();
+  const { mutate: FormSubmit } = PostAddressData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = useAddressData(Number(StudentId));
   const methods = useForm({
     mode: 'onSubmit',
 
     resolver: zodResolver(addressInfoSchema),
     defaultValues: {
       address: '',
-      neighborhood: '',
-      city: '',
-      zipCode: '',
-      referencePoint: '',
-      residenceType: '',
-      ...(formData.address_info as Partial<AddressInfo>),
+    neighborhood: '',
+    city: '',
+    zipCode: '',
+    referencePoint: '',
+    residenceType: '',
+    structureType: '',
+    structureTypeOthers: '',
+    hasSewage: '',
+    electricitySource: '',
+    waterSupply: '',
+    transportType: '',
+    transportTypeOthers: '',
+    commutingTime: '',
+    afterSchoolActivities: '',
+    activityDescription: '',
+    weeklyFrequency: '',
+    ...(formData.address_info as Partial<AddressInfo>),
     },
   });
 
@@ -59,6 +73,15 @@ export const AddressResidence = ({ label }: { label: string }) => {
     }
   };
 
+   useEffect(() => {
+        if (data) {
+          methods.reset({
+            ...methods.getValues(),
+            ...(data as Partial<AddressInfo>),
+          });
+        }
+      }, [data, methods]);
+
   const onSubmit = async (data: AddressInfo) => {
     const isValid = await methods.trigger();
     if (!isValid) {
@@ -69,10 +92,30 @@ export const AddressResidence = ({ label }: { label: string }) => {
     try {
       setFormData('address_info', data);
       setSelectedTab('required_documents');
+      
+      // Garantindo que todos os campos obrigatórios estão presentes
       const payload = {
-        userId: userId,
-        ...data
+        userId: Number(StudentId),
+        zipCode: data.zipCode,
+        address: data.address,
+        neighborhood: data.neighborhood,
+        city: data.city,
+        referencePoint: data.referencePoint,
+        residenceType: data.residenceType,
+        structureType: data.structureType,
+        structureTypeOthers: data.structureTypeOthers,
+        hasSewage: data.hasSewage,
+        electricitySource: data.electricitySource,
+        waterSupply: data.waterSupply,
+        transportType: data.transportType,
+        transportTypeOthers: data.transportTypeOthers,
+        commutingTime: data.commutingTime,
+        afterSchoolActivities: data.afterSchoolActivities,
+        // Verificando se os campos condicionais são necessários
+        activityDescription: data.afterSchoolActivities === 'Sim' ? data.activityDescription : undefined,
+        weeklyFrequency: data.afterSchoolActivities === 'Sim' ? data.weeklyFrequency : undefined
       }
+      
       FormSubmit(payload)
     } catch (error) {
       console.error(error)
@@ -116,12 +159,130 @@ export const AddressResidence = ({ label }: { label: string }) => {
                 label="O(a) candidato(a) reside:"
                 required
                 options={[
-                  { value: 'P', label: 'Própria' },
-                  { value: 'A', label: 'Alugada' },
-                  { value: 'O', label: 'Outros' },
+                  { value: 'Casa', label: 'Casa' },
+                  { value: 'Apartamento', label: 'Apartamento' },
+                  { value: 'Comôdo', label: 'Comôdo' },
+                  { value: 'Outros', label: 'Outros' },
                 ]}
                 error={errors.residenceType?.message}
               />
+            <FormSelect
+              name="structureType"
+              label="Estrutura fisica da moradia:"
+              required
+              options={[
+                { value: 'Alvenaria', label: 'Alvenaria' },
+                { value: 'Madeira', label: 'Madeira' },
+                { value: 'Taipa', label: 'Taipa' },
+                { value: 'Outros', label: 'Outros' },
+              ]}
+              withOtherOption={{
+                otherValue: "Outros",
+                otherFieldName: "structureTypeOthers",
+                otherPlaceholder: "Especifique..."
+              }}
+              error={errors.structureType?.message}
+            />
+
+            <FormSelect
+              name="hasSewage"
+              label="Possui Esgoto sanitário:"
+              required
+              options={[
+                { value: 'Existente', label: 'Existente' },
+                { value: 'Inexistente', label: 'Inexistente' },
+              ]}
+              error={errors.hasSewage?.message}
+            />
+
+            <FormSelect
+              name="electricitySource"
+              label="Fornecimento de Energia Elétrica:"
+              required
+              options={[
+                { value: 'Companhia distribuidora', label: 'Companhia distribuidora' },
+                { value: 'Inexistente', label: 'Inexistente' },
+              ]}
+              error={errors.electricitySource?.message}
+            />
+
+            <FormSelect
+              name="waterSupply"
+              label="Abastecimento de Água:"
+              required
+              options={[
+                { value: 'Companhia distribuidora', label: 'Companhia distribuidora' },
+                { value: 'Inexistente', label: 'Inexistente' },
+              ]}
+              error={errors.waterSupply?.message}
+            />
+
+            <FormSelect
+              name="transportType"
+              label="Utiliza transporte para chegar à Unidade Educacional:"
+              required
+              options={[
+                { value: 'Transporte público', label: 'Transporte público' },
+                { value: 'Transporte escolar', label: 'Transporte escolar' },
+                { value: 'Translado realizado pela família', label: 'Translado realizado pela família' },
+                { value: 'outros', label: 'Outros' },
+              ]}
+              withOtherOption={{
+                otherValue: "outros",
+                otherFieldName: "transportTypeOthers",
+                otherPlaceholder: "Especifique o tipo de transporte"
+              }}
+              error={errors.transportType?.message || errors.transportTypeOthers?.message}
+            />
+
+             <FormSelect
+              name="commutingTime"
+              label="Tempo habitual gasto no deslocamento:"
+              required
+              options={[
+                { value: 'Até 10 minutos', label: 'Até 10 minutos' },
+                { value: 'Até 30 minutos', label: 'Até 30 minutos' },
+                { value: 'Até 1 hora', label: 'Até 1 hora' },
+                { value: 'Mais de 1 hora', label: 'Mais de 1 hora' },
+              ]}
+              error={errors.commutingTime?.message}
+            />
+
+            <FormSelect
+              name="afterSchoolActivities"
+              label="O(a) candidato(a) participa de atividades no contraturno escolar?"
+              required
+              options={[
+                { value: 'Não', label: 'Não' },
+                { value: 'Sim', label: 'Sim' },
+              ]}
+              error={errors.afterSchoolActivities?.message}
+            />
+            
+            {methods.watch('afterSchoolActivities') === 'Sim' && (
+              <>
+                <div className="col-span-1 sm:col-span-2 animate-in fade-in slide-in-from-left-5 duration-300">
+                  <FormInput
+                    name="activityDescription"
+                    label={<>Quais são as atividades que o(a) candidato(a) participa? <span className="text-red-500 ml-1">*</span></>}
+                    required
+                    error={errors.activityDescription?.message}
+                    withMarginTop
+                  />
+                </div>
+    
+                <div className="col-span-1 sm:col-span-2 animate-in fade-in slide-in-from-left-5 duration-300">
+                  <FormInput
+                    name="weeklyFrequency"
+                    label={<>Número de vezes por semana em que participa? <span className="text-red-500 ml-1">*</span></>}
+                    required
+                    error={errors.weeklyFrequency?.message}
+                    withMarginTop
+                  />
+                </div>
+              </>
+            )}
+              
             </div>
             <div className="flex justify-end w-full">
               <Button

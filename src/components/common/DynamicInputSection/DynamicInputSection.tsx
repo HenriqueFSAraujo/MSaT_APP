@@ -1,9 +1,7 @@
 import { maskCurrency, maskDate } from '@/utils/transformMasks';
-import autoAnimate from '@formkit/auto-animate';
 import { Info, Plus, Trash } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { type FieldError, useFieldArray, useFormContext } from 'react-hook-form';
-import { AnimatedIconButton } from '../AnimatedIconButton/AnimatedIconButton';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
 
@@ -35,42 +33,39 @@ export const DynamicInputSection = ({
     setValue,
     watch,
   } = useFormContext();
-  const [openModal, setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: namePrefix,
   });
 
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (parentRef.current) {
-      autoAnimate(parentRef.current);
-    }
-  }, []);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const handleAddRow = () =>
     append(fieldNames.reduce((acc, field) => ({ ...acc, [field]: '' }), {}));
 
-  const handleRemoveRow = (index: number) => remove(index);
-
-  const cols = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-2',
-    3: 'grid-cols-3',
-    4: 'grid-cols-4',
-    5: 'grid-cols-5',
-    6: 'grid-cols-6',
+  const handleRemoveRow = (index: number) => {
+    // Preservar posição de scroll
+    const scrollContainer = tableBodyRef.current?.closest('.overflow-y-auto');
+    const scrollTop = scrollContainer?.scrollTop || 0;
+    
+    // Remover a linha
+    remove(index);
+    
+    // Restaurar posição de scroll
+    if (scrollContainer) {
+      setTimeout(() => {
+        scrollContainer.scrollTop = scrollTop;
+      }, 0);
+    }
   };
-
-  const gridColsClass = cols[columns.length as keyof typeof cols] ?? 'grid-cols-1';
 
   const hasError = Array.isArray(errors[namePrefix])
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))
     : false;
 
-  const renderInputWithMask = (fieldName: string, rowIdx: number, fieldError?: FieldError) => {
+  const renderInputWithMask = (fieldName: string, rowIdx: number, fieldError?: FieldError, placeholder?: string) => {
     const path = `${namePrefix}.${rowIdx}.${fieldName}` as const;
     const mask = fieldMasks[fieldName];
     const value = watch(path) || '';
@@ -89,51 +84,75 @@ export const DynamicInputSection = ({
       setValue(path, val, { shouldValidate: true, shouldDirty: true });
     };
 
+    // Determinar o ícone baseado no tipo de máscara
+    const getInputIcon = () => {
+      if (mask === 'date') return '📅';
+      if (mask === 'currency') return 'R$';
+      // Ano não precisa de ícone
+      return null;
+    };
+    
+    const inputIcon = getInputIcon();
+
     return (
-      <>
+      <div className="relative">
+        {inputIcon && (
+          <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+            <span className="text-gray-500 text-sm">{inputIcon}</span>
+          </div>
+        )}
         <input
           {...register(path, {
             required: required ? 'Campo obrigatório' : false,
             validate:
               mask === 'year'
-                ? (val) => /^\d{4}$/.test(val) || 'Ano deve conter exatamente 4 dígitos'
+                ? (val) => {
+                    if (!val) return true;
+                    if (!/^\d{1,4}$/.test(val)) return 'Apenas números são permitidos';
+                    if (val.length !== 4) return 'O ano deve conter exatamente 4 dígitos';
+                    const yearNum = parseInt(val, 10);
+                    if (yearNum < 1900 || yearNum > new Date().getFullYear() + 1) 
+                      return 'Ano inválido';
+                    return true;
+                  }
+                : mask === 'date'
+                ? (val) => !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val) || 'Formato deve ser DD/MM/AAAA'
                 : undefined,
           })}
-          placeholder="Digite..."
-          onChange={onChange}
-          inputMode="numeric"
-          maxLength={mask === 'year' ? 4 : undefined}
+          placeholder={placeholder || (mask === 'date' ? "DD/MM/AAAA" : mask === 'year' ? "AAAA" : "Digite...")}
+          onChange={mask ? onChange : undefined}
+          inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? "numeric" : "text"}
+          maxLength={mask === 'year' ? 4 : mask === 'date' ? 10 : undefined}
           className={`
-          m-1 p-2 border w-full text-muted-foreground
-          placeholder-muted-foreground rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-          ${fieldError ? 'text-red-500 border-red-500 placeholder:text-current bg-red-200' : 'border-gray-300'}
-        `}
-          value={value}
+            p-3 text-sm border w-full rounded-md
+            ${inputIcon ? 'pl-7' : ''}
+            placeholder-gray-400
+            focus:outline-none focus:ring-1 focus:ring-blue-500
+            ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
+          `}
+          value={mask ? value : undefined}
         />
-
         {fieldError && (
-          <p className="absolute text-red-500 text-xs mt-1 bottom-[-13px]">{fieldError.message}</p>
+          <div className="md:absolute text-red-500 text-xs mt-1 md:mt-0 md:-bottom-4 md:left-0">
+            {fieldError.message}
+          </div>
         )}
-      </>
+      </div>
     );
   };
 
-
-
-
   return (
-    <div className="max-w-[950px] space-y-4">
-      <div className="flex gap-2 items-center">
-        {title && <h3 className="font-semibold text-md text-muted-foreground">{title}</h3>}
-        {required && <span className={`ml-1 ${hasError ? 'text-red-500' : ''}`}>*</span>}
+    <div className="w-full space-y-2">
+      <div className="flex gap-3 items-center">
+        {title && <h3 className="font-semibold text-gray-700">{title}</h3>}
+        {required && <span className={`ml-1 ${hasError ? 'text-red-500' : 'text-red-500'}`}>*</span>}
         {info && (
           <DialogAction
             textButton="Entendi."
-            textTitle="Despesas mensais básicas"
+            textTitle="Informações"
             textDescription={info}
             icon={Info}
-            size="24"
+            size="16"
             open={openModal}
             setOpenModal={() => setOpenModal(!openModal)}
           />
@@ -141,93 +160,157 @@ export const DynamicInputSection = ({
       </div>
 
       <div className="rounded-lg overflow-hidden border border-gray-200">
-        <div
-          className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-1 py-1 max-w-[1000px] rounded-t-lg`}
-        >
-          {columns.map((col, idx) => (
-            <div
-              // biome-ignore lint/suspicious/noArrayIndexKey: Using index as key is acceptable here since columns are static
-              key={idx}
-              className="font-bold text-white truncate bg-blue-400 p-2 rounded-t-md text-sm"
-              title={col}
-            >
-              {col}
-            </div>
-          ))}
-        </div>
-
-        {/* Linhas */}
-        <div ref={parentRef} className="max-w-[1000px] divide-y ">
-          {fields.map((field, rowIdx) => (
-            <div key={field.id} className={`grid ${gridColsClass} gap-4 p-4 relative`}>
-              {fieldNames.map((fieldName) => {
-                const fieldError = (
-                  errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
-                )?.[rowIdx]?.[fieldName];
-
-                // Renderiza input com máscara caso tenha máscara configurada, senão input padrão
-                if (fieldMasks[fieldName]) {
-                  return (
-                    <div key={`${field.id}-${fieldName}`} className="relative">
-                      {renderInputWithMask(fieldName, rowIdx, fieldError)}
-                    </div>
-                  );
-                }
-
-                // Input padrão
-                return (
-                  <div key={`${field.id}-${fieldName}`} className="relative">
-                    <input
-                      {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
-                        required: required ? 'Campo obrigatório' : false,
-                      })}
-                      placeholder="Digite..."
-                      className={`
-                        m-1 p-2 border w-full text-muted-foreground
-                        placeholder-muted-foreground rounded-lg
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                        ${fieldError ? 'text-red-500 border-red-500 placeholder:text-current bg-red-200' : 'border-gray-300'}
-                      `}
-                    />
-                    {fieldError && (
-                      <p className="absolute text-red-500 text-xs mt-1 bottom-[-13px]">
-                        {fieldError.message}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-
-              {rowIdx === fields.length - 1 && (
-                <div className="flex gap-2 items-center">
-                  <TooltipAction text={'Adicionar linha'}>
-                    <div>
-                      <AnimatedIconButton
-                        onClick={handleAddRow}
-                        className="p-1 text-gray-600 rounded-full hover:bg-gray-200 transition"
-                      >
-                        <Plus size={20} />
-                      </AnimatedIconButton>
-                    </div>
-                  </TooltipAction>
-
+        {/* Adicionamos uma altura máxima para evitar saltos de página */}
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
+          {/* Exibição para mobile em cards */}
+          <div className="md:hidden">
+            {fields.map((field, rowIdx) => (
+              <div key={field.id} className="p-3 border-b last:border-b-0 bg-white">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-blue-600">Pessoa {rowIdx + 1}</h4>
                   {fields.length > 1 && (
-                    <TooltipAction text={'Remover linha'}>
-                      <div>
-                        <AnimatedIconButton
-                          onClick={() => handleRemoveRow(fields.length - 1)}
-                          className="p-1 text-gray-600 rounded-full hover:bg-gray-200 transition"
-                        >
-                          <Trash size={19} />
-                        </AnimatedIconButton>
-                      </div>
-                    </TooltipAction>
+                    <button 
+                      onClick={() => handleRemoveRow(rowIdx)}
+                      className="p-1 rounded-full hover:bg-red-100 text-red-500"
+                      type="button"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
-              )}
-            </div>
-          ))}
+                {fieldNames.map((fieldName, colIdx) => {
+                  const fieldError = (
+                    errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
+                  )?.[rowIdx]?.[fieldName];
+                  
+                  return (
+                    <div key={`${field.id}-${fieldName}`} className="mb-3">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {columns[colIdx]}
+                      </label>
+                      {fieldMasks[fieldName]
+                        ? renderInputWithMask(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)
+                        : (
+                          <div className="relative">
+                            <input
+                              {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
+                                required: required ? 'Campo obrigatório' : false,
+                              })}
+                              placeholder={`${columns[colIdx]}...`}
+                              className={`
+                                p-3 text-sm border w-full rounded-md
+                                focus:outline-none focus:ring-1 focus:ring-blue-500
+                                ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
+                              `}
+                            />
+                            {fieldError && (
+                              <span className="text-red-500 text-xs mt-1 block">
+                                {fieldError.message}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          
+          {/* Exibição para tablet e desktop como tabela */}
+          <table className="w-full table-fixed hidden md:table">
+            <thead className="bg-blue-500 text-white sticky top-0 z-10">
+              <tr>
+                {columns.map((col, idx) => (
+                  <th key={idx} className="text-left p-3 text-sm font-medium">
+                    {col}
+                  </th>
+                ))}
+                <th className="w-10"></th>
+              </tr>
+            </thead>
+            {/* Tabela para tablet e desktop */}
+            <tbody ref={tableBodyRef} className="divide-y divide-gray-200">
+              {fields.map((field, rowIdx) => (
+                <tr key={field.id} className="hover:bg-gray-50">
+                  {fieldNames.map((fieldName, colIdx) => {
+                    const fieldError = (
+                      errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
+                    )?.[rowIdx]?.[fieldName];
+
+                    return (
+                      <td key={`${field.id}-${fieldName}`} className="p-3 align-top">
+                        {fieldMasks[fieldName]
+                          ? renderInputWithMask(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)
+                          : (
+                            <div className="relative">
+                              <input
+                                {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
+                                  required: required ? 'Campo obrigatório' : false,
+                                })}
+                                placeholder={`${columns[colIdx]}...`}
+                                className={`
+                                  p-3 text-sm border w-full min-w-[80px] text-gray-700
+                                  placeholder-gray-400 rounded-md
+                                  focus:outline-none focus:ring-1 focus:ring-blue-500
+                                  ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
+                                `}
+                              />
+                              {fieldError && (
+                                <span className="text-red-500 text-xs absolute -bottom-4 left-0">
+                                  {fieldError.message}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                      </td>
+                    );
+                  })}
+                  <td className="p-3 w-10 align-middle">
+                    {fields.length > 1 && (
+                      <TooltipAction text="Remover">
+                        <button 
+                          onClick={() => handleRemoveRow(rowIdx)}
+                          className="p-1 rounded-full hover:bg-red-100 text-red-500"
+                          type="button"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </TooltipAction>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+
+        {/* Botão adicionar para mobile */}
+        <div className="p-3 md:hidden">
+          <button
+            onClick={handleAddRow}
+            className="flex items-center justify-center w-full p-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors"
+            type="button"
+          >
+            <Plus size={20} className="mr-2" />
+            <span className="font-medium">Adicionar Pessoa</span>
+          </button>
+        </div>
+          
+        {/* Botão adicionar para desktop */}
+        <div className="hidden md:flex justify-end p-3 bg-gray-50">
+          <button
+            onClick={handleAddRow}
+            className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100"
+            type="button"
+          >
+            <Plus size={14} /> Adicionar linha
+          </button>
+        </div>
+      </div>
+      
+      <div className="text-xs text-gray-500 mt-1">
+        * Preencha os dados de todos os membros da família. As linhas em branco não serão salvas.
       </div>
     </div>
   );

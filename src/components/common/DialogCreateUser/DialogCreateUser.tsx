@@ -1,13 +1,7 @@
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useState, useEffect } from 'react';
-import { UserPlus, AlertCircle } from 'lucide-react';
-import { toast } from '@/utils/toast';
-import { z } from 'zod';
-import { cn } from '@/lib/utils';
-import { useCreateUser } from '@/services/queries/useCreateUser';
 import {
   Select,
   SelectContent,
@@ -15,7 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { useCreateUser } from '@/services/queries/useCreateUser';
+import { toast } from '@/utils/toast';
 import { formatCpf } from '@/utils/transformMasks';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, UserPlus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
 
 const userSchema = z.object({
   fullName: z.string().min(1, 'O nome completo é obrigatório'),
@@ -142,90 +143,161 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
     }
   }, [open]);
 
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3 },
+    },
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-[500px] p-0 overflow-hidden"
-        onInteractOutside={(e) => e.preventDefault()}
-      >
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
-              <UserPlus className="h-6 w-6" />
-              Criar Novo Usuário
-            </DialogTitle>
-            <p className="text-blue-100 text-sm mt-2">
-              Preencha os campos para adicionar um novo usuário.
-            </p>
-          </DialogHeader>
-        </div>
-
-        <div className="p-6 space-y-4">
-          {['fullName', 'cpf', 'email'].map((field) => (
-            <div key={field} className="space-y-2">
-              <Label className="text-sm font-medium">
-                {field === 'fullName' && 'Nome Completo'}
-                {field === 'cpf' && 'CPF'}
-                {field === 'email' && 'E-mail'}
-              </Label>
-              <Input
-                value={
-                  typeof formData[field as keyof typeof formData] === 'string'
-                    ? (formData[field as keyof typeof formData] as string)
-                    : ''
-                }
-                onChange={(e) => handleInputChange(field, e.target.value)}
-                placeholder={`Digite o ${field === 'name' ? 'nome completo' : field}`}
-                className={cn(errors[field] && 'border-red-500 focus-visible:ring-red-500')}
-              />
-              {errors[field] && (
-                <div className="flex items-center gap-1 text-red-500 text-xs mt-1">
-                  <AlertCircle className="w-3 h-3" />
-                  {errors[field]}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Role */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Perfil</Label>
-            <Select
-              value={formData.roleName}
-              onValueChange={(value) => handleInputChange('roleName', value)}
+    <AnimatePresence>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          className="max-w-[500px] p-0 overflow-hidden"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div
+              className="bg-gradient-to-r from-blue-600 to-blue-700 p-6"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <SelectTrigger
-                className={cn(errors.roleName && 'border-red-500 focus-visible:ring-red-500')}
-              >
-                <SelectValue placeholder="Selecione o perfil" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ROLE_ADMIN">Admin</SelectItem>
-                <SelectItem value="ROLE_USER">Aluno</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.roleName && (
-              <div className="flex items-center gap-1 text-red-500 text-xs mt-1">
-                <AlertCircle className="w-3 h-3" />
-                {errors.roleName}
-              </div>
-            )}
-          </div>
+              <DialogHeader>
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
+                    <UserPlus className="h-6 w-6" />
+                    Criar Novo Usuário
+                  </DialogTitle>
+                </motion.div>
+                <motion.p
+                  className="text-blue-100 text-sm mt-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Preencha os campos para adicionar um novo usuário.
+                </motion.p>
+              </DialogHeader>
+            </motion.div>
 
-          <div className="flex justify-end gap-3 mt-8">
-            <Button variant="outline" onClick={() => onOpenChange(false)} className="px-6">
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={!isFormValid}
-              className="px-6 bg-blue-600 hover:bg-blue-700"
-            >
-              Criar Usuário
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+            <motion.div className="p-6 space-y-4" variants={itemVariants}>
+              {['fullName', 'cpf', 'email'].map((field, index) => (
+                <motion.div
+                  key={field}
+                  className="space-y-2"
+                  variants={itemVariants}
+                  custom={index}
+                >
+                  <Label className="text-sm font-medium">
+                    {field === 'fullName' && 'Nome Completo'}
+                    {field === 'cpf' && 'CPF'}
+                    {field === 'email' && 'E-mail'}
+                  </Label>
+                  <motion.div whileHover={{ scale: 1.01 }}>
+                    <Input
+                      value={
+                        typeof formData[field as keyof typeof formData] === 'string'
+                          ? (formData[field as keyof typeof formData] as string)
+                          : ''
+                      }
+                      onChange={(e) => handleInputChange(field, e.target.value)}
+                      placeholder={`Digite o ${field === 'name' ? 'nome completo' : field}`}
+                      className={cn(errors[field] && 'border-red-500 focus-visible:ring-red-500')}
+                    />
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors[field] && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="flex items-center gap-1 text-red-500 text-xs mt-1"
+                      >
+                        <AlertCircle className="w-3 h-3" />
+                        {errors[field]}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+
+              <motion.div className="space-y-2" variants={itemVariants}>
+                <Label className="text-sm font-medium">Perfil</Label>
+                <motion.div whileHover={{ scale: 1.01 }}>
+                  <Select
+                    value={formData.roleName}
+                    onValueChange={(value) => handleInputChange('roleName', value)}
+                  >
+                    <SelectTrigger
+                      className={cn(errors.roleName && 'border-red-500 focus-visible:ring-red-500')}
+                    >
+                      <SelectValue placeholder="Selecione o perfil" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ROLE_ADMIN">Admin</SelectItem>
+                      <SelectItem value="ROLE_USER">Aluno</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </motion.div>
+                <AnimatePresence>
+                  {errors.roleName && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="flex items-center gap-1 text-red-500 text-xs mt-1"
+                    >
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.roleName}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.div className="flex justify-end gap-3 mt-8" variants={itemVariants}>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                    className="px-6"
+                  >
+                    Cancelar
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    onClick={handleSave}
+                    disabled={!isFormValid}
+                    className="px-6 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Criar Usuário
+                  </Button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </DialogContent>
+      </Dialog>
+    </AnimatePresence>
   );
 };

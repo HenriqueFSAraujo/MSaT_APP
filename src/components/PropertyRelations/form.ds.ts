@@ -1,8 +1,8 @@
-export const fieldMasksMap: Record<string, 'currency' | 'date'> = {
+export const fieldMasksMap: Record<string, 'currency' | 'date' | 'year'> = {
   valorMensal: 'currency',
   despesaMensal: 'currency',
   valor: 'currency',
-  anoFabricacao: 'date',
+  anoFabricacao: 'year',
 };
 
 export const dynamicSections = [

@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useGetUsers, User } from '@/services/queries/useGetUsers';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { motion } from 'framer-motion';
 import { BookOpenText } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -126,40 +127,83 @@ export default function UsuariosPage() {
     };
   }, [filteredUsers]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   return (
-    <main className="p-4 space-y-6 min-h-auto">
-      <Card className="bg-white shadow-md rounded-2xl">
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h2 className="text-3xl font-bold text-muted-foreground flex items-center gap-1">
-              <BookOpenText className="h-5 w-5" />
-              Painel de usuários
-            </h2>
-          </div>
+    <motion.main
+      className="p-4 space-y-6 min-h-auto"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div variants={itemVariants}>
+        <Card className="bg-white shadow-md rounded-2xl">
+          <CardContent className="pt-6">
+            <motion.div
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4"
+              variants={itemVariants}
+            >
+              <h2
+                className="text-3xl font-bold text-muted-foreground flex items-center gap-1"
+              >
+                <BookOpenText className="h-5 w-5" />
+                Painel de usuários
+              </h2>
+            </motion.div>
 
-          <UsersMetricsCards metrics={metrics} />
+            <motion.div variants={itemVariants}>
+              <UsersMetricsCards metrics={metrics} />
+            </motion.div>
 
-          <UsersFilters
-            searchTerm={filters.searchTerm}
-            onSearchChange={handleSearch}
-            selectedRole={filters.role}
-            onRoleChange={handleRoleChange}
-            onNewUser={handleNewUser}
-          />
+            <motion.div variants={itemVariants}>
+              <UsersFilters
+                searchTerm={filters.searchTerm}
+                onSearchChange={handleSearch}
+                selectedRole={filters.role}
+                onRoleChange={handleRoleChange}
+                onNewUser={handleNewUser}
+              />
+            </motion.div>
 
-          <UsersTable
-            users={filteredUsers}
-            statusFilter={filters.status}
-            onStatusChange={toggleStatus}
-            generateOpinion={handleEditUser}
-            goesForm={goesForm}
-          />
-        </CardContent>
-      </Card>
+            <motion.div
+              variants={itemVariants}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <UsersTable
+                users={filteredUsers}
+                statusFilter={filters.status}
+                onStatusChange={toggleStatus}
+                generateOpinion={handleEditUser}
+                goesForm={goesForm}
+              />
+            </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       <DialogCreateUser open={openModal} onOpenChange={setOpenModal} />
-
       <DialogPerfilAction open={changePasswordModal} onOpenChange={setChangePasswordModal} />
-    </main>
+    </motion.main>
   );
 }

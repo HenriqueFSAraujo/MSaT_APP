@@ -7,7 +7,9 @@ export const formularioSocioeconomicoSchema = z.object({
       required_error: 'Data de nascimento é obrigatória',
       invalid_type_error: 'Formato inválido de data',
     })
-     .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
+    .refine((date) => date !== null && date !== undefined, { 
+      message: 'Data de nascimento é obrigatória' 
+    }),
 
   segmentoCursar2025: z.string().min(1, 'Segmento a cursar é obrigatório'),
 
@@ -34,7 +36,11 @@ export const formularioSocioeconomicoSchema = z.object({
 
   rendaPerCapitaSalarioMinimo: z
   .string()
-  .transform((val) => Number(val.replace(/\D/g, '')))
+  .transform((val) => {
+    if (!val) return 0;
+    const normalizedValue = val.replace(',', '.');
+    return parseFloat(normalizedValue);
+  })
   .pipe(z.number().min(0, 'Valor inválido')),
 
 
@@ -108,4 +114,26 @@ export const percentualOptions = [
   { value: 'Indeferido', label: 'Indeferido' },
 ];
 
-export type FormularioSocioeconomicoData = z.infer<typeof formularioSocioeconomicoSchema>;
+export interface FormularioSocioeconomicoData {
+  nomeAluno: string;
+  dataNascimentoAluno: Date | undefined;
+  segmentoCursar2025: string;
+  nomeResponsavel: string;
+  cpfResponsavel: string;
+  telefoneResponsavel?: string;
+  rendaBrutaFamiliar: string | number;
+  totalComponentesFamilar: string | number;
+  rendaPerCapita: string | number;
+  rendaPerCapitaSalarioMinimo: string | number;
+  percentualLc187?: string;
+  beneficiarioProgramaRenda?: string;
+  resideProximoUnidadeEscolar?: string;
+  candidatoComDeficiencia?: string;
+  doencaGraveOuDeficienciaFamiliar?: string;
+  quantidadeMenoresDezoitoAnos?: string | number;
+  aspectosRelevantes: string;
+  resultadoSocioeconomico?: string;
+  dataFinalizacaoParecer: Date;
+}
+
+export type FormularioSocioeconomicoDataFromZod = z.infer<typeof formularioSocioeconomicoSchema>;

@@ -1,34 +1,25 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: '/',
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(process.cwd(), 'src'),
-    },
-  },
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-dom')) {
-              return 'react-dom';
-            }
-            if (id.includes('/react/')) {
-              return 'react';
-            }
-            if (id.includes('shadcn') || id.includes('styled-components')) {
-              return 'ui';
-            }
-            return 'vendor';
-          }
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-label'],
+          'vendor-utils': ['axios', 'framer-motion', 'react-router-dom', '@tanstack/react-query'],
+          'vendor-forms': ['react-hook-form', 'zod', '@hookform/resolvers']
         }
       }
-    }
-
+    },
+    chunkSizeWarningLimit: 1000
   },
-});
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  }
+})

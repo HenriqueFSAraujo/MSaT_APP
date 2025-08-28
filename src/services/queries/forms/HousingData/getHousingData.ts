@@ -1,23 +1,19 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
-type HousingDataPayload = {
-    userId: number
-};
-
-export function getHousingData() {
-    return useMutation({
-        mutationFn: (payload: HousingDataPayload) =>
-            api.get(`${Endpoints.Forms.Housing_Data}/${payload.userId}`),
-
-        onSuccess: () => { },
-
-        onError: (error) => {
-            toast.error('Erro ao carregar informações do formulário.');
-            console.error(error)
+export function UseHousingData(userId: number) {
+    return useQuery({
+    queryKey: ['get-housing-data', userId],
+    queryFn: async () => {
+        const { data } = await api.get(`${Endpoints.Forms.Housing_Data}/${userId}`);
+        return data;
         },
+        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        retry: false
     });
 }
+
+
 

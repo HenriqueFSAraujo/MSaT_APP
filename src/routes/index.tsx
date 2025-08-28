@@ -1,16 +1,17 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Login from '@/pages/Login/Login';
-import Users from '@/pages/Users/Users';
-import StudentForm from '@/pages/StudentForm/StudentForm';
-import { Header } from '@/components/Header/Header';
-import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
-import { useAuthStore } from '@/store/useAuthStore';
-import SocioeconomicReport from '@/pages/SocioeconomicReport/SocioeconomicReport';
-import StudentPortal from '@/pages/StudentPortal/StudentPortal';
 import { routeRoles } from '@/Auth/Login/Routes/routeRoles';
+import { Layout } from '@/components/Layout/Layout';
+import Login from '@/pages/Login/Login';
+import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
+import SocioeconomicReport from '@/pages/SocioeconomicReport/SocioeconomicReport';
+import StudentForm from '@/pages/StudentForm/StudentForm';
+import StudentPortal from '@/pages/StudentPortal/StudentPortal';
+import Users from '@/pages/Users/Users';
+import { useAuthStore } from '@/store/useAuthStore';
+import type { ReactElement } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 interface PrivateRouteProps {
-  element: JSX.Element;
+  element: ReactElement;
   allowedRoles: string[];
 }
 
@@ -21,22 +22,15 @@ const PrivateRoute = ({ element, allowedRoles }: PrivateRouteProps) => {
 };
 
 export const AppRoutes = () => {
-  const { token: isAuthenticated } = useAuthStore();
-  const location = useLocation();
-
-  const isLoginPage = location.pathname === '/';
-
   return (
-    <>
-      {!isLoginPage && isAuthenticated && <Header shouldRender />}
-
+    <Layout>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
 
         {/* ADMIN ROLE */}
         <Route
-          path="/dashboard-Users"
+          path="/dashboard-users"
           element={<PrivateRoute element={<Users />} allowedRoles={routeRoles.admin} />}
         />
 
@@ -58,6 +52,6 @@ export const AppRoutes = () => {
           element={<PrivateRoute element={<StudentForm />} allowedRoles={routeRoles.users} />}
         />
       </Routes>
-    </>
+    </Layout>
   );
 };

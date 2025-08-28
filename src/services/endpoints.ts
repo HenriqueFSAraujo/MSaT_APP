@@ -16,7 +16,8 @@ export const Endpoints = {
     Personal_Data: '/forms',
     Parental_Data: '/parentes',
     Address_Data: '/enderecos',
-
+    //TODO: Ajustar rota dos Docs
+    Family_Composition: '/composicao-familiar',
     Housing_Data: '/form-condicoes-habitacionais',
     Property_Data: '/bens-posses',
   },

@@ -4,16 +4,18 @@ import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '..
 import { useFormContext } from 'react-hook-form';
 import { forwardRef } from 'react';
 import { moneyMask } from '@/utils/transformMasks';
+import React from 'react';
 
 interface FormInputProps {
   name: string;
-  label: string;
+  label: string | React.ReactNode;
   type?: string;
   required?: boolean;
   error?: string;
   mask?: 'cpf' | 'rg' | 'phone' | 'cep' | 'money';
-  description?: string;
+  description?: string | React.ReactNode;
   withMarginTop?: boolean;
+  disabled?: boolean;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   [key: string]: unknown;
 }
@@ -56,6 +58,7 @@ const FormInput = ({
   mask,
   withMarginTop = false,
   onBlur,
+  disabled,
 }: FormInputProps) => {
   const { control, trigger } = useFormContext();
 
@@ -79,11 +82,12 @@ const FormInput = ({
               {...field}
               mask={mask === 'money' ? (value) => moneyMask(value) : maskPatterns[mask]}
               guide={false}
-              keepCharPositions={mask === 'money'} // Importante para a máscara de dinheiro
+              disabled={disabled}
+              keepCharPositions={mask === 'money'}
               className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
                 fieldState.error
                   ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                  : disabled ? 'bg-gray-50 text-gray-700 cursor-not-allowed border-dashed border-gray-400' : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
               }`}
               onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
@@ -103,10 +107,11 @@ const FormInput = ({
             <Input
               {...field}
               type={type}
+              disabled={disabled}
               className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${
                 fieldState.error
                   ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                  : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                  : disabled ? 'bg-gray-50 text-gray-700 cursor-not-allowed border-dashed border-gray-400' : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
               }`}
               placeholder="Digite..."
               onBlur={async (e) => {

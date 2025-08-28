@@ -1,23 +1,20 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
-type getScholarshipProcessPayload = {
-    userId: number
-};
-
-export function getScholarshipProcess() {
-    return useMutation({
-        mutationFn: (payload: getScholarshipProcessPayload) =>
-            api.get(`${Endpoints.Forms.SchoolarShip_data}/${payload.userId}`),
-
-        onSuccess: () => { },
-
-        onError: (error) => {
-            toast.error('Erro ao carregar informações do formulário.');
-            console.error(error)
+export function useScholarShipData(userId: number) {
+    return useQuery({
+    queryKey: ['get-scholar-ship-data', userId],
+    queryFn: async () => {
+        const { data } = await api.get(`${Endpoints.Forms.SchoolarShip_data}/${userId}`);
+        return data;
         },
+        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        retry: false
     });
 }
+
+
+
 

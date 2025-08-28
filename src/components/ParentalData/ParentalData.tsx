@@ -1,21 +1,22 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from '../common/FormInput/FormInput';
+import { PostParentalData, useParentalData } from '@/services/queries/forms/index';
+import { useTabStore } from '@/store/tabStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import FormInput from '../common/FormInput/FormInput';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
-import { useTabStore } from '@/store/tabStore';
-import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ParentalData, parentalDataSchema } from './type/formData';
-import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { postParentalData } from '@/services/queries/forms/ParentalData/postParentalData';
-import { useAuthStore } from '@/store/useAuthStore';
 
 export const ParentalDataForm = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
-  const { mutate: FormSubmit } = postParentalData();
-  const { id: userId } = useAuthStore();
+  const { mutate: FormSubmit } = PostParentalData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = useParentalData(Number(StudentId));
   const methods = useForm({
     mode: 'onSubmit',
     resolver: zodResolver(parentalDataSchema),
@@ -34,6 +35,15 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
   });
 
   const { errors } = methods.formState;
+  
+    useEffect(() => {
+      if (data) {
+        methods.reset({
+          ...methods.getValues(),
+          ...(data as Partial<ParentalData>),
+        });
+      }
+    }, [data, methods]);
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
@@ -43,11 +53,9 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
     if (!isValid) return;
     try {
       setFormData('parents_data', data);
-      toast.success('Sucesso!', 'Dados enviados com sucesso!');
-      console.log('Dados do formulário:', data);
       setSelectedTab('address_info');
       const payload = {
-        userId: userId,
+        userId: Number(StudentId),
         parent1FullName: data.parent1FullName,
         parent1Cpf: data.parent1Cpf,
         parent1Phone: data.parent1Phone,

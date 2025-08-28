@@ -1,23 +1,22 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
-import { toast } from '@/utils/toast';
 
-type PropertyDataPayload = {
-    userId: number
-};
-
-export function getPropertyData() {
-    return useMutation({
-        mutationFn: (payload: PropertyDataPayload) =>
-            api.get(`${Endpoints.Forms.Property_Data}/${payload.userId}`),
-
-        onSuccess: () => { },
-
-        onError: (error) => {
-            toast.error('Erro ao carregar informações do formulário.');
-            console.error(error)
+export function usePropertyData(userId: number) {
+    return useQuery({
+    queryKey: ['get-property-data', userId],
+    queryFn: async () => {
+        const { data } = await api.get(`${Endpoints.Forms.Property_Data}/${userId}`);
+        return data;
         },
+        enabled: !!userId,
+        staleTime: 1000 * 60 * 5,
+        retry: false
     });
 }
+
+
+
+
+
 
