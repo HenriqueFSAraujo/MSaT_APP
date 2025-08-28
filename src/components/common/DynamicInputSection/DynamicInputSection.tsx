@@ -15,6 +15,7 @@ type DynamicInputSectionProps = {
   namePrefix: string;
   required: boolean;
   fieldMasks?: Record<string, MaskType>;
+  footerMessage?: string;
 };
 
 export const DynamicInputSection = ({
@@ -25,6 +26,7 @@ export const DynamicInputSection = ({
   namePrefix = '',
   required = false,
   fieldMasks = {},
+  footerMessage, // Nova prop
 }: DynamicInputSectionProps) => {
   const {
     control,
@@ -46,14 +48,11 @@ export const DynamicInputSection = ({
     append(fieldNames.reduce((acc, field) => ({ ...acc, [field]: '' }), {}));
 
   const handleRemoveRow = (index: number) => {
-    // Preservar posição de scroll
     const scrollContainer = tableBodyRef.current?.closest('.overflow-y-auto');
     const scrollTop = scrollContainer?.scrollTop || 0;
-    
-    // Remover a linha
+
     remove(index);
-    
-    // Restaurar posição de scroll
+
     if (scrollContainer) {
       setTimeout(() => {
         scrollContainer.scrollTop = scrollTop;
@@ -65,7 +64,12 @@ export const DynamicInputSection = ({
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))
     : false;
 
-  const renderInputWithMask = (fieldName: string, rowIdx: number, fieldError?: FieldError, placeholder?: string) => {
+  const renderInputWithMask = (
+    fieldName: string,
+    rowIdx: number,
+    fieldError?: FieldError,
+    placeholder?: string
+  ) => {
     const path = `${namePrefix}.${rowIdx}.${fieldName}` as const;
     const mask = fieldMasks[fieldName];
     const value = watch(path) || '';
@@ -84,23 +88,8 @@ export const DynamicInputSection = ({
       setValue(path, val, { shouldValidate: true, shouldDirty: true });
     };
 
-    // Determinar o ícone baseado no tipo de máscara
-    const getInputIcon = () => {
-      if (mask === 'date') return '📅';
-      if (mask === 'currency') return 'R$';
-      // Ano não precisa de ícone
-      return null;
-    };
-    
-    const inputIcon = getInputIcon();
-
     return (
       <div className="relative">
-        {inputIcon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-            <span className="text-gray-500 text-sm">{inputIcon}</span>
-          </div>
-        )}
         <input
           {...register(path, {
             required: required ? 'Campo obrigatório' : false,
@@ -111,21 +100,23 @@ export const DynamicInputSection = ({
                     if (!/^\d{1,4}$/.test(val)) return 'Apenas números são permitidos';
                     if (val.length !== 4) return 'O ano deve conter exatamente 4 dígitos';
                     const yearNum = parseInt(val, 10);
-                    if (yearNum < 1900 || yearNum > new Date().getFullYear() + 1) 
+                    if (yearNum < 1900 || yearNum > new Date().getFullYear() + 1)
                       return 'Ano inválido';
                     return true;
                   }
                 : mask === 'date'
-                ? (val) => !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val) || 'Formato deve ser DD/MM/AAAA'
-                : undefined,
+                  ? (val) =>
+                      !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val) || 'Formato deve ser DD/MM/AAAA'
+                  : undefined,
           })}
-          placeholder={placeholder || (mask === 'date' ? "DD/MM/AAAA" : mask === 'year' ? "AAAA" : "Digite...")}
+          placeholder={
+            placeholder || (mask === 'date' ? 'DD/MM/AAAA' : mask === 'year' ? 'AAAA' : 'Digite...')
+          }
           onChange={mask ? onChange : undefined}
-          inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? "numeric" : "text"}
+          inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? 'numeric' : 'text'}
           maxLength={mask === 'year' ? 4 : mask === 'date' ? 10 : undefined}
           className={`
             p-3 text-sm border w-full rounded-md
-            ${inputIcon ? 'pl-7' : ''}
             placeholder-gray-400
             focus:outline-none focus:ring-1 focus:ring-blue-500
             ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
@@ -145,7 +136,9 @@ export const DynamicInputSection = ({
     <div className="w-full space-y-2">
       <div className="flex gap-3 items-center">
         {title && <h3 className="font-semibold text-gray-700">{title}</h3>}
-        {required && <span className={`ml-1 ${hasError ? 'text-red-500' : 'text-red-500'}`}>*</span>}
+        {required && (
+          <span className={`ml-1 ${hasError ? 'text-red-500' : 'text-red-500'}`}>*</span>
+        )}
         {info && (
           <DialogAction
             textButton="Entendi."
@@ -169,7 +162,7 @@ export const DynamicInputSection = ({
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium text-blue-600">Pessoa {rowIdx + 1}</h4>
                   {fields.length > 1 && (
-                    <button 
+                    <button
                       onClick={() => handleRemoveRow(rowIdx)}
                       className="p-1 rounded-full hover:bg-red-100 text-red-500"
                       type="button"
@@ -182,41 +175,41 @@ export const DynamicInputSection = ({
                   const fieldError = (
                     errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
                   )?.[rowIdx]?.[fieldName];
-                  
+
                   return (
                     <div key={`${field.id}-${fieldName}`} className="mb-3">
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         {columns[colIdx]}
                       </label>
-                      {fieldMasks[fieldName]
-                        ? renderInputWithMask(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)
-                        : (
-                          <div className="relative">
-                            <input
-                              {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
-                                required: required ? 'Campo obrigatório' : false,
-                              })}
-                              placeholder={`${columns[colIdx]}...`}
-                              className={`
+                      {fieldMasks[fieldName] ? (
+                        renderInputWithMask(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)
+                      ) : (
+                        <div className="relative">
+                          <input
+                            {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
+                              required: required ? 'Campo obrigatório' : false,
+                            })}
+                            placeholder={`${columns[colIdx]}...`}
+                            className={`
                                 p-3 text-sm border w-full rounded-md
                                 focus:outline-none focus:ring-1 focus:ring-blue-500
                                 ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
                               `}
-                            />
-                            {fieldError && (
-                              <span className="text-red-500 text-xs mt-1 block">
-                                {fieldError.message}
-                              </span>
-                            )}
-                          </div>
-                        )}
+                          />
+                          {fieldError && (
+                            <span className="text-red-500 text-xs mt-1 block">
+                              {fieldError.message}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
             ))}
           </div>
-          
+
           {/* Exibição para tablet e desktop como tabela */}
           <table className="w-full table-fixed hidden md:table">
             <thead className="bg-blue-500 text-white sticky top-0 z-10">
@@ -240,36 +233,41 @@ export const DynamicInputSection = ({
 
                     return (
                       <td key={`${field.id}-${fieldName}`} className="p-3 align-top">
-                        {fieldMasks[fieldName]
-                          ? renderInputWithMask(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)
-                          : (
-                            <div className="relative">
-                              <input
-                                {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
-                                  required: required ? 'Campo obrigatório' : false,
-                                })}
-                                placeholder={`${columns[colIdx]}...`}
-                                className={`
+                        {fieldMasks[fieldName] ? (
+                          renderInputWithMask(
+                            fieldName,
+                            rowIdx,
+                            fieldError,
+                            `${columns[colIdx]}...`
+                          )
+                        ) : (
+                          <div className="relative">
+                            <input
+                              {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
+                                required: required ? 'Campo obrigatório' : false,
+                              })}
+                              placeholder={`${columns[colIdx]}...`}
+                              className={`
                                   p-3 text-sm border w-full min-w-[80px] text-gray-700
                                   placeholder-gray-400 rounded-md
                                   focus:outline-none focus:ring-1 focus:ring-blue-500
                                   ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
                                 `}
-                              />
-                              {fieldError && (
-                                <span className="text-red-500 text-xs absolute -bottom-4 left-0">
-                                  {fieldError.message}
-                                </span>
-                              )}
-                            </div>
-                          )}
+                            />
+                            {fieldError && (
+                              <span className="text-red-500 text-xs absolute -bottom-4 left-0">
+                                {fieldError.message}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </td>
                     );
                   })}
                   <td className="p-3 w-10 align-middle">
                     {fields.length > 1 && (
                       <TooltipAction text="Remover">
-                        <button 
+                        <button
                           onClick={() => handleRemoveRow(rowIdx)}
                           className="p-1 rounded-full hover:bg-red-100 text-red-500"
                           type="button"
@@ -296,7 +294,7 @@ export const DynamicInputSection = ({
             <span className="font-medium">Adicionar Pessoa</span>
           </button>
         </div>
-          
+
         {/* Botão adicionar para desktop */}
         <div className="hidden md:flex justify-end p-3 bg-gray-50">
           <button
@@ -308,10 +306,8 @@ export const DynamicInputSection = ({
           </button>
         </div>
       </div>
-      
-      <div className="text-xs text-gray-500 mt-1">
-        * Preencha os dados de todos os membros da família. As linhas em branco não serão salvas.
-      </div>
+
+      {footerMessage && <div className="text-xs text-gray-500 mt-1">{footerMessage}</div>}
     </div>
   );
 };

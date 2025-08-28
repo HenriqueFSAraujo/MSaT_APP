@@ -15,7 +15,7 @@ import { type PropertyRelationsInfo, PropertyRelationsSchema } from './type/form
 export const PropertyRelations = ({ label }: { label: string }) => {
   const { mutate: FormSubmit } = PostPropertyData();
   const { id: StudentId } = useParams<{ id: string }>();
-    const { data } = usePropertyData(Number(StudentId));
+  const { data } = usePropertyData(Number(StudentId));
   const { setFormData, formData } = useScholarshipFormStore();
   const methods = useForm<z.infer<typeof PropertyRelationsSchema>>({
     resolver: zodResolver(PropertyRelationsSchema),
@@ -40,10 +40,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     }
   }, [data, methods]);
 
-
-  const unmaskDigits = (value: string) =>
-    value.replace(/\D/g, '');
-
+  const unmaskDigits = (value: string) => value.replace(/\D/g, '');
 
   const formatPayload = (data: PropertyRelationsInfo, userId: number) => {
     return {
@@ -80,11 +77,10 @@ export const PropertyRelations = ({ label }: { label: string }) => {
   const onSubmit = async (data: PropertyRelationsInfo) => {
     try {
       setFormData('property_relations', data);
-      
-      
+
       const payload = formatPayload(data, Number(StudentId));
       FormSubmit(payload);
-      
+
       toast.success('Sucesso!', 'salva com sucesso!');
     } catch (error) {
       console.error('Erro no processamento:', error);
@@ -113,6 +109,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
                     namePrefix={section.key}
                     required={section.required}
                     fieldMasks={getMasksForSection(section.fields)}
+                    footerMessage={section.footerMessage}
                   />
                 </div>
               ))}
