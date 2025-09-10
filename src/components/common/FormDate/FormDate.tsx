@@ -331,15 +331,15 @@ const FormDate: React.FC<FormDateProps> = ({
                       setOpen(false);
                     }
                   }}
-                  className={`text-left bg-transparent border border-gray-300 rounded-lg px-4 pr-12 hover:bg-transparent text-sm transition-all justify-between w-full ${
-                    compact ? 'py-3 min-h-[45px]' : 'py-4 min-h-[50px]'
+                  className={`text-left bg-transparent border border-gray-300 rounded-lg px-4 pr-12 hover:bg-transparent text-sm transition-all justify-between w-full min-h-[50px] ${
+                    compact ? 'py-3' : 'py-4'
                   } ${
                     fieldState.error
-                      ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-50'
-                      : 'text-gray-700 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                      ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-50 placeholder:text-current'
+                      : 'text-gray-700 placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white'
                   }`}
                 >
-                  <span className={`flex-1 ${field.value ? 'text-gray-900' : 'text-gray-500'}`}>
+                  <span className={`flex-1 ${field.value ? 'text-gray-900' : 'text-gray-500'} placeholder:text-gray-500`}>
                     {field.value
                       ? format(field.value, 'dd/MM/yyyy', { locale: ptBR })
                       : 'Selecione uma data'}

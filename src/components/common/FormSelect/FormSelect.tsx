@@ -90,9 +90,13 @@ const FormSelect = ({
               value={field.value || ""}
             >
               <SelectTrigger
-                className={`peer w-full border border-gray-300 text-black rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${fieldState.error ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error' : ''}`}
+                className={`peer w-full border border-gray-300 outline-none focus:outline-none rounded-lg px-4 py-3 text-sm transition-all justify-between min-h-[50px] ${
+                  fieldState.error
+                    ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                    : 'text-gray-700 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white'
+                }`}
               >
-                <SelectValue placeholder="Digite..." />
+                <SelectValue placeholder="Digite..." className="text-gray-500" />
               </SelectTrigger>
               <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200">
                 {options.map((option) => (
@@ -131,7 +135,7 @@ const FormSelect = ({
                     <Input
                       {...otherField}
                       placeholder={withOtherOption.otherPlaceholder || "Especifique..."}
-                      className={`w-full px-4 py-2 border ${otherFieldState.error ? 'border-red-500 bg-primary-error ring-2 ring-red-200' : 'border-gray-300'} rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all`}
+                      className={`w-full px-4 py-2 border ${otherFieldState.error ? 'border-red-500 bg-primary-error ring-2 ring-red-200' : 'border-gray-300'} rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all placeholder:text-gray-500 min-h-[45px]`}
                     />
                     {otherFieldState.error && (
                       <FormMessage className="text-red-500 text-xs mt-1">
