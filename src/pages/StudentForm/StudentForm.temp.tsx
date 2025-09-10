@@ -141,9 +141,9 @@ const StudentForm = () => {
                       {tab.value === 'scholarship_info' ? (
                         <ScholarshipProcessInfo />
                       ) : tab.value === 'personal_data' ? (
-                        <PersonalData label="Dados Pessoais" />
+                        <PersonalData label="Dados dos Pais/Responsável Legal" />
                       ) : tab.value === 'parents_data' ? (
-                        <ParentalDataForm label="Dados dos Pais" />
+                        <ParentalDataForm label="Dados Pessoais do(a) Candidato(a)" />
                       ) : tab.value === 'address_info' ? (
                         <AddressResidence label="Endereço" />
                       ) : tab.value === 'housing_conditions' ? (

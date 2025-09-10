@@ -169,11 +169,7 @@ export const PersonalData = ({ label }: { label: string }) => {
                   required
                   error={errors.phone?.message}
                 />
-                <FormInput
-                  name="cpfScholarship"
-                  label="CPF do(a) candidato(a) bolsista"
-                  mask="cpf"
-                />
+                
                 <FormInput
                   name="educacenso"
                   label="Número Educacenso"
