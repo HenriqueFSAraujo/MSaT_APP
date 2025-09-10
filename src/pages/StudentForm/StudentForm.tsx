@@ -14,16 +14,18 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FamilyComposition } from '@/components/FamilyComposition/FamilyComposition';
+import { Home } from 'lucide-react';
 
 const StudentForm = () => {
+  const { role } = useAuthStore();
   const { id: StudentId } = useParams<{ id: string }>();
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
   const { firstLogin } = useAuthStore();
-
+ const navigate = useNavigate();
   useEffect(() => {
     console.log(StudentId);
     if (firstLogin) {
@@ -59,6 +61,11 @@ const StudentForm = () => {
         duration: 0.2
       }
     }
+  };
+
+const handleClickBack = () => {
+    if (role === 'ROLE_ADMIN') return navigate('/dashboard-users');
+    navigate(`/student-portal/${StudentId}`);
   };
 
   return (
@@ -101,6 +108,9 @@ const StudentForm = () => {
               <div className="hidden md:block">
                 <TabsList className="w-full p-1 rounded-none bg-muted/20">
                   <div className="flex flex-wrap justify-center gap-1 w-full">
+                    <div className='flex items-center mr-2 cursor-pointer'>
+                    <Home onClick={() => handleClickBack()}>teste</Home>
+                    </div>
                     {TABS.map((tab: Tab, index) => (
                       <motion.div
                         key={tab.value}
