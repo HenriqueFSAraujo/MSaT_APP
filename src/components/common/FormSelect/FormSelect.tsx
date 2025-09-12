@@ -17,36 +17,42 @@ interface FormSelectProps {
   description?: string;
   options: { value: string; label: string }[];
   className?: string;
+  compact?: boolean;
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
   withOtherOption?: {
-    otherValue: string; // O valor que será considerado como "Outros" (ex: "outros")
-    otherFieldName: string; // O nome do campo para armazenar o valor personalizado
-    otherPlaceholder?: string; // Placeholder opcional para o campo de "Outros"
+    otherValue: string;
+    otherFieldName: string;
+    otherPlaceholder?: string;
   };
 }
 
-const FormSelect = ({ 
-  name, 
-  label, 
-  options, 
-  required = false, 
-  error, 
-  withOtherOption 
+const FormSelect = ({
+  name,
+  label,
+  options,
+  required = false,
+  compact = false,
+  error,
+  withOtherOption,
 }: FormSelectProps) => {
   const { control, trigger, watch, setValue } = useFormContext();
   const [showOtherField, setShowOtherField] = useState(false);
   const selectedValue = watch(name);
-  
+
   useEffect(() => {
-    // Verifica se o valor selecionado é a opção "Outros"
     if (withOtherOption && selectedValue === withOtherOption.otherValue) {
       setShowOtherField(true);
     } else {
       setShowOtherField(false);
-      // Limpa o campo de "Outros" quando outra opção for selecionada
-      if (withOtherOption) {
-        setValue(withOtherOption.otherFieldName, '');
-      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (withOtherOption && selectedValue === withOtherOption.otherValue) {
+      setShowOtherField(true);
+    } else if (withOtherOption) {
+      setShowOtherField(false);
+      setValue(withOtherOption.otherFieldName, '');
     }
   }, [selectedValue, withOtherOption, setValue]);
 
@@ -65,40 +71,42 @@ const FormSelect = ({
     }
     return 'Erro desconhecido';
   };
-  
+
   const handleChange = async (value: string, field: { onChange: (value: string) => void }) => {
     field.onChange(value);
     await trigger(name);
   };
-
 
   return (
     <FormField
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className="w-full">
-          <FormLabel
-            className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
-          >
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </FormLabel>
+        <FormItem className={`w-full ${compact ? 'space-y-1' : 'space-y-2'}`}>
+          {label && (
+            <FormLabel
+              className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
+            >
+              {label}
+              {required && <span className="text-red-500 ml-1">*</span>}
+            </FormLabel>
+          )}
           <FormControl>
             <Select
               onValueChange={(value) => handleChange(value, field)}
-              value={field.value || ""}
+              value={field.value || ''}
+              defaultValue={field.value || ''}
             >
               <SelectTrigger
-                className={`peer w-full border border-gray-300 outline-none focus:outline-none rounded-lg px-4 py-3 text-sm transition-all justify-between min-h-[50px] ${
+                className={`peer w-full border border-gray-300 outline-none focus:outline-none rounded-lg px-4 ${compact ? 'py-2' : 'py-3'} text-sm transition-all justify-between min-h-[50px] ${
                   fieldState.error
                     ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
                     : 'text-gray-700 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white'
                 }`}
               >
-                <SelectValue placeholder="Digite..." className="text-gray-500" />
+                <SelectValue placeholder="Selecion a opção" className="text-gray-500" />
               </SelectTrigger>
-              <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200">
+              <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200 max-h-[300px] overflow-y-auto">
                 {options.map((option) => (
                   <SelectItem
                     key={option.value}
@@ -113,29 +121,31 @@ const FormSelect = ({
           </FormControl>
           {(error || fieldState.error) && (
             <FormMessage className="text-red-500 text-xs mt-1">
-              {getErrorMessage(error)}
+              {getErrorMessage(error || fieldState.error)}
             </FormMessage>
           )}
-          
+
           {/* Campo de entrada para "Outros" */}
           {withOtherOption && showOtherField && (
-            <div className="mt-2 animate-in fade-in">
+            <div className={`${compact ? 'mt-1' : 'mt-2'} animate-in fade-in`}>
               <div className="flex items-center mb-1">
                 <span className="text-sm font-medium text-gray-700">
-                  {withOtherOption.otherPlaceholder || "Especifique..."}
-                  {required && <span className="text-red-500 ml-1 font-bold">*</span>}
+                  {withOtherOption.otherPlaceholder || 'Especifique...'}
+                  {required && <span className="text-red-500 ml-1">*</span>}
                 </span>
               </div>
               <FormField
                 control={control}
                 name={withOtherOption.otherFieldName}
-                rules={{ required: required ? 'Por favor, especifique' : false }}
+                rules={{
+                  required: required && field.value === 'outros' ? 'Por favor, especifique' : false,
+                }}
                 render={({ field: otherField, fieldState: otherFieldState }) => (
                   <>
                     <Input
                       {...otherField}
-                      placeholder={withOtherOption.otherPlaceholder || "Especifique..."}
-                      className={`w-full px-4 py-2 border ${otherFieldState.error ? 'border-red-500 bg-primary-error ring-2 ring-red-200' : 'border-gray-300'} rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all placeholder:text-gray-500 min-h-[45px]`}
+                      placeholder={withOtherOption.otherPlaceholder || 'Especifique...'}
+                      className={`w-full px-4 ${compact ? 'py-1.5' : 'py-2'} border ${otherFieldState.error ? 'border-red-500 bg-primary-error ring-2 ring-red-200' : 'border-gray-300'} rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all placeholder:text-gray-500 min-h-[${compact ? '38px' : '45px'}]`}
                     />
                     {otherFieldState.error && (
                       <FormMessage className="text-red-500 text-xs mt-1">

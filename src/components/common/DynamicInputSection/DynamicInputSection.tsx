@@ -1,10 +1,12 @@
 import { maskCurrency, maskDate } from '@/utils/transformMasks';
 import { Info, Plus, Trash } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type FieldError, useFieldArray, useFormContext } from 'react-hook-form';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
-import FormDate from '../FormDate/FormDate'; // Importe o componente FormDate
+import FormDate from '../FormDate/FormDate';
+import FormSelect from '../FormSelect/FormSelect';
+import { educationalOptions } from '@/components/FamilyComposition/form.ds';
 
 type MaskType = 'date' | 'currency' | 'year';
 
@@ -17,8 +19,17 @@ type DynamicInputSectionProps = {
   required: boolean;
   fieldMasks?: Record<string, MaskType>;
   footerMessage?: string;
-  dateFields?: string[]; // Nova prop para especificar quais campos são de data
+  dateFields?: string[];
+  selectFields?: string[];
+  showTotalRow?: {
+    fieldToSum: string;
+    label: string;
+  };
 };
+
+interface FormRowItem {
+  [key: string]: string | undefined;
+}
 
 export const DynamicInputSection = ({
   title = '',
@@ -30,6 +41,8 @@ export const DynamicInputSection = ({
   fieldMasks = {},
   footerMessage,
   dateFields = [],
+  selectFields = [],
+  showTotalRow,
 }: DynamicInputSectionProps) => {
   const {
     control,
@@ -39,6 +52,7 @@ export const DynamicInputSection = ({
     watch,
   } = useFormContext();
   const [openModal, setOpenModal] = useState(false);
+  const [totalValue, setTotalValue] = useState('R$ 0,00');
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -46,6 +60,31 @@ export const DynamicInputSection = ({
   });
 
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+
+  const watchAllFields = watch();
+
+  useEffect(() => {
+    if (showTotalRow && watchAllFields[namePrefix]) {
+      const sumField = showTotalRow.fieldToSum;
+
+      const total = watchAllFields[namePrefix].reduce((sum: number, item: FormRowItem) => {
+        if (item && item[sumField]) {
+          const valueStr = (item[sumField] as string).replace(/[^\d,]/g, '').replace(',', '.');
+
+          const value = parseFloat(valueStr) || 0;
+          return sum + value;
+        }
+        return sum;
+      }, 0);
+
+      const formattedTotal = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(total);
+
+      setTotalValue(formattedTotal);
+    }
+  }, [watchAllFields, namePrefix, showTotalRow]);
 
   const handleAddRow = () =>
     append(fieldNames.reduce((acc, field) => ({ ...acc, [field]: '' }), {}));
@@ -74,8 +113,8 @@ export const DynamicInputSection = ({
     placeholder?: string
   ) => {
     const path = `${namePrefix}.${rowIdx}.${fieldName}` as const;
+    const otherPath = `${namePrefix}.${rowIdx}.${fieldName}_other` as const;
 
-    // Se é um campo de data, use o FormDate sem label
     if (dateFields.includes(fieldName)) {
       return (
         <div className="w-full">
@@ -85,6 +124,35 @@ export const DynamicInputSection = ({
             required={required}
             error={fieldError?.message}
             compact={true}
+          />
+        </div>
+      );
+    }
+
+    if (selectFields.includes(fieldName)) {
+      let options: { value: string; label: string }[] = [];
+      if (fieldName === 'escolaridade') {
+        options = educationalOptions;
+      }
+
+      return (
+        <div className="w-full">
+          <FormSelect
+            name={path}
+            label=""
+            options={options}
+            required={required}
+            compact={true}
+            error={fieldError?.message}
+            withOtherOption={
+              options.some((opt) => opt.value === 'outros')
+                ? {
+                    otherValue: 'outros',
+                    otherFieldName: otherPath,
+                    otherPlaceholder: 'Especifique a escolaridade',
+                  }
+                : undefined
+            }
           />
         </div>
       );
@@ -205,6 +273,16 @@ export const DynamicInputSection = ({
                 })}
               </div>
             ))}
+
+            {/* Add total row for mobile */}
+            {showTotalRow && (
+              <div className="p-3 border-t bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-800">{showTotalRow.label}</h4>
+                  <div className="font-bold text-blue-700">{totalValue}</div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Desktop table view */}
@@ -248,6 +326,23 @@ export const DynamicInputSection = ({
                   </td>
                 </tr>
               ))}
+
+              {/* Add total row for desktop */}
+              {showTotalRow && (
+                <tr className="bg-gray-50">
+                  <td className="p-3 align-middle font-medium">{showTotalRow.label}</td>
+                  {/* Empty cells to fill the space */}
+                  {Array(columns.length - 2)
+                    .fill(0)
+                    .map((_, idx) => (
+                      <td key={`spacer-${idx}`}></td>
+                    ))}
+                  <td className="p-3 align-middle text-right font-bold text-blue-700">
+                    {totalValue}
+                  </td>
+                  <td className="w-10"></td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

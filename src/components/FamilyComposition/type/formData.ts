@@ -1,84 +1,85 @@
 import { z } from 'zod';
 
-// Esquema para campos vazios ou completos
-const memberSchema = z.object({
-  nomeCompleto: z.string()
-    .refine(val => !val || val.trim() !== '', 'Campo obrigatório'),
-  escolaridade: z.string()
-    .refine(val => !val || val.trim() !== '', 'Campo obrigatório'),
-  grauParentesco: z.string()
-    .refine(val => !val || val.trim() !== '', 'Campo obrigatório'),
-  dataNascimento: z.string()
-    .refine(val => !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val), 'Formato de data deve ser DD/MM/AAAA'),
-  profissaoAtiva: z.string()
-    .refine(val => !val || val.trim() !== '', 'Campo obrigatório'),
-  estadoCivil: z.string()
-    .refine(val => !val || val.trim() !== '', 'Campo obrigatório'),
-  salarioBruto: z.string()
-    .refine(val => !val || val.trim() !== '', 'Campo obrigatório'),
-}).superRefine((data, ctx) => {
-  // Se qualquer campo tem valor, todos são obrigatórios
-  const hasValue = Object.values(data).some(val => val && val.trim() !== '');
-  
-  // Se tem algum valor, verifica se todos estão preenchidos
-  if (hasValue) {
-    Object.entries(data).forEach(([key, val]) => {
-      // Se não tem valor e algum campo foi preenchido
-      if (!val || val.trim() === '') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Campo obrigatório',
-          path: [key],
-        });
-      }
-      
-      // Validação específica para data
-      if (key === 'dataNascimento' && val && !/^\d{2}\/\d{2}\/\d{4}$/.test(val)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Formato de data deve ser DD/MM/AAAA',
-          path: [key],
-        });
-      }
-    });
-  }
+export const FamilyMemberSchema = z.object({
+  nomeCompleto: z.string().optional().default(''),
+  escolaridade: z.string().optional().default(''),
+  escolaridade_other: z.string().optional().default(''),
+  grauParentesco: z.string().optional().default(''),
+  dataNascimento: z.string().optional().default(''),
+  profissaoAtiva: z.string().optional().default(''),
+  estadoCivil: z.string().optional().default(''),
+  salarioBruto: z.string().optional().default(''),
+});
+
+export const FamiliarEscolaSchema = z.object({
+  nome: z.string().optional().default(''),
+  escola: z.string().optional().default(''),
+  valorMensal: z.string().optional().default(''),
+});
+
+export const PessoaComDeficienciaSchema = z.object({
+  nome: z.string().optional().default(''),
+  tipoDeficiencia: z.string().optional().default(''),
+  despesaMensal: z.string().optional().default(''),
+});
+
+export const DespesaMensalSchema = z.object({
+  descricao: z.string().optional().default(''),
+  valor: z.string().optional().default(''),
 });
 
 export const FamilyCompositionSchema = z.object({
-  composicaoFamiliar: z
-    .array(memberSchema)
-    .refine(
-      (arr) => arr.some(item => 
-        Object.values(item).some(val => val && val.trim() !== '')
-      ), 
-      { message: 'Pelo menos um membro da família é obrigatório' }
-    ),
-  familiaresEscola: z
-    .array(
-      z.object({
-        nome: z.string().min(1, 'Campo obrigatório'),
-        escola: z.string().min(1, 'Campo obrigatório'),
-        valorMensal: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .optional(),
-  pessoasComDeficiencia: z
-    .array(
-      z.object({
-        nome: z.string().min(1, 'Campo obrigatório'),
-        tipoDeficiencia: z.string().min(1, 'Campo obrigatório'),
-        despesaMensal: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .optional(),
-  despesasMensais: z
-    .array(
-      z.object({
-        descricao: z.string().min(1, 'Campo obrigatório'),
-        valor: z.string().min(1, 'Campo obrigatório'),
-      })
-    )
-    .optional(),
+  composicaoFamiliar: z.array(FamilyMemberSchema),
+  familiaresEscola: z.array(FamiliarEscolaSchema).optional().default([]),
+  pessoasComDeficiencia: z.array(PessoaComDeficienciaSchema).optional().default([]),
+  despesasMensais: z.array(DespesaMensalSchema).optional().default([]),
 });
 
-export type FamilyCompositionInfo = z.infer<typeof FamilyCompositionSchema>;
+// Define the type for a family member with index signature to allow string indexing
+export interface FamilyMember {
+  nomeCompleto: string;
+  escolaridade: string;
+  escolaridade_other?: string;
+  grauParentesco: string;
+  dataNascimento: string;
+  profissaoAtiva: string;
+  estadoCivil: string;
+  salarioBruto: string;
+  [key: string]: string | undefined;
+}
+
+export interface FamiliarEscola {
+  nome: string;
+  escola: string;
+  valorMensal: string;
+}
+
+export interface PessoaComDeficiencia {
+  nome: string;
+  tipoDeficiencia: string;
+  despesaMensal: string;
+}
+
+export interface DespesaMensal {
+  descricao: string;
+  valor: string;
+}
+
+export interface FamilyCompositionInfo {
+  composicaoFamiliar: FamilyMember[];
+  familiaresEscola: FamiliarEscola[];
+  pessoasComDeficiencia: PessoaComDeficiencia[];
+  despesasMensais: DespesaMensal[];
+}
+
+export function isFamilyCompositionInfo(
+  data: FamilyCompositionInfo
+): data is FamilyCompositionInfo {
+  return (
+    data &&
+    Array.isArray(data.composicaoFamiliar) &&
+    (!data.familiaresEscola || Array.isArray(data.familiaresEscola)) &&
+    (!data.pessoasComDeficiencia || Array.isArray(data.pessoasComDeficiencia)) &&
+    (!data.despesasMensais || Array.isArray(data.despesasMensais))
+  );
+}

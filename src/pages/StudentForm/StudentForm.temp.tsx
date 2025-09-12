@@ -147,10 +147,12 @@ const StudentForm = () => {
                         <AddressResidence label="Endereço" />
                       ) : tab.value === 'property_relations' ? (
                         <PropertyRelations label="Relação de Bens" />
+                      ) : tab.value === 'family_composition' ? (
+                        <FamilyComposition label="Composição Familiar" />
                       ) : tab.value === 'document_data' ? (
                         <DocumentData label="Documentos" />
                       ) : (
-                        <FamilyComposition label="Composição Familiar" />
+                        <div>Componente não encontrado</div>
                       )}
                     </motion.div>
                   </TabsContent>

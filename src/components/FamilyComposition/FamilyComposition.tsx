@@ -9,9 +9,13 @@ import { useParams } from 'react-router-dom';
 import type { z } from 'zod';
 import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { dateFieldsMap, dynamicSections, fieldMasksMap } from './form.ds';
-import { type FamilyCompositionInfo, FamilyCompositionSchema } from './type/formData';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { dateFieldsMap, dynamicSections, fieldMasksMap, selectFieldsMap } from './form.ds';
+import {
+  type FamilyCompositionInfo,
+  FamilyCompositionSchema,
+  type FamilyMember,
+} from './type/formData';
 
 export const FamilyComposition = ({ label }: { label: string }) => {
   const { id: studentId } = useParams<{ id: string }>();
@@ -26,6 +30,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
     return Array.from({ length: count }, () => ({
       nomeCompleto: '',
       escolaridade: '',
+      escolaridade_other: '',
       grauParentesco: '',
       dataNascimento: '',
       profissaoAtiva: '',
@@ -34,9 +39,9 @@ export const FamilyComposition = ({ label }: { label: string }) => {
     }));
   };
 
-  const initialValues = () => {
+  const initialValues = (): FamilyCompositionInfo => {
     if (formData.family_composition?.composicaoFamiliar?.length) {
-      return formData.family_composition;
+      return formData.family_composition as FamilyCompositionInfo;
     }
 
     return {
@@ -72,9 +77,10 @@ export const FamilyComposition = ({ label }: { label: string }) => {
   const onSubmit = async (data: FamilyCompositionInfo) => {
     try {
       const partiallyFilledRows = data.composicaoFamiliar.some((row) => {
-        const filledFields = Object.values(row).filter(
-          (value) => value && value.trim() !== ''
-        ).length;
+        const filledFields = Object.values(row).filter((value, index) => {
+          const key = Object.keys(row)[index];
+          return !key.endsWith('_other') && value && value.trim() !== '';
+        }).length;
         return filledFields > 0 && filledFields < 7;
       });
 
@@ -88,16 +94,19 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
       const filteredData = {
         ...data,
-        composicaoFamiliar: data.composicaoFamiliar.filter(
-          (item) =>
-            (item?.nomeCompleto?.trim?.() ?? '') !== '' ||
-            (item?.escolaridade?.trim?.() ?? '') !== '' ||
-            (item?.grauParentesco?.trim?.() ?? '') !== '' ||
-            (item?.dataNascimento?.trim?.() ?? '') !== '' ||
-            (item?.profissaoAtiva?.trim?.() ?? '') !== '' ||
-            (item?.estadoCivil?.trim?.() ?? '') !== '' ||
-            (item?.salarioBruto?.trim?.() ?? '') !== ''
-        ),
+        composicaoFamiliar: data.composicaoFamiliar.filter((item) => {
+          const mainFields = [
+            'nomeCompleto',
+            'escolaridade',
+            'grauParentesco',
+            'dataNascimento',
+            'profissaoAtiva',
+            'estadoCivil',
+            'salarioBruto',
+          ];
+
+          return mainFields.some((field) => (item[field]?.trim?.() ?? '') !== '');
+        }),
       };
 
       setFormData('family_composition', {
@@ -109,12 +118,24 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
       const payload = {
         userInfoId: Number(studentId),
-        composicaoFamiliar: filteredData.composicaoFamiliar.map((item) => ({
-          ...item,
-          salarioBruto: item?.salarioBruto
-            ? item.salarioBruto.replace(/[^\d,]/g, '').replace(',', '.')
-            : '',
-        })),
+        composicaoFamiliar: filteredData.composicaoFamiliar.map((item) => {
+          const processedItem: FamilyMember = { ...item };
+          if (item.escolaridade === 'outros' && item.escolaridade_other) {
+            processedItem.escolaridade = item.escolaridade_other;
+          }
+
+          if (item.salarioBruto) {
+            processedItem.salarioBruto = item.salarioBruto.replace(/[^\d,]/g, '').replace(',', '.');
+          }
+
+          Object.keys(processedItem).forEach((key) => {
+            if (key.endsWith('_other')) {
+              delete processedItem[key];
+            }
+          });
+
+          return processedItem;
+        }),
       };
 
       await familyDataMutation.mutateAsync(payload);
@@ -135,6 +156,11 @@ export const FamilyComposition = ({ label }: { label: string }) => {
           <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
             {label}
           </CardTitle>
+          <CardDescription>
+            Preencha o quadro de composição familiar com todos os dados solicitados de todos os
+            membros do grupo familiar (todas as pessoas que residem no mesmo domicílio que o(a)
+            candidato(a)). Inicie o preenchimento com o nome completo do(a) candidato(a).
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -142,7 +168,6 @@ export const FamilyComposition = ({ label }: { label: string }) => {
               {dynamicSections.map((section) => (
                 <div key={section.key} className="w-full">
                   <DynamicInputSection
-                    title={section.title}
                     columns={section.columns}
                     fieldNames={section.fields}
                     namePrefix={section.key}
@@ -150,6 +175,8 @@ export const FamilyComposition = ({ label }: { label: string }) => {
                     fieldMasks={getMasksForSection(section.fields)}
                     footerMessage={footerMessage}
                     dateFields={dateFieldsMap[section.key] || []}
+                    selectFields={selectFieldsMap[section.key] || []}
+                    showTotalRow={section.showTotalRow}
                   />
                 </div>
               ))}

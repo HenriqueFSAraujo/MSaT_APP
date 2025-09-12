@@ -39,7 +39,7 @@ export const HousingConditions = ({ label }: { label: string }) => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      setFormData('housing_conditions', data);
+      // setFormData('housing_conditions', data);
 
       const payload: HousingDataPayload = {
         userId: Number(StudentId),

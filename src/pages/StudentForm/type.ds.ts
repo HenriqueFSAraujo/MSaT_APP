@@ -13,9 +13,9 @@ export const TABS: Tab[] = [
   { value: 'scholarship_info', label: 'Processo de Bolsa' },
   { value: 'personal_data', label: 'Dados Pessoais do(a) Candidato(a)' },
   { value: 'parents_data', label: 'Dados dos Pais/Responsável Legal' },
-  { value: 'address_info', label: 'Endereço e Moradia' },
-  { value: 'required_documents', label: 'Docs Necessários' },
+  { value: 'address_info', label: 'Informações Habitacionais' },
   { value: 'family_composition', label: 'Composição Familiar' },
+  { value: 'required_documents', label: 'Docs Necessários' },
   { value: 'property_relations', label: 'Bens e Posses' },
 ];
 
