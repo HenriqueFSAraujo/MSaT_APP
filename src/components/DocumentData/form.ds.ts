@@ -52,12 +52,12 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
       label: 'Cadastro do CAD. único',
       linkLabel: 'Disponível no link',
       openLink: 'https://meucadunico.cidadania.gov.br/meu_cadunico',
-      required: true
+      required: true,
     },
     {
       name: 'maritalStatus',
       label: 'Estado Civil',
-      desc: 'Documentos comprobatórios do estado civil atual',
+      desc: 'Apresentar documento que comprove o estado civil de todos os membros do grupo familiar maiores de 18 (dezoito) anos de idade',
       required: true,
       options: [
         {
@@ -79,8 +79,8 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
     },
     {
       name: 'identityDocuments',
-      label: 'Documentos de Identidade',
-      desc: 'Documentos oficiais com foto para identificação pessoal',
+      label: 'Documentos de Identificação',
+      desc: 'Apresentar um documento de identificação do(a) candidato(a) e de todos os membros do grupo familiar',
       required: true,
       options: [
         {
@@ -148,7 +148,7 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
     {
       name: 'vaccinationCard',
       label: 'Carteira de Vacinação',
-      desc: 'Carteira de vacinação atualizada conforme o calendário nacional',
+      desc: 'Carteira de vacinação atualizada do(a) candidato(a) conforme o calendário nacional',
     },
     {
       name: 'proofOfResidence',
@@ -177,7 +177,8 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
     {
       name: 'workContract',
       label: 'Carteira de trabalho digital',
-      desc: 'CTPS digital ou documento equivalente comprovando vínculo empregatício',
+      desc: 'CTPS digital ou documento equivalente comprovando vínculo empregatício de todos os membros do grupo familiar maiores de 16 (dezesseis) anos de idade',
+      required: true,
     },
     {
       name: 'bankingRelationsReport',
