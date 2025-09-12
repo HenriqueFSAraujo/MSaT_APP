@@ -1,11 +1,6 @@
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
-import {
-  UseHousingData
-} from '@/services/queries/forms/HousingData/getHousingData';
-import {
-  HousingDataPayload,
-  PostHousingData,
-} from '@/services/queries/forms/index';
+import { UseHousingData } from '@/services/queries/forms/HousingData/getHousingData';
+import { HousingDataPayload, PostHousingData } from '@/services/queries/forms/index';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,23 +18,22 @@ export const HousingConditions = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
   const { mutate: FormSubmit } = PostHousingData();
   const { id: StudentId } = useParams<{ id: string }>();
-   const { data } = UseHousingData(Number(StudentId));
+  const { data } = UseHousingData(Number(StudentId));
   const methods = useForm<FormData>({
     resolver: zodResolver(housingConditionsSchema),
     defaultValues: {
       ...Object.fromEntries(radioGroups.map((group) => [group.name, ''])),
-      ...(formData.housing_conditions as Partial<FormData>),
     },
   });
 
-   useEffect(() => {
-        if (data) {
-          methods.reset({
-            ...methods.getValues(),
-            ...(data as Partial<FormData>),
-          });
-        }
-      }, [data, methods]);
+  useEffect(() => {
+    if (data) {
+      methods.reset({
+        ...methods.getValues(),
+        ...(data as Partial<FormData>),
+      });
+    }
+  }, [data, methods]);
 
   const { handleSubmit } = methods;
 

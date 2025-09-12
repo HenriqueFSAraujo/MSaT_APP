@@ -1,6 +1,5 @@
 import { AddressResidence } from '@/components/AddressResidence/AddressResidence';
 import { DocumentData } from '@/components/DocumentData/DocumentData';
-import { HousingConditions } from '@/components/HousingConditions/HousingConditions';
 import { ParentalDataForm } from '@/components/ParentalData/ParentalData';
 import { PersonalData } from '@/components/PersonalData/PersonalData';
 import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelations';
@@ -38,9 +37,9 @@ const StudentForm = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
 
   const tabContentVariants = {
@@ -49,34 +48,34 @@ const StudentForm = () => {
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.3
-      }
+        duration: 0.3,
+      },
     },
     exit: {
       opacity: 0,
       x: 20,
       transition: {
-        duration: 0.2
-      }
-    }
+        duration: 0.2,
+      },
+    },
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-auto bg-background"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <div className="container mx-auto py-6 px-4">
-        <motion.div 
+        <motion.div
           className="bg-card rounded-lg shadow-lg border"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
         >
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <motion.div 
+            <motion.div
               className="sticky top-0 z-20 bg-background border-b"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -84,7 +83,7 @@ const StudentForm = () => {
             >
               {/* Versão para dispositivos móveis - Menu dropdown */}
               <div className="block md:hidden p-2">
-                <select 
+                <select
                   value={selectedTab}
                   onChange={(e) => setSelectedTab(e.target.value)}
                   className="w-full p-2 bg-muted border border-border rounded-md text-sm font-medium"
@@ -96,7 +95,7 @@ const StudentForm = () => {
                   ))}
                 </select>
               </div>
-              
+
               {/* Versão para tablet e desktop */}
               <div className="hidden md:block">
                 <TabsList className="w-full p-1 rounded-none bg-muted/20">
@@ -146,8 +145,6 @@ const StudentForm = () => {
                         <ParentalDataForm label="Dados Pessoais do(a) Candidato(a)" />
                       ) : tab.value === 'address_info' ? (
                         <AddressResidence label="Endereço" />
-                      ) : tab.value === 'housing_conditions' ? (
-                        <HousingConditions label="Condições de Moradia" />
                       ) : tab.value === 'property_relations' ? (
                         <PropertyRelations label="Relação de Bens" />
                       ) : tab.value === 'document_data' ? (
