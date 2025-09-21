@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
 export const scholarshipProcessSchema = z.object({
+  segmentToStudy2025: z.string({
+    required_error: 'Por favor, selecione uma opção'
+  }),
+  specificGrade: z.string({
+    required_error: 'Por favor, selecione uma opção'
+  }),
   wantsToParticipate: z.enum(['sim', 'nao'], {
     required_error: 'Por favor, selecione uma opção'
   }),
