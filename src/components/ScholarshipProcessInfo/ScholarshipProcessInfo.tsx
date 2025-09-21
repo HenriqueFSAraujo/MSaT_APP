@@ -40,7 +40,6 @@ export function ScholarshipProcessInfo() {
   const hadScholarshipLastYear = watch('hadScholarshipLastYear');
   const segmentToStudy2025 = watch('segmentToStudy2025');
 
-  // Opções dinâmicas baseadas no segmento selecionado
   const getGradeOptions = (segment: string) => {
     switch (segment) {
       case 'Educação Infantil':
@@ -83,7 +82,6 @@ export function ScholarshipProcessInfo() {
   }, [hadScholarshipLastYear, setValue]);
 
   useEffect(() => {
-    // Limpar o campo de série/ano quando o segmento mudar
     setValue('specificGrade', '');
   }, [segmentToStudy2025, setValue]);
 
