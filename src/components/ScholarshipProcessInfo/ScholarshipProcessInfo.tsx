@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PostScholarshipProcess, useScholarShipData } from '@/services/queries/forms/index';
 import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { useTabNavigation } from '@/hooks/useTabNavigation';
+import { TabNavigation } from '@/components/TabNavigation/TabNavigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -17,7 +19,6 @@ export function ScholarshipProcessInfo() {
   const { data } = useScholarShipData(Number(StudentId));
   const { mutate: FormSubmit } = PostScholarshipProcess();
   const { setFormData, formData } = useScholarshipFormStore();
-  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
   const form = useForm<ScholarshipProcessForm>({
     resolver: zodResolver(scholarshipProcessSchema),
@@ -29,6 +30,8 @@ export function ScholarshipProcessInfo() {
       previousScholarshipPercentage: undefined
     }
   });
+
+  const { navigateToNextTab } = useTabNavigation('scholarship_info', form);
 
   const {
     handleSubmit,
@@ -95,8 +98,20 @@ export function ScholarshipProcessInfo() {
     }
   }, [data, setValue]);
 
-  const onSubmit = (formData: ScholarshipProcessForm) => {
+  const onSubmit = async (formData: ScholarshipProcessForm) => {
     try {
+      // Validar se todos os campos obrigatórios estão preenchidos
+      const isFormValid = formData.segmentToStudy2025 &&
+        formData.specificGrade &&
+        formData.wantsToParticipate &&
+        formData.hadScholarshipLastYear &&
+        (formData.hadScholarshipLastYear !== 'sim' || formData.previousScholarshipPercentage);
+
+      if (!isFormValid) {
+        console.error('Formulário incompleto');
+        return;
+      }
+
       const payload = {
         userId: Number(StudentId),
         segmento2025: formData.segmentToStudy2025,
@@ -108,7 +123,13 @@ export function ScholarshipProcessInfo() {
 
       setFormData('scholarship_info', formData);
       FormSubmit(payload);
-      setSelectedTab('personal_data');
+
+      // Marcar tab como completa apenas se todos os campos estiverem preenchidos
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('scholarship_info');
+
+      // Navegar para próxima tab
+      await navigateToNextTab();
     } catch (error) {
       console.error(error);
     }
@@ -127,6 +148,20 @@ export function ScholarshipProcessInfo() {
       setValue('previousScholarshipPercentage', scholarshipProcessData.previousScholarshipPercentage);
     }
   }, [scholarshipProcessData, setValue]);
+
+  // Verificar se a tab deve ser marcada como incompleta se campos obrigatórios estiverem vazios
+  useEffect(() => {
+    const currentValues = watch();
+    const hasRequiredFields = currentValues.segmentToStudy2025 &&
+      currentValues.specificGrade &&
+      currentValues.wantsToParticipate &&
+      currentValues.hadScholarshipLastYear;
+
+    if (!hasRequiredFields) {
+      const { resetSpecificTab } = useTabStore.getState();
+      resetSpecificTab('scholarship_info');
+    }
+  }, [watch]);
 
   return (
     <Card>
@@ -275,18 +310,28 @@ export function ScholarshipProcessInfo() {
                   <Button onClick={handleDownloadEdital} variant="outline">
                     Baixar Edital de Divulgação do Processo
                   </Button>
-                  <Button
-                    type="submit"
-                    disabled={
-                      !watch('segmentToStudy2025') ||
-                      !watch('specificGrade') ||
-                      !watch('wantsToParticipate') ||
-                      !watch('hadScholarshipLastYear') ||
-                      (watch('hadScholarshipLastYear') === 'sim' && !watch('previousScholarshipPercentage'))
-                    }
-                  >
-                    Continuar
-                  </Button>
+
+                  <div className="w-full">
+                    <div className="flex-shrink-0">
+                      <TabNavigation
+                        currentTab="scholarship_info"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={
+                        !watch('segmentToStudy2025') ||
+                        !watch('specificGrade') ||
+                        !watch('wantsToParticipate') ||
+                        !watch('hadScholarshipLastYear') ||
+                        (watch('hadScholarshipLastYear') === 'sim' && !watch('previousScholarshipPercentage'))
+                      }
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors w-full"
+                    >
+                      Salvar e continuar
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

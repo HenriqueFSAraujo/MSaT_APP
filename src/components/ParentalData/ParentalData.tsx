@@ -35,15 +35,15 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
   });
 
   const { errors } = methods.formState;
-  
-    useEffect(() => {
-      if (data) {
-        methods.reset({
-          ...methods.getValues(),
-          ...(data as Partial<ParentalData>),
-        });
-      }
-    }, [data, methods]);
+
+  useEffect(() => {
+    if (data) {
+      methods.reset({
+        ...methods.getValues(),
+        ...(data as Partial<ParentalData>),
+      });
+    }
+  }, [data, methods]);
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
@@ -53,6 +53,11 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
     if (!isValid) return;
     try {
       setFormData('parents_data', data);
+
+      // Marcar tab como completa apenas se a validação passou
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('parents_data');
+
       setSelectedTab('address_info');
       const payload = {
         userId: Number(StudentId),

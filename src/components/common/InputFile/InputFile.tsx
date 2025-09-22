@@ -179,11 +179,9 @@ export const InputFile = ({
               const hasValidOption = value.option?.value && value.option.value !== 'none';
 
               if (selectOptions) {
-                // Se tem opções de select, precisa ter uma opção válida E um arquivo
                 if (!hasValidOption) return 'Selecione uma opção válida';
                 if (!hasFile) return 'Envie um arquivo';
               } else {
-                // Se não tem opções de select, precisa apenas do arquivo
                 if (!hasFile) return 'Envie um arquivo';
               }
 

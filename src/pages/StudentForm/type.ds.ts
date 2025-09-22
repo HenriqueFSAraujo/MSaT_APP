@@ -2,6 +2,7 @@ import { addressInfoSchema } from '@/components/AddressResidence/type/formData';
 import { parentalDataSchema } from '@/components/ParentalData/type/formData';
 import { personalDataSchema } from '@/components/PersonalData/type/formData';
 import { PropertyRelationsSchema } from '@/components/PropertyRelations/type/formData';
+import { consentTermsSchema } from '@/components/ConsentTerms/type/formData';
 import { z } from 'zod';
 
 export type Tab = {
@@ -17,6 +18,7 @@ export const TABS: Tab[] = [
   { value: 'family_composition', label: 'Composição Familiar' },
   { value: 'required_documents', label: 'Docs Necessários' },
   { value: 'property_relations', label: 'Bens e Posses' },
+  { value: 'consent_terms', label: 'Termos de Consentimento' },
 ];
 
 export type FormDataByTab = {
@@ -31,6 +33,7 @@ export type FormDataByTab = {
   parents_data?: z.infer<typeof parentalDataSchema>;
   address_info?: z.infer<typeof addressInfoSchema>;
   property_relations?: z.infer<typeof PropertyRelationsSchema>;
+  consent_terms?: z.infer<typeof consentTermsSchema>;
   family_composition?: {
     composicaoFamiliar: Array<{
       nomeCompleto: string;

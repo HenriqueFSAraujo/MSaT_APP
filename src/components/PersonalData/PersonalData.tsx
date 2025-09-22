@@ -1,7 +1,8 @@
 import { PostPersonalData, usePersonalData } from '@/services/queries/forms/index';
 import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { Birthplace, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';
+import { getBirthplaceOptions, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';
+import { TabNavigation } from '@/components/TabNavigation/TabNavigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -41,15 +42,71 @@ export const PersonalData = ({ label }: { label: string }) => {
   });
 
   const { errors } = methods.formState;
+  const { watch } = methods;
+  const selectedNationality = watch('nationality');
+
+  const birthplaceOptions = selectedNationality
+    ? getBirthplaceOptions(selectedNationality)
+    : [];
 
   useEffect(() => {
     if (data) {
-      methods.reset({
+      const formData = {
         ...methods.getValues(),
         ...(data as Partial<PersonalDataType>),
-      });
+      };
+
+      if (formData.dateBirth && typeof formData.dateBirth === 'string') {
+        const dateObj = new Date(formData.dateBirth);
+        if (!isNaN(dateObj.getTime())) {
+          formData.dateBirth = dateObj;
+        } else {
+          const { dateBirth, ...formDataWithoutDate } = formData;
+          methods.reset(formDataWithoutDate);
+          return;
+        }
+      }
+
+      methods.reset(formData);
     }
   }, [data, methods]);
+
+  useEffect(() => {
+    if (formData.personal_data) {
+      const storeData = formData.personal_data;
+      const currentValues = methods.getValues();
+
+      if (storeData.dateBirth && typeof storeData.dateBirth === 'string') {
+        const dateObj = new Date(storeData.dateBirth);
+        if (!isNaN(dateObj.getTime())) {
+          storeData.dateBirth = dateObj;
+        } else {
+          const { dateBirth, ...storeDataWithoutDate } = storeData;
+          methods.reset({
+            ...currentValues,
+            ...storeDataWithoutDate,
+          });
+          return;
+        }
+      }
+
+      methods.reset({
+        ...currentValues,
+        ...storeData,
+      });
+    }
+  }, [formData.personal_data, methods]);
+
+  useEffect(() => {
+    if (selectedNationality) {
+      const currentBirthplace = methods.getValues('birthplace');
+      const newOptions = getBirthplaceOptions(selectedNationality);
+
+      if (currentBirthplace && !newOptions.some(option => option.value === currentBirthplace)) {
+        methods.setValue('birthplace', '');
+      }
+    }
+  }, [selectedNationality, methods]);
 
   const onSubmit = async (formValues: PersonalDataType) => {
     const isValid = await methods.trigger();
@@ -57,6 +114,10 @@ export const PersonalData = ({ label }: { label: string }) => {
 
     try {
       setFormData('personal_data', formValues);
+
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('personal_data');
+
       setSelectedTab('parents_data');
 
       const payload = {
@@ -127,9 +188,13 @@ export const PersonalData = ({ label }: { label: string }) => {
                   name="birthplace"
                   label="Naturalidade do(a) candidato(a)"
                   required
-                  description="Selecione uma das opções abaixo."
-                  options={Birthplace}
+                  description={selectedNationality
+                    ? `Selecione uma das opções de ${Nationality.find(n => n.value === selectedNationality)?.label || 'naturalidade'}.`
+                    : "Primeiro selecione a nacionalidade."
+                  }
+                  options={birthplaceOptions}
                   error={errors.birthplace?.message}
+                  disabled={!selectedNationality}
                 />
                 <FormSelect
                   name="race"
@@ -169,17 +234,23 @@ export const PersonalData = ({ label }: { label: string }) => {
                   required
                   error={errors.phone?.message}
                 />
-                
+
                 <FormInput
                   name="educacenso"
                   label="Número Educacenso"
                   description="Caso não possua, deixe em branco."
                 />
               </div>
-              <div className="flex justify-end w-full">
+              <div className="flex justify-between items-center w-full mt-4 gap-4">
+                <div className="flex-shrink-0">
+                  <TabNavigation
+                    currentTab="personal_data"
+                  />
+                </div>
+
                 <Button
                   type="submit"
-                  className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
                 >
                   Salvar e continuar
                 </Button>
