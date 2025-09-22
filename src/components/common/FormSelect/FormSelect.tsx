@@ -18,6 +18,7 @@ interface FormSelectProps {
   options: { value: string; label: string }[];
   className?: string;
   compact?: boolean;
+  disabled?: boolean;
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
   withOtherOption?: {
     otherValue: string;
@@ -32,6 +33,7 @@ const FormSelect = ({
   options,
   required = false,
   compact = false,
+  disabled = false,
   error,
   withOtherOption,
 }: FormSelectProps) => {
@@ -96,13 +98,13 @@ const FormSelect = ({
               onValueChange={(value) => handleChange(value, field)}
               value={field.value || ''}
               defaultValue={field.value || ''}
+              disabled={disabled}
             >
               <SelectTrigger
-                className={`peer w-full border border-gray-300 outline-none focus:outline-none rounded-lg px-4 ${compact ? 'py-2' : 'py-3'} text-sm transition-all justify-between min-h-[50px] ${
-                  fieldState.error
+                className={`peer w-full border border-gray-300 outline-none focus:outline-none rounded-lg px-4 ${compact ? 'py-2' : 'py-3'} text-sm transition-all justify-between min-h-[50px] ${fieldState.error
                     ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
                     : 'text-gray-700 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white'
-                }`}
+                  }`}
               >
                 <SelectValue placeholder="Selecion a opção" className="text-gray-500" />
               </SelectTrigger>

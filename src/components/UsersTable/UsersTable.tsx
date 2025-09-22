@@ -12,8 +12,9 @@ import {
 import { User } from '@/services/queries/useGetUsers';
 import { formatCpf } from '@/utils/transformMasks';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, ClipboardList, FilePenLine } from 'lucide-react';
+import { ChevronDown, ClipboardList, FilePenLine, Eye } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DialogChangeStatusUser } from '../common/DialogChangeStatusUser/DialogChangeStatusUser';
 import { TooltipAction } from '../common/TooltipAction/TooltipAction';
 
@@ -42,6 +43,7 @@ export function UsersTable({
   const [UserStatus, setUserStatus] = useState(false);
   const [selectedUserID, setSelectedUserID] = useState<number | undefined>();
   const [openStatusModal, setOpenStatusModal] = useState(false);
+  const navigate = useNavigate();
 
   const OpinionButton = (user: User) => (
     <TooltipAction text="Gerar parecer do aluno">
@@ -57,9 +59,9 @@ export function UsersTable({
   );
 
   const StudentButton = (user: User) => (
-    <TooltipAction text="Visualizar formulário">
-      <Button size="sm" variant="outline" onClick={() => goesForm(user.userId)} className="p-2">
-        <FilePenLine className="h-5 w-5" />
+    <TooltipAction text="Visualizar dados do formulário">
+      <Button size="sm" variant="outline" className="p-2" onClick={() => navigate(`/form-validation/${user.userId}`)}>
+        <Eye className="h-5 w-5" />
       </Button>
     </TooltipAction>
   );
@@ -115,7 +117,7 @@ export function UsersTable({
   const allUsersAreAdmin = users.every(user => user.roleName === 'ROLE_ADMIN');
 
   return (
-    <motion.div 
+    <motion.div
       className="overflow-x-auto rounded-2xl border border-gray-200"
       initial="hidden"
       animate="visible"
@@ -204,11 +206,10 @@ export function UsersTable({
                   >
                     <motion.div whileHover="hover" variants={badgeVariants}>
                       <Badge
-                        className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${
-                          user.active === true
-                            ? 'bg-green-100 text-green-800 border-green-200'
-                            : 'bg-red-100 text-red-800 border-red-200'
-                        }`}
+                        className={`text-sm capitalize px-3 py-1 w-[65px] flex justify-center rounded-full font-medium border ${user.active === true
+                          ? 'bg-green-100 text-green-800 border-green-200'
+                          : 'bg-red-100 text-red-800 border-red-200'
+                          }`}
                       >
                         {user.active ? 'Ativo' : 'Inativo'}
                       </Badge>
@@ -217,6 +218,7 @@ export function UsersTable({
                   {user.roleName !== 'ROLE_ADMIN' && (
                     <TableCell className="flex align-center gap-2">
                       <motion.div className="flex gap-2">
+
                         <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
                           {StudentButton(user)}
                         </motion.div>

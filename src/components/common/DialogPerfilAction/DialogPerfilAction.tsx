@@ -81,7 +81,6 @@ export const DialogPerfilAction = ({ open, onOpenChange }: DialogPerfilActionPro
         {
           onSuccess: () => {
             onOpenChange(false);
-            // Reset form
             setcurrentPassWord('');
             setNewPassword('');
             setConfirmPassword('');
@@ -144,7 +143,7 @@ export const DialogPerfilAction = ({ open, onOpenChange }: DialogPerfilActionPro
           setIsFormValid(false);
         }
       }
-    }, 300); // 300ms debounce
+    }, 300);
 
     return () => clearTimeout(timeout);
   }, [currentPassWord, newPassword, confirmPassword, isDirty]);

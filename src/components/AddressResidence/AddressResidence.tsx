@@ -91,9 +91,11 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
     try {
       setFormData('address_info', data);
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('address_info');
+
       setSelectedTab('required_documents');
 
-      // Garantindo que todos os campos obrigatórios estão presentes
       const payload = {
         userId: Number(StudentId),
         zipCode: data.zipCode,
@@ -111,7 +113,6 @@ export const AddressResidence = ({ label }: { label: string }) => {
         transportTypeOthers: data.transportTypeOthers,
         commutingTime: data.commutingTime,
         afterSchoolActivities: data.afterSchoolActivities,
-        // Verificando se os campos condicionais são necessários
         activityDescription:
           data.afterSchoolActivities === 'Sim' ? data.activityDescription : undefined,
         weeklyFrequency: data.afterSchoolActivities === 'Sim' ? data.weeklyFrequency : undefined,
