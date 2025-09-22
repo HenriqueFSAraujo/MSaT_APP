@@ -1,4 +1,3 @@
-import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import {
     Shield,
@@ -7,20 +6,22 @@ import {
     MapPin,
     FileText
 } from 'lucide-react';
-import { useState } from 'react';
 
 interface FormValidationSidebarProps {
     validationStatus: Record<string, string>;
     getValidationStatus: (section: string) => string;
     getValidationBadge: (status: string, isActive?: boolean) => React.ReactNode;
+    activeTab: string;
+    onTabChange: (tab: string) => void;
 }
 
 export const FormValidationSidebar = ({
     validationStatus,
     getValidationStatus,
-    getValidationBadge
+    getValidationBadge,
+    activeTab,
+    onTabChange
 }: FormValidationSidebarProps) => {
-    const [activeTab, setActiveTab] = useState<string>('scholarship_info');
     const tabs = [
         {
             value: 'scholarship_info',
@@ -115,25 +116,25 @@ export const FormValidationSidebar = ({
                 </div>
             </div>
             <div className="flex-1 overflow-y-auto min-h-0">
-                <TabsList className="flex flex-col w-full bg-transparent p-3 space-y-2 mt-[300px]">
+                <div className="flex flex-col w-full bg-transparent p-3 space-y-2">
                     {tabs.map((tab) => {
                         const Icon = tab.icon;
                         const status = getValidationStatus(tab.value);
                         const isActive = activeTab === tab.value;
 
                         return (
-                            <TabsTrigger
+                            <button
                                 key={tab.value}
-                                value={tab.value}
-                                onClick={() => setActiveTab(tab.value)}
-                                className="w-full justify-start p-4 h-auto flex items-center gap-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white rounded-xl transition-all duration-300 group shadow-sm hover:shadow-md data-[state=active]:shadow-lg"
+                                onClick={() => onTabChange(tab.value)}
+                                className={`w-full justify-start p-4 h-auto flex items-center gap-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-xl transition-all duration-300 group shadow-sm hover:shadow-md ${isActive ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : ''
+                                    }`}
                             >
                                 <div className={getIconContainerClass(tab.color, isActive)}>
                                     <Icon className={getIconClass(tab.color, isActive)} />
                                 </div>
                                 <div className="flex-1">
                                     <span className="font-semibold text-sm">{tab.label}</span>
-                                    <div className="text-xs text-gray-500 group-data-[state=active]:text-white/80 mt-1">
+                                    <div className={`text-xs mt-1 ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
                                         {status === 'pending' ? 'Pendente' :
                                             status === 'approved' ? 'Aprovado' : 'Rejeitado'}
                                     </div>
@@ -141,10 +142,10 @@ export const FormValidationSidebar = ({
                                 <div className="flex items-center gap-2">
                                     {getValidationBadge(status, isActive)}
                                 </div>
-                            </TabsTrigger>
+                            </button>
                         );
                     })}
-                </TabsList>
+                </div>
             </div>
         </div>
     );
