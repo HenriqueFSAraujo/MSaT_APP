@@ -126,7 +126,7 @@ export const FormValidationSidebar = ({
                             <button
                                 key={tab.value}
                                 onClick={() => onTabChange(tab.value)}
-                                className={`w-full justify-start p-4 h-auto flex items-center gap-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-xl transition-all duration-300 group shadow-sm hover:shadow-md ${isActive ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : ''
+                                className={`w-full justify-start p-4 h-auto flex items-center gap-3 hover:bg-gradient-to-r rounded-xl transition-all duration-300 group shadow-sm hover:bg-blue-100 ${isActive ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white'
                                     }`}
                             >
                                 <div className={getIconContainerClass(tab.color, isActive)}>
@@ -134,7 +134,7 @@ export const FormValidationSidebar = ({
                                 </div>
                                 <div className="flex-1">
                                     <span className="font-semibold text-sm">{tab.label}</span>
-                                    <div className={`text-xs mt-1 ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
+                                    <div className='text-xs mt-1'>
                                         {status === 'pending' ? 'Pendente' :
                                             status === 'approved' ? 'Aprovado' : 'Rejeitado'}
                                     </div>

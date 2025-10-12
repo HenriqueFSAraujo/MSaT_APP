@@ -202,7 +202,7 @@ const FormValidation = () => {
                 );
             default:
                 return (
-                    <span className={`${baseClasses} bg-yellow-100 text-yellow-800 border border-yellow-200 ${isActive ? 'text-white bg-yellow-600' : ''}`}>
+                    <span className={`${baseClasses}  ${isActive ? 'bg-yellow-100 text-yellow-500 border-yellow-500 border-2' : 'bg-yellow-200 text-yellow'}`}>
                         Pendente
                     </span>
                 );
@@ -235,7 +235,7 @@ const FormValidation = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/30">
+        <div className="h-screen bg-gradient-to-r from-blue-600/5 via-indigo-600/5 to-purple-600/5 p-4 flex flex-col overflow-hidden">
             <FormValidationHeader
                 studentId={studentId}
                 onBack={handleBack}
@@ -243,7 +243,7 @@ const FormValidation = () => {
                 onSaveValidation={handleSaveValidation}
             />
 
-            <div className="flex h-[calc(100vh-80px)]">
+            <div className="flex flex-1 shadow-2xl rounded-lg pb-6 bg-white mt-4 min-h-0">
                 <FormValidationSidebar
                     validationStatus={validationStatus}
                     getValidationStatus={getValidationStatus}

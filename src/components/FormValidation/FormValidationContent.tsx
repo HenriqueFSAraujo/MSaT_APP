@@ -62,8 +62,8 @@ export const FormValidationContent = ({
     );
 
     return (
-        <Tabs value={activeTab} className="h-full">
-            <div className="flex-1 overflow-y-auto bg-gray-50">
+        <Tabs value={activeTab} className="h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto bg-gray-50 min-h-0">
                 {/* Scholarship Info */}
                 <TabsContent value="scholarship_info" className="p-6 m-0">
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
