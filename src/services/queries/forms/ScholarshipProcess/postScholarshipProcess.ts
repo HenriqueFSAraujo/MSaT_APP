@@ -5,6 +5,8 @@ import { Endpoints } from '../../../endpoints';
 
 type postScholarshipProcessPayload = {
     userId: number
+    segmentoAno: string
+    serieAno: string
     vaiParticipar: boolean
     jaFoiContemplado: boolean
     percentual?: number
