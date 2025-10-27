@@ -1,6 +1,5 @@
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { formatCpf } from '@/utils/transformMasks';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -10,21 +9,18 @@ import {
     XCircle,
     FileText,
     User,
-    Home,
     Users,
     MapPin,
     FileCheck,
-    DollarSign,
     Shield
 } from 'lucide-react';
 import { useState } from 'react';
 
 interface FormPreviewProps {
-    studentId: number;
     studentName: string;
 }
 
-export const FormPreview = ({ studentId, studentName }: FormPreviewProps) => {
+export const FormPreview = ({ studentName }: FormPreviewProps) => {
     const { formData } = useScholarshipFormStore();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -33,14 +29,6 @@ export const FormPreview = ({ studentId, studentName }: FormPreviewProps) => {
             <CheckCircle className="w-4 h-4 text-green-600" />
         ) : (
             <XCircle className="w-4 h-4 text-red-500" />
-        );
-    };
-
-    const getStatusBadge = (isCompleted: boolean) => {
-        return (
-            <Badge variant={isCompleted ? "default" : "destructive"} className="text-xs">
-                {isCompleted ? 'Completo' : 'Pendente'}
-            </Badge>
         );
     };
 

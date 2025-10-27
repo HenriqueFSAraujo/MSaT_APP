@@ -4,7 +4,7 @@ import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { getBirthplaceOptions, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';
 import { TabNavigation } from '@/components/TabNavigation/TabNavigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import FormDate from '../common/FormDate/FormDate';
@@ -17,9 +17,11 @@ import { personalDataSchema, PersonalDataType } from './type/formData';
 export const PersonalData = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+  const { resetSpecificTab } = useTabStore();
   const { mutate: FormSubmit } = PostPersonalData();
   const { id: StudentId } = useParams<{ id: string }>();
   const { data } = usePersonalData(Number(StudentId));
+  const [hasLoadedFromAPI, setHasLoadedFromAPI] = useState(false);
 
   const methods = useForm<PersonalDataType>({
     resolver: zodResolver(personalDataSchema),
@@ -52,7 +54,22 @@ export const PersonalData = ({ label }: { label: string }) => {
     // Debounce auto-save to avoid too many saves
     const timeoutId = setTimeout(() => {
       if (watchedValues && Object.keys(watchedValues).length > 0) {
-        setFormData('personal_data', watchedValues);
+        // Verificar se todos os campos obrigatórios estão preenchidos antes de salvar
+        const hasAllRequired =
+          watchedValues.fullName &&
+          watchedValues.cpf &&
+          watchedValues.rg &&
+          watchedValues.nationality &&
+          watchedValues.birthplace &&
+          watchedValues.race &&
+          watchedValues.phone &&
+          watchedValues.gender &&
+          watchedValues.dateBirth;
+
+        // Só salvar se todos os campos obrigatórios estão preenchidos
+        if (hasAllRequired) {
+          setFormData('personal_data', watchedValues);
+        }
       }
     }, 1000); // Save after 1 second of inactivity
 
@@ -64,7 +81,7 @@ export const PersonalData = ({ label }: { label: string }) => {
     : [];
 
   useEffect(() => {
-    if (data) {
+    if (data && !hasLoadedFromAPI) {
       const formData = {
         ...methods.getValues(),
         ...(data as Partial<PersonalDataType>),
@@ -78,13 +95,27 @@ export const PersonalData = ({ label }: { label: string }) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { dateBirth, ...formDataWithoutDate } = formData;
           methods.reset(formDataWithoutDate);
+          setHasLoadedFromAPI(true);
           return;
         }
       }
 
+      // Verificar se campos obrigatórios estão vazios após carregar da API
+      const hasAllRequiredFields =
+        formData.rg &&
+        formData.nationality &&
+        formData.birthplace &&
+        formData.race;
+
+      // Se campos obrigatórios estão vazios, desmarcar a tab
+      if (!hasAllRequiredFields) {
+        resetSpecificTab('personal_data');
+      }
+
       methods.reset(formData);
+      setHasLoadedFromAPI(true);
     }
-  }, [data, methods]);
+  }, [data, methods, hasLoadedFromAPI, resetSpecificTab]);
 
   useEffect(() => {
     if (formData.personal_data) {
@@ -124,9 +155,47 @@ export const PersonalData = ({ label }: { label: string }) => {
     }
   }, [selectedNationality, methods]);
 
+  // Monitorar se a tab deve ser desmarcada quando campos obrigatórios estão vazios
+  useEffect(() => {
+    const { completedTabs } = useTabStore.getState();
+
+    // Verificar se todos os campos obrigatórios estão preenchidos
+    const hasAllRequiredFields =
+      watchedValues.fullName &&
+      watchedValues.cpf &&
+      watchedValues.rg &&
+      watchedValues.nationality &&
+      watchedValues.birthplace &&
+      watchedValues.race &&
+      watchedValues.phone &&
+      watchedValues.gender &&
+      watchedValues.dateBirth;
+
+    // Se a tab está marcada como completa mas não tem todos os campos, desmarcar
+    if (completedTabs.includes('personal_data') && !hasAllRequiredFields) {
+      resetSpecificTab('personal_data');
+    }
+  }, [watchedValues, resetSpecificTab]);
+
   const onSubmit = async (formValues: PersonalDataType) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
+
+    // Verificar se todos os campos obrigatórios estão preenchidos
+    const hasAllRequiredFields =
+      formValues.fullName &&
+      formValues.cpf &&
+      formValues.rg &&
+      formValues.nationality &&
+      formValues.birthplace &&
+      formValues.race &&
+      formValues.phone &&
+      formValues.gender &&
+      formValues.dateBirth;
+
+    if (!hasAllRequiredFields) {
+      return;
+    }
 
     try {
       setFormData('personal_data', formValues);
