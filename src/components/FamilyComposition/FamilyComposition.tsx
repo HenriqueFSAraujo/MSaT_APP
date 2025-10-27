@@ -98,6 +98,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
   const {
     handleSubmit,
     reset,
+    trigger,
     formState: { isSubmitting },
   } = methods;
 
@@ -151,6 +152,10 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
   const onSubmit = async (data: FamilyCompositionInfo) => {
     try {
+      // Validar todos os campos antes de prosseguir
+      const isValid = await trigger();
+      if (!isValid) return
+
       // Função para verificar se uma linha está completamente vazia
       const isRowEmpty = (row: FamilyMember) => {
         const nome = row.nomeCompleto?.trim() || '';
@@ -205,7 +210,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
       await familyDataMutation.mutateAsync(payload);
 
-      // Marcar a aba como concluída e navegar para a próxima
+      // Marcar a aba como concluída e navegar para a próxima tab (DocumentData)
       markTabAsCompleted('family_composition');
       setSelectedTab('required_documents');
 
