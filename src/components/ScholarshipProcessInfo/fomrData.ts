@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const scholarshipProcessSchema = z.object({
-  segmentToStudy2025: z.string({
+  segmentYearToStudy: z.string({
     required_error: 'Por favor, selecione uma opção'
   }),
   specificGrade: z.string({

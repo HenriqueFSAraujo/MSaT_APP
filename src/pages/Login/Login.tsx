@@ -61,7 +61,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center p-12 bg-gradient-to-r from-blue-600 to-blue-800">
           <div className="text-center text-white">
             <img
-              src="https://pbs.twimg.com/profile_images/440769852/Logo_Eb_400x400.jpg"
+              src="/imgs/logo-educa.png"
               alt="Logo"
               className="max-h-60 w-auto object-contain mx-auto mb-6 p-3 bg-white"
             />

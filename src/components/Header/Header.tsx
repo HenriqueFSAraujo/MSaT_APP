@@ -94,7 +94,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
   if (isLoginPage) {
     return (
       <motion.header
-        className="h-[76px] md:h-[64px] sm:h-[56px] bg-[#0b59ac] shadow-sm flex items-center justify-center px-6"
+        className="h-[76px] md:h-[64px] sm:h-[56px] bg-blue-400 shadow-sm flex items-center justify-center px-6"
         initial="hidden"
         animate="visible"
         variants={headerVariants}
@@ -105,7 +105,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
           whileTap={{ scale: 0.95 }}
         >
           <motion.img
-            src="https://pbs.twimg.com/profile_images/440769852/Logo_Eb_400x400.jpg"
+            src="/"
             alt="Logo"
             className="h-14 max-w-full max-h-[100px] md:max-h-[32px]"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -119,7 +119,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
 
   return (
     <motion.header
-      className="h-auto md:h-[64px] sm:h-[56px] bg-[#0b59ac] shadow-sm flex items-center justify-between px-[22px] md:px-4 sm:px-3"
+      className="h-auto md:h-[64px] sm:h-[56px] bg-blue-400 shadow-sm flex items-center justify-between px-[22px] md:px-4 sm:px-3"
       initial="hidden"
       animate="visible"
       variants={headerVariants}
@@ -130,7 +130,7 @@ export const Header = ({ shouldRender = true }: HeaderProps) => {
       >
         <MenuComponent />
         <motion.img
-          src="https://pbs.twimg.com/profile_images/440769852/Logo_Eb_400x400.jpg"
+          src="/imgs/logo-educa.png"
           alt="Logo"
           className="h-14 w-auto object-contain cursor-pointer"
           onClick={handleClickMenu}

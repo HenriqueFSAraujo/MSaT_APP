@@ -4,6 +4,7 @@ export const fieldMasksMap: Record<string, 'currency' | 'date' | 'year'> = {
   valor: 'currency',
   anoFabricacao: 'year',
   salarioBruto: 'currency',
+  dataNascimento: 'date',
 };
 
 export const dateFieldsMap: Record<string, string[]> = {
@@ -32,9 +33,35 @@ export const educationalOptions: SelectOption[] = [
   { value: 'outros', label: 'Outros' },
 ];
 
+export const maritalStatusOptions: SelectOption[] = [
+  { value: 'Solteiro(a)', label: 'Solteiro(a)' },
+  { value: 'Casado(a)', label: 'Casado(a)' },
+  { value: 'Divorciado(a)', label: 'Divorciado(a)' },
+  { value: 'Viúvo(a)', label: 'Viúvo(a)' },
+  { value: 'União Estável', label: 'União Estável' },
+  { value: 'Separado(a)', label: 'Separado(a)' },
+];
+
+export const kinshipOptions: SelectOption[] = [
+  { value: 'Candidato(a)', label: 'Candidato(a)' },
+  { value: 'Pai', label: 'Pai' },
+  { value: 'Mãe', label: 'Mãe' },
+  { value: 'Irmão(ã)', label: 'Irmão(ã)' },
+  { value: 'Avô', label: 'Avô' },
+  { value: 'Avó', label: 'Avó' },
+  { value: 'Tio(a)', label: 'Tio(a)' },
+  { value: 'Primo(a)', label: 'Primo(a)' },
+  { value: 'Sobrinho(a)', label: 'Sobrinho(a)' },
+  { value: 'Padrasto', label: 'Padrasto' },
+  { value: 'Madrasta', label: 'Madrasta' },
+  { value: 'Meio-irmão(ã)', label: 'Meio-irmão(ã)' },
+  { value: 'Cunhado(a)', label: 'Cunhado(a)' },
+  { value: 'Outros', label: 'Outros' },
+];
+
 // Add select fields mapping
 export const selectFieldsMap: Record<string, string[]> = {
-  composicaoFamiliar: ['escolaridade'],
+  composicaoFamiliar: ['escolaridade', 'estadoCivil', 'grauParentesco'],
   familiaresEscola: [],
   pessoasComDeficiencia: [],
   despesasMensais: [],
@@ -90,6 +117,10 @@ export const getOptionsForField = (fieldName: string): SelectOption[] => {
   switch (fieldName) {
     case 'escolaridade':
       return educationalOptions;
+    case 'estadoCivil':
+      return maritalStatusOptions;
+    case 'grauParentesco':
+      return kinshipOptions;
     // Add more cases for other select fields as needed
     default:
       return [];

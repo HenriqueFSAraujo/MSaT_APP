@@ -1,20 +1,19 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, FileCheck, FileText, Save, AlertCircle } from 'lucide-react';
+import { ArrowLeft,  FileText,  AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface FormValidationHeaderProps {
     studentId: string | null;
     onBack: () => void;
     onEditForm: () => void;
-    onSaveValidation: () => void;
+    onSaveValidation?: () => void;
 }
 
 export const FormValidationHeader = ({
     studentId,
     onBack,
     onEditForm,
-    onSaveValidation
 }: FormValidationHeaderProps) => {
     const cardVariants = {
         hidden: { opacity: 0, x: -20 },

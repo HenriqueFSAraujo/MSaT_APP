@@ -1,15 +1,9 @@
 import { z } from 'zod';
+import { birthDateStringValidation } from '@/utils/dateValidations';
 
 export const formularioSocioeconomicoSchema = z.object({
   nomeAluno: z.string().min(1, 'Nome do(a) aluno(a) é obrigatório'),
-  dataNascimentoAluno: z
-   .date({
-      required_error: 'Data de nascimento é obrigatória',
-      invalid_type_error: 'Formato inválido de data',
-    })
-    .refine((date) => date !== null && date !== undefined, { 
-      message: 'Data de nascimento é obrigatória' 
-    }),
+  dataNascimentoAluno: birthDateStringValidation,
 
   segmentoCursar2025: z.string().min(1, 'Segmento a cursar é obrigatório'),
 
@@ -116,7 +110,7 @@ export const percentualOptions = [
 
 export interface FormularioSocioeconomicoData {
   nomeAluno: string;
-  dataNascimentoAluno: Date | undefined;
+  dataNascimentoAluno: string;
   segmentoCursar2025: string;
   nomeResponsavel: string;
   cpfResponsavel: string;

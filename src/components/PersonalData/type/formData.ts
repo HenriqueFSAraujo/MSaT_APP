@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { birthDateStringValidation } from '@/utils/dateValidations';
 
 export const personalDataSchema = z.object({
   fullName: z.string().nonempty('Nome completo é obrigatório'),
@@ -11,12 +12,7 @@ export const personalDataSchema = z.object({
   phone: z.string().min(1, 'Celular é obrigatório'),
   gender: z.string().min(1, 'Gênero é obrigatório'),
   cpfScholarship: z.string().optional(),
-  dateBirth: z
-    .date({
-      required_error: 'Data de nascimento é obrigatória',
-      invalid_type_error: 'Formato inválido de data',
-    })
-    .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
+  dateBirth: birthDateStringValidation,
   deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
   educacenso: z.string().optional(),
 });

@@ -42,6 +42,14 @@ export const addressInfoSchema = z.object({
 }, {
   message: 'Por favor, especifique qual transporte utiliza',
   path: ['transportTypeOthers']
+}).refine((data) => {
+  if (data.structureType === 'Outros') {
+    return !!data.structureTypeOthers && data.structureTypeOthers.trim() !== '';
+  }
+  return true;
+}, {
+  message: 'Por favor, especifique o tipo de estrutura',
+  path: ['structureTypeOthers']
 });
 
 export type AddressInfo = z.infer<typeof addressInfoSchema>;

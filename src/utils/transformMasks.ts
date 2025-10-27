@@ -8,27 +8,97 @@ export const formatCpf = (value: string) => {
 };
 
 export const maskDate = (value: string) => {
-  // Remover todos os caracteres não numéricos
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    return value;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    const datePart = value.split('T')[0];
+    const [year, month, day] = datePart.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
   const v = value.replace(/\D/g, '').slice(0, 8);
-  
-  // Aplicar a formatação de data DD/MM/AAAA
+
+  if (v.length === 8) {
+    const year = v.slice(0, 4);
+    const month = v.slice(4, 6);
+    const day = v.slice(6, 8);
+    return `${day}/${month}/${year}`;
+  }
+
   if (v.length > 4) return `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
   if (v.length > 2) return `${v.slice(0, 2)}/${v.slice(2)}`;
   return v;
 };
 
-export function maskCurrency(value: string) {
+export function maskCurrency(value: string | number) {
+  if (typeof value === 'number') {
+    return value.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  if (!value || value.trim() === '') {
+    return 'R$ 0,00';
+  }
+
+  if (/^R\$\s?\d/.test(value)) {
+    return value;
+  }
+
+  if (value.includes(',') || value.includes('.')) {
+    const cleanValue = value.replace(/\./g, '').replace(',', '.');
+    const number = parseFloat(cleanValue);
+
+    if (!isNaN(number)) {
+      return number.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+  }
+
   const onlyNumbers = value.replace(/\D/g, '');
 
-  if (!onlyNumbers) return '';
+  if (!onlyNumbers) {
+    return 'R$ 0,00';
+  }
 
   const number = parseInt(onlyNumbers, 10);
 
-  const numberFloat = number / 100;
-
-  return numberFloat.toLocaleString('pt-BR', {
+  return number.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+export function maskCurrencyInput(value: string) {
+  const onlyNumbers = value.replace(/\D/g, '');
+
+  if (!onlyNumbers || onlyNumbers === '0') {
+    return 'R$ 0,00';
+  }
+
+  const number = parseInt(onlyNumbers, 10) / 100;
+
+  return number.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 }
 
@@ -41,24 +111,19 @@ export function maskCpfCustom(cpf: string): string {
 }
 
 export const moneyMask = (rawValue: string): (string | RegExp)[] => {
-  // Remove tudo que não é dígito
   const numbers = rawValue.replace(/\D+/g, '');
 
-  // Se não tem valor, retorna máscara inicial
   if (numbers.length === 0) {
     return ['R', '$', ' ', /\d/, ',', /\d/, /\d/];
   }
 
-  // Converte para número e divide em reais e centavos
   const amount = parseInt(numbers, 10) / 100;
 
-  // Formata o valor como string no formato monetário
   const formattedValue = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(amount);
 
-  // Converte a string formatada em uma máscara
   const mask: (string | RegExp)[] = [];
   for (let i = 0; i < formattedValue.length; i++) {
     const char = formattedValue[i];
@@ -72,11 +137,23 @@ export const moneyMask = (rawValue: string): (string | RegExp)[] => {
   return mask;
 };
 
-export function parseCurrency(value: string): string {
+export function parseCurrency(value: string | number | null | undefined): string {
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (typeof value === 'number') {
+    return value.toString();
+  }
+
+  if (typeof value !== 'string') {
+    return String(value);
+  }
+
   return value
     .replace(/\s/g, '')
-    .replace('R$', '')        // Remove o símbolo de moeda
-    .replace(/\./g, '')       // Remove pontos de milhar
-    .replace(',', '.');       // Troca vírgula decimal por ponto
+    .replace('R$', '')
+    .replace(/\./g, '')
+    .replace(',', '.');
 }
 

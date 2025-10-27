@@ -47,6 +47,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   const handleInputChange = (field: string, value: string | { name: string }) => {
     let newValue: unknown = value;
@@ -55,6 +56,10 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
     }
     setFormData((prev) => ({ ...prev, [field]: newValue }));
     setIsDirty(true);
+  };
+
+  const handleInputBlur = (field: string) => {
+    setTouchedFields(prev => new Set(prev).add(field));
   };
 
   const handleSave = () => {
@@ -108,7 +113,8 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
   };
 
   useEffect(() => {
-    if (!isDirty) return;
+    if (!isDirty || touchedFields.size === 0) return;
+
     try {
       userSchema.parse(formData);
       setErrors({});
@@ -117,7 +123,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
       if (err instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
         err.errors.forEach((error) => {
-          if (error.path[0]) {
+          if (error.path[0] && touchedFields.has(error.path[0] as string)) {
             newErrors[error.path[0] as string] = error.message;
           }
         });
@@ -125,7 +131,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
         setIsFormValid(false);
       }
     }
-  }, [formData, isDirty]);
+  }, [formData, isDirty, touchedFields]);
 
   useEffect(() => {
     if (!open) {
@@ -140,8 +146,13 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
       setErrors({});
       setIsFormValid(false);
       setIsDirty(false);
+      setTouchedFields(new Set());
     }
   }, [open]);
+
+  const getCpfLabel = () => {
+    return formData.roleName === 'ROLE_ADMIN' ? 'CPF' : 'CPF do candidato';
+  };
 
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -210,7 +221,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                 >
                   <Label className="text-sm font-medium">
                     {field === 'fullName' && 'Nome Completo'}
-                    {field === 'cpf' && 'CPF'}
+                    {field === 'cpf' && getCpfLabel()}
                     {field === 'email' && 'E-mail'}
                   </Label>
                   <motion.div whileHover={{ scale: 1.01 }}>
@@ -221,7 +232,8 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                           : ''
                       }
                       onChange={(e) => handleInputChange(field, e.target.value)}
-                      placeholder={`Digite o ${field === 'name' ? 'nome completo' : field}`}
+                      onBlur={() => handleInputBlur(field)}
+                      placeholder='Digite o nome completo'
                       className={cn(errors[field] && 'border-red-500 focus-visible:ring-red-500')}
                     />
                   </motion.div>
@@ -246,7 +258,10 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                 <motion.div whileHover={{ scale: 1.01 }}>
                   <Select
                     value={formData.roleName}
-                    onValueChange={(value) => handleInputChange('roleName', value)}
+                    onValueChange={(value) => {
+                      handleInputChange('roleName', value);
+                      handleInputBlur('roleName');
+                    }}
                   >
                     <SelectTrigger
                       className={cn(errors.roleName && 'border-red-500 focus-visible:ring-red-500')}

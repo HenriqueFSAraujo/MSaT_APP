@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/for
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useState } from 'react';
 import { FieldError, FieldErrorsImpl, Merge, useFormContext } from 'react-hook-form';
 
@@ -50,6 +50,7 @@ const FormDate: React.FC<FormDateProps> = ({
 
   const minYear = 1900;
   const maxYear = new Date().getFullYear();
+  const today = new Date();
 
   const months = [
     'Janeiro',
@@ -238,11 +239,13 @@ const FormDate: React.FC<FormDateProps> = ({
                 <div className="p-4">
                   <Calendar
                     mode="single"
-                    selected={field.value}
+                    selected={field.value ? (typeof field.value === 'string' ? new Date(field.value.split('/').reverse().join('-')) : field.value) : undefined}
                     onSelect={(date) => {
                       if (date) {
                         setJustSelected(true);
-                        setValue(name, date);
+                        // Convert Date to string in DD/MM/YYYY format
+                        const dateString = format(date, 'dd/MM/yyyy', { locale: ptBR });
+                        setValue(name, dateString);
                         setOpen(false);
                         setTimeout(() => setJustSelected(false), 200);
                       }
@@ -251,6 +254,7 @@ const FormDate: React.FC<FormDateProps> = ({
                     onMonthChange={setCurrentDate}
                     fromYear={minYear}
                     toYear={maxYear}
+                    disabled={(date) => date > today}
                     locale={ptBR}
                     initialFocus
                     className="w-full"
@@ -341,10 +345,11 @@ const FormDate: React.FC<FormDateProps> = ({
                 >
                   <span className={`flex-1 ${field.value ? 'text-gray-900' : 'text-gray-500'} placeholder:text-gray-500`}>
                     {field.value
-                      ? format(field.value, 'dd/MM/yyyy', { locale: ptBR })
-                      : 'Selecione uma data'}
+                      ? typeof field.value === 'string'
+                        ? field.value
+                        : format(field.value, 'dd/MM/yyyy', { locale: ptBR })
+                      : 'Selecione uma data'} 
                   </span>
-                  {/* <CalendarIcon className="h-4 w-4 opacity-50 absolute right-4" /> */}
                 </Button>
               </PopoverTrigger>
 

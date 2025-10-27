@@ -16,7 +16,7 @@ const FormValidation = () => {
     // Dados de exemplo para teste (remover quando formData estiver funcionando)
     const mockFormData = {
         scholarship_info: {
-            segmentToStudy2025: 'Educação Infantil',
+            segmentYearToStudy: 'Educação Infantil',
             specificGrade: 'Maternal I',
             wantsToParticipate: 'sim',
             hadScholarshipLastYear: 'nao',
@@ -221,7 +221,7 @@ const FormValidation = () => {
     };
 
     const handleBack = () => {
-        navigate('/students');
+        navigate('/dashboard-users');
     };
 
     const handleEditForm = () => {

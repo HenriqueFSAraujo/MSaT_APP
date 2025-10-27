@@ -50,11 +50,11 @@ export default function SocioeconomicReport() {
       dataFinalizacaoParecer: new Date(),
     },
   });
-  
+
   const rendaPerCapita = methods.watch('rendaPerCapita');
   const rendaBrutaFamiliar = methods.watch('rendaBrutaFamiliar');
   const totalComponentesFamilar = methods.watch('totalComponentesFamilar');
-  
+
   useEffect(() => {
     if (rendaBrutaFamiliar && totalComponentesFamilar) {
       try {
@@ -66,22 +66,22 @@ export default function SocioeconomicReport() {
         } else if (typeof rendaBrutaFamiliar === 'number') {
           rendaTotal = rendaBrutaFamiliar;
         }
-        
+
         let componentes = 0;
         if (typeof totalComponentesFamilar === 'string') {
           componentes = parseInt(totalComponentesFamilar, 10) || 0;
         } else if (typeof totalComponentesFamilar === 'number') {
           componentes = totalComponentesFamilar;
         }
-        
+
         if (rendaTotal > 0 && componentes > 0) {
           const rendaPerCapitaCalculada = rendaTotal / componentes;
-          
+
           const rendaPerCapitaFormatada = rendaPerCapitaCalculada.toLocaleString('pt-BR', {
-            style: 'currency', 
+            style: 'currency',
             currency: 'BRL'
           });
-          
+
           methods.setValue('rendaPerCapita', rendaPerCapitaFormatada);
           console.log(`Renda: ${rendaTotal}, Componentes: ${componentes}, Per Capita: ${rendaPerCapitaFormatada}`);
         }
@@ -90,26 +90,26 @@ export default function SocioeconomicReport() {
       }
     }
   }, [rendaBrutaFamiliar, totalComponentesFamilar, methods]);
-  
+
   useEffect(() => {
     const salarioMinimo = 1518;
-    
+
     if (rendaPerCapita !== undefined && rendaPerCapita !== null) {
       try {
         let rendaPerCapitaNumero = 0;
-        
+
         if (typeof rendaPerCapita === 'string') {
           const valorLimpo = rendaPerCapita.replace(/[^\d.,]/g, '');
           const valorAmericano = valorLimpo.replace(/\./g, '').replace(',', '.');
-          
+
           rendaPerCapitaNumero = parseFloat(valorAmericano) || 0;
         } else if (typeof rendaPerCapita === 'number') {
           rendaPerCapitaNumero = rendaPerCapita;
         }
-        
+
         const rendaEmSalariosMinimos = rendaPerCapitaNumero / salarioMinimo;
         const valorFormatado = rendaEmSalariosMinimos.toFixed(4);
-        
+
         methods.setValue('rendaPerCapitaSalarioMinimo', valorFormatado);
       } catch (error) {
         console.error("Erro ao calcular renda em salários mínimos:", error);
@@ -130,22 +130,22 @@ export default function SocioeconomicReport() {
         toast.error('A data de nascimento do aluno é obrigatória.');
         return;
       }
-      
+
       const getBooleanValue = (value: string | undefined): boolean => {
         if (!value) return false;
         return value === 'Sim';
       };
-      
+
       const payload = {
         userId: Number(StudentId),
         nomeAluno: data.nomeAluno,
-        dataNascimentoAluno: data.dataNascimentoAluno,
+        dataNascimentoAluno: new Date(data.dataNascimentoAluno),
         segmentoCursar2025: data.segmentoCursar2025,
         nomeResponsavel: data.nomeResponsavel,
         cpfResponsavel: data.cpfResponsavel,
         telefoneResponsavel: data.telefoneResponsavel,
-        rendaBrutaFamiliar: typeof data.rendaBrutaFamiliar === 'string' 
-          ? parseFloat(data.rendaBrutaFamiliar.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.')) 
+        rendaBrutaFamiliar: typeof data.rendaBrutaFamiliar === 'string'
+          ? parseFloat(data.rendaBrutaFamiliar.replace(/[^\d.,]/g, '').replace(/\./g, '').replace(',', '.'))
           : Number(data.rendaBrutaFamiliar),
         totalComponentesFamilar: typeof data.totalComponentesFamilar === 'string'
           ? parseInt(data.totalComponentesFamilar, 10)
@@ -159,17 +159,17 @@ export default function SocioeconomicReport() {
         beneficiarioProgramaRenda: getBooleanValue(data.beneficiarioProgramaRenda),
         resideProximoUnidadeEscolar: getBooleanValue(data.resideProximoUnidadeEscolar),
         candidatoComDeficiencia: getBooleanValue(data.candidatoComDeficiencia),
-        doencaGraveOuDeficienciaFamiliar: data.doencaGraveOuDeficienciaFamiliar ? 
+        doencaGraveOuDeficienciaFamiliar: data.doencaGraveOuDeficienciaFamiliar ?
           getBooleanValue(data.doencaGraveOuDeficienciaFamiliar) : undefined,
         percentualLc187: data.percentualLc187 || '',
-        quantidadeMenoresDezoitoAnos: typeof data.quantidadeMenoresDezoitoAnos === 'string' 
-          ? parseInt(data.quantidadeMenoresDezoitoAnos, 10) 
+        quantidadeMenoresDezoitoAnos: typeof data.quantidadeMenoresDezoitoAnos === 'string'
+          ? parseInt(data.quantidadeMenoresDezoitoAnos, 10)
           : data.quantidadeMenoresDezoitoAnos,
         aspectosRelevantes: data.aspectosRelevantes,
         resultadoSocioeconomico: data.resultadoSocioeconomico,
         dataFinalizacaoParecer: data.dataFinalizacaoParecer || new Date(),
       };
-      
+
       console.log('Enviando dados:', payload);
       mutate(payload);
     } catch (error) {
@@ -212,14 +212,14 @@ export default function SocioeconomicReport() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-auto bg-background"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <div className="container mx-auto py-6 px-4">
-        <motion.div 
+        <motion.div
           className="bg-card rounded-lg shadow-lg border"
           variants={cardVariants}
         >

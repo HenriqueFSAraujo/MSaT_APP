@@ -29,7 +29,8 @@ interface DocumentValidation {
 export const DocumentData = ({ label }: { label: string }) => {
   const [submitted, setSubmitted] = useState(false);
   const [documentValidations, setDocumentValidations] = useState<DocumentValidation>({});
-  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const [validationComment, setValidationComment] = useState('');
 
   const methods = useForm<FormValues>({
@@ -185,7 +186,7 @@ export const DocumentData = ({ label }: { label: string }) => {
       const { markTabAsCompleted } = useTabStore.getState();
       markTabAsCompleted('required_documents');
 
-      setSelectedTab('housing_conditions');
+      setSelectedTab('property_relations');
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
@@ -217,7 +218,6 @@ export const DocumentData = ({ label }: { label: string }) => {
             <a href="/TUTORIAIS.pdf" download>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
                 Em caso de dúvidas, sobre como emitir os documento basta clicar aqui!
-
                 <Download className="mr-1 h-5 w-5 cursor-pointer" />
               </div>
             </a>

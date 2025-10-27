@@ -1,14 +1,20 @@
-import { maskCurrency, maskDate } from '@/utils/transformMasks';
+import { maskDate, parseCurrency, maskCurrencyInput } from '@/utils/transformMasks';
 import { Info, Plus, Trash } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { type FieldError, useFieldArray, useFormContext } from 'react-hook-form';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
 import FormDate from '../FormDate/FormDate';
 import FormSelect from '../FormSelect/FormSelect';
-import { educationalOptions } from '@/components/FamilyComposition/form.ds';
+import { getOptionsForField } from '@/components/FamilyComposition/form.ds';
 
 type MaskType = 'date' | 'currency' | 'year';
+
+// Global lock para evitar múltiplas adições simultâneas
+const globalAddLock = {
+  isAdding: false,
+  lastAddTime: 0,
+};
 
 type DynamicInputSectionProps = {
   title?: string;
@@ -27,11 +33,7 @@ type DynamicInputSectionProps = {
   };
 };
 
-interface FormRowItem {
-  [key: string]: string | undefined;
-}
-
-export const DynamicInputSection = ({
+const DynamicInputSectionComponent = ({
   title = '',
   info = '',
   columns = [],
@@ -48,11 +50,9 @@ export const DynamicInputSection = ({
     control,
     register,
     formState: { errors },
-    setValue,
-    watch,
   } = useFormContext();
   const [openModal, setOpenModal] = useState(false);
-  const [totalValue, setTotalValue] = useState('R$ 0,00');
+  const [isAdding, setIsAdding] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -60,36 +60,65 @@ export const DynamicInputSection = ({
   });
 
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const isAddingRef = useRef(false);
+  const lastAddTimeRef = useRef<number>(0);
 
-  const watchAllFields = watch();
-
-  useEffect(() => {
-    if (showTotalRow && watchAllFields[namePrefix]) {
-      const sumField = showTotalRow.fieldToSum;
-
-      const total = watchAllFields[namePrefix].reduce((sum: number, item: FormRowItem) => {
-        if (item && item[sumField]) {
-          const valueStr = (item[sumField] as string).replace(/[^\d,]/g, '').replace(',', '.');
-
-          const value = parseFloat(valueStr) || 0;
-          return sum + value;
-        }
-        return sum;
-      }, 0);
-
-      const formattedTotal = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(total);
-
-      setTotalValue(formattedTotal);
+  // Calculate total diretamente dos fields do useFieldArray
+  const totalValue = useMemo(() => {
+    if (!showTotalRow || !Array.isArray(fields)) {
+      return 'R$ 0,00';
     }
-  }, [watchAllFields, namePrefix, showTotalRow]);
 
-  const handleAddRow = () =>
-    append(fieldNames.reduce((acc, field) => ({ ...acc, [field]: '' }), {}));
+    const sumField = showTotalRow.fieldToSum;
+    const total = fields.reduce((sum: number, item: Record<string, string | number>) => {
+      if (item && item[sumField]) {
+        const originalValue = item[sumField] as string;
+        const parsedValue = parseCurrency(originalValue);
+        const value = parseFloat(parsedValue) || 0;
+        return sum + value;
+      }
+      return sum;
+    }, 0);
 
-  const handleRemoveRow = (index: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(total);
+  }, [fields, showTotalRow]);
+
+  const handleAddRow = useCallback(() => {
+    const now = Date.now();
+
+    if (globalAddLock.isAdding || isAddingRef.current ||
+        (now - globalAddLock.lastAddTime < 500) || (now - lastAddTimeRef.current < 500)) {
+      return;
+    }
+
+    globalAddLock.isAdding = true;
+    globalAddLock.lastAddTime = now;
+    isAddingRef.current = true;
+    lastAddTimeRef.current = now;
+    setIsAdding(true);
+
+    const newRow = fieldNames.reduce((acc, field) => {
+      if (field === 'salarioBruto' || field === 'valorMensal' || field === 'despesaMensal' || field === 'valor') {
+        acc[field] = 'R$ 0,00';
+      } else {
+        acc[field] = '';
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    append(newRow);
+
+    setTimeout(() => {
+      globalAddLock.isAdding = false;
+      isAddingRef.current = false;
+      setIsAdding(false);
+    }, 500);
+  }, [append, fieldNames]);
+
+  const handleRemoveRow = useCallback((index: number) => {
     const scrollContainer = tableBodyRef.current?.closest('.overflow-y-auto');
     const scrollTop = scrollContainer?.scrollTop || 0;
 
@@ -100,13 +129,84 @@ export const DynamicInputSection = ({
         scrollContainer.scrollTop = scrollTop;
       }, 0);
     }
-  };
+  }, [remove]);
 
   const hasError = Array.isArray(errors[namePrefix])
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))
     : false;
 
-  const renderField = (
+  const createMaskedInput = useCallback((path: string, mask: MaskType | undefined, fieldError?: FieldError, placeholder?: string) => {
+    const { onChange, onBlur, ...registerProps } = register(path, {
+      required: required ? 'Campo obrigatório' : false,
+      validate: (val: string) => {
+        if (mask === 'year') {
+          if (!val) return true;
+          if (!/^\d{1,4}$/.test(val)) return 'Apenas números são permitidos';
+          if (val.length !== 4) return 'O ano deve conter exatamente 4 dígitos';
+          const yearNum = parseInt(val, 10);
+          if (yearNum < 1900 || yearNum > new Date().getFullYear() + 1)
+            return 'Ano inválido';
+          return true;
+        } else if (mask === 'date') {
+          return !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val) || 'Formato deve ser DD/MM/AAAA';
+        }
+        return true;
+      }
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+
+      if (mask === 'year') {
+        val = val.replace(/\D/g, '').slice(0, 4);
+      } else if (mask === 'date') {
+        val = maskDate(val);
+      } else if (mask === 'currency') {
+        val = maskCurrencyInput(val);
+      }
+
+      // Criar um novo evento com o valor mascarado
+      const maskedEvent = {
+        ...e,
+        target: {
+          ...e.target,
+          value: val
+        }
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      // Chamar o onChange do register com o valor mascarado
+      onChange(maskedEvent);
+    };
+
+    return (
+      <div className="w-full">
+        <input
+          {...registerProps}
+          placeholder={
+            placeholder || (mask === 'date' ? 'DD/MM/AAAA' : mask === 'year' ? 'AAAA' : 'Digite...')
+          }
+          onChange={handleChange}
+          onBlur={onBlur}
+          inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? 'numeric' : 'text'}
+          maxLength={mask === 'year' ? 4 : mask === 'date' ? 10 : undefined}
+          className={`
+            w-full px-4 py-3 text-sm border rounded-lg
+            placeholder:text-gray-500
+            focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500
+            transition-all min-h-[50px]
+            ${fieldError ? 'border-red-500 bg-red-50 text-red-500' : 'border-gray-300 bg-white text-gray-700'}
+          `}
+        />
+        {fieldError && (
+          <p className="text-red-500 text-xs mt-1">
+            {fieldError.message}
+          </p>
+        )}
+      </div>
+    );
+  }, [register, required]);
+
+  const renderField = useCallback((
     fieldName: string,
     rowIdx: number,
     fieldError?: FieldError,
@@ -130,10 +230,7 @@ export const DynamicInputSection = ({
     }
 
     if (selectFields.includes(fieldName)) {
-      let options: { value: string; label: string }[] = [];
-      if (fieldName === 'escolaridade') {
-        options = educationalOptions;
-      }
+      const options = getOptionsForField(fieldName);
 
       return (
         <div className="w-full">
@@ -149,7 +246,11 @@ export const DynamicInputSection = ({
                 ? {
                     otherValue: 'outros',
                     otherFieldName: otherPath,
-                    otherPlaceholder: 'Especifique a escolaridade',
+                    otherPlaceholder: fieldName === 'escolaridade'
+                      ? 'Especifique a escolaridade'
+                      : fieldName === 'grauParentesco'
+                      ? 'Especifique o grau de parentesco'
+                      : 'Especifique...',
                   }
                 : undefined
             }
@@ -159,65 +260,8 @@ export const DynamicInputSection = ({
     }
 
     const mask = fieldMasks[fieldName];
-    const value = watch(path) || '';
-
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let val = e.target.value;
-
-      if (mask === 'year') {
-        val = val.replace(/\D/g, '').slice(0, 4);
-      } else if (mask === 'date') {
-        val = maskDate(val);
-      } else if (mask === 'currency') {
-        val = maskCurrency(val);
-      }
-
-      setValue(path, val, { shouldValidate: true, shouldDirty: true });
-    };
-
-    return (
-      <div className="relative">
-        <input
-          {...register(path, {
-            required: required ? 'Campo obrigatório' : false,
-            validate:
-              mask === 'year'
-                ? (val) => {
-                    if (!val) return true;
-                    if (!/^\d{1,4}$/.test(val)) return 'Apenas números são permitidos';
-                    if (val.length !== 4) return 'O ano deve conter exatamente 4 dígitos';
-                    const yearNum = parseInt(val, 10);
-                    if (yearNum < 1900 || yearNum > new Date().getFullYear() + 1)
-                      return 'Ano inválido';
-                    return true;
-                  }
-                : mask === 'date'
-                  ? (val) =>
-                      !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val) || 'Formato deve ser DD/MM/AAAA'
-                  : undefined,
-          })}
-          placeholder={
-            placeholder || (mask === 'date' ? 'DD/MM/AAAA' : mask === 'year' ? 'AAAA' : 'Digite...')
-          }
-          onChange={mask ? onChange : undefined}
-          inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? 'numeric' : 'text'}
-          maxLength={mask === 'year' ? 4 : mask === 'date' ? 10 : undefined}
-          className={`
-            p-3 text-sm border w-full rounded-md
-            placeholder-gray-400
-            focus:outline-none focus:ring-1 focus:ring-blue-500
-            ${fieldError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
-          `}
-          value={mask ? value : undefined}
-        />
-        {fieldError && (
-          <div className="md:absolute text-red-500 text-xs mt-1 md:mt-0 md:-bottom-4 md:left-0">
-            {fieldError.message}
-          </div>
-        )}
-      </div>
-    );
-  };
+    return createMaskedInput(path, mask, fieldError, placeholder);
+  }, [namePrefix, dateFields, selectFields, required, fieldMasks, createMaskedInput]);
 
   return (
     <div className="w-full space-y-2">
@@ -267,7 +311,7 @@ export const DynamicInputSection = ({
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         {columns[colIdx]}
                       </label>
-                      {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)}
+                      {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}`)}
                     </div>
                   );
                 })}
@@ -307,7 +351,7 @@ export const DynamicInputSection = ({
 
                     return (
                       <td key={`${field.id}-${fieldName}`} className="p-3 align-top">
-                        {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}...`)}
+                        {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}`)}
                       </td>
                     );
                   })}
@@ -351,21 +395,23 @@ export const DynamicInputSection = ({
         <div className="p-3 md:hidden">
           <button
             onClick={handleAddRow}
-            className="flex items-center justify-center w-full p-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors"
+            disabled={isAdding}
+            className="flex items-center justify-center w-full p-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             type="button"
           >
             <Plus size={20} className="mr-2" />
-            <span className="font-medium">Adicionar Pessoa</span>
+            <span className="font-medium">{isAdding ? 'Adicionando...' : 'Adicionar Pessoa'}</span>
           </button>
         </div>
 
         <div className="hidden md:flex justify-end p-3 bg-gray-50">
           <button
             onClick={handleAddRow}
-            className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100"
+            disabled={isAdding}
+            className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
             type="button"
           >
-            <Plus size={14} /> Adicionar linha
+            <Plus size={14} /> {isAdding ? 'Adicionando...' : 'Adicionar linha'}
           </button>
         </div>
       </div>
@@ -374,3 +420,6 @@ export const DynamicInputSection = ({
     </div>
   );
 };
+
+// Export sem memo para testar
+export const DynamicInputSection = DynamicInputSectionComponent;

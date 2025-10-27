@@ -23,6 +23,8 @@ export const TABS: Tab[] = [
 
 export type FormDataByTab = {
   scholarship_info?: {
+    segmentYearToStudy: string;
+    specificGrade: string;
     wantsToParticipate: 'sim' | 'nao';
     hadScholarshipLastYear: 'sim' | 'nao';
     previousScholarshipPercentage?: '50' | '100';

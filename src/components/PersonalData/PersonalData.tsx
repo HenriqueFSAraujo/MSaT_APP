@@ -45,6 +45,20 @@ export const PersonalData = ({ label }: { label: string }) => {
   const { watch } = methods;
   const selectedNationality = watch('nationality');
 
+  // Auto-save functionality
+  const watchedValues = watch();
+
+  useEffect(() => {
+    // Debounce auto-save to avoid too many saves
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        setFormData('personal_data', watchedValues);
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
+
   const birthplaceOptions = selectedNationality
     ? getBirthplaceOptions(selectedNationality)
     : [];
@@ -59,8 +73,9 @@ export const PersonalData = ({ label }: { label: string }) => {
       if (formData.dateBirth && typeof formData.dateBirth === 'string') {
         const dateObj = new Date(formData.dateBirth);
         if (!isNaN(dateObj.getTime())) {
-          formData.dateBirth = dateObj;
+          formData.dateBirth = dateObj.toISOString().split('T')[0];
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { dateBirth, ...formDataWithoutDate } = formData;
           methods.reset(formDataWithoutDate);
           return;
@@ -79,8 +94,9 @@ export const PersonalData = ({ label }: { label: string }) => {
       if (storeData.dateBirth && typeof storeData.dateBirth === 'string') {
         const dateObj = new Date(storeData.dateBirth);
         if (!isNaN(dateObj.getTime())) {
-          storeData.dateBirth = dateObj;
+          storeData.dateBirth = dateObj.toISOString().split('T')[0];
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { dateBirth, ...storeDataWithoutDate } = storeData;
           methods.reset({
             ...currentValues,
@@ -133,7 +149,9 @@ export const PersonalData = ({ label }: { label: string }) => {
         phone: formValues.phone,
         gender: formValues.gender,
         dateBirth: formValues.dateBirth
-          ? formValues.dateBirth.toISOString()
+          ? (typeof formValues.dateBirth === 'string'
+              ? formValues.dateBirth
+              : (formValues.dateBirth as Date).toISOString())
           : '',
         deficiency: formValues.deficiency,
         educasenso: formValues.educacenso ?? '',

@@ -186,42 +186,45 @@ const StudentForm = () => {
             <div className="p-4 md:p-6">
               <ProgressIndicator />
 
-              <AnimatePresence mode="wait">
-                {TABS.map((tab: Tab) => (
-                  <TabsContent
-                    key={tab.value}
-                    value={tab.value}
-                    className="mt-0 focus-visible:outline-none"
-                  >
-                    <motion.div
-                      variants={tabContentVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    >
-                      {tab.value === 'scholarship_info' ? (
-                        <ScholarshipProcessInfo />
-                      ) : tab.value === 'personal_data' ? (
-                        <PersonalData label="Dados Pessoais" />
-                      ) : tab.value === 'parents_data' ? (
-                        <ParentalDataForm label="Dados dos Pais" />
-                      ) : tab.value === 'address_info' ? (
-                        <AddressResidence label="Endereço" />
-                      ) : tab.value === 'family_composition' ? (
-                        <FamilyComposition label="Composição Familiar" />
-                      ) : tab.value === 'required_documents' ? (
-                        <DocumentData label="Documentos" />
-                      ) : tab.value === 'property_relations' ? (
-                        <PropertyRelations label="Relação de Bens" />
-                      ) : tab.value === 'consent_terms' ? (
-                        <ConsentTerms label="Termos de Consentimento" />
-                      ) : (
-                        <div>Componente não encontrado</div>
-                      )}
-                    </motion.div>
-                  </TabsContent>
-                ))}
-              </AnimatePresence>
+              {TABS.map((tab: Tab) => (
+                <TabsContent
+                  key={tab.value}
+                  value={tab.value}
+                  className="mt-0 focus-visible:outline-none"
+                >
+                  <AnimatePresence mode="wait">
+                    {selectedTab === tab.value && (
+                      <motion.div
+                        key={tab.value}
+                        variants={tabContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                      >
+                        {tab.value === 'scholarship_info' ? (
+                          <ScholarshipProcessInfo />
+                        ) : tab.value === 'personal_data' ? (
+                          <PersonalData label="Dados Pessoais" />
+                        ) : tab.value === 'parents_data' ? (
+                          <ParentalDataForm label="Dados dos Pais" />
+                        ) : tab.value === 'address_info' ? (
+                          <AddressResidence label="Endereço" />
+                        ) : tab.value === 'family_composition' ? (
+                          <FamilyComposition label="Composição Familiar" />
+                        ) : tab.value === 'required_documents' ? (
+                          <DocumentData label="Documentos" />
+                        ) : tab.value === 'property_relations' ? (
+                          <PropertyRelations label="Relação de Bens" />
+                        ) : tab.value === 'consent_terms' ? (
+                          <ConsentTerms label="Termos de Consentimento" />
+                        ) : (
+                          <div>Componente não encontrado</div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </TabsContent>
+              ))}
             </div>
           </Tabs>
         </motion.div>

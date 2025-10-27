@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
-import { api } from '@/services/api';
-import { Endpoints } from '@/services/endpoints';
+import { useFamilyCompositionData, PostFamilyCompositionData } from '@/services/queries/forms/FamilyCompositionData';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { toast } from '@/utils/toast';
+import { useTabStore } from '@/store/tabStore';
+import { maskCurrency, maskDate } from '@/utils/transformMasks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { useCallback, useMemo, useEffect, useRef } from 'react';
 import type { z } from 'zod';
 import { DynamicInputSection } from '../common/DynamicInputSection/DynamicInputSection';
 import { Button } from '../ui/button';
@@ -17,103 +17,168 @@ import {
   type FamilyMember,
 } from './type/formData';
 
+// Interface para os dados que vêm da API
+interface ApiFamilyMember {
+  id?: number;
+  nomeCompleto?: string;
+  escolaridade?: string;
+  escolaridade_other?: string;
+  grauParentesco?: string;
+  grauParentesco_other?: string;
+  dataNascimento?: string | Date;
+  profissaoAtiva?: string;
+  estadoCivil?: string;
+  salarioBruto?: string | number;
+}
+
 export const FamilyComposition = ({ label }: { label: string }) => {
   const { id: studentId } = useParams<{ id: string }>();
-  const { setFormData, formData } = useScholarshipFormStore();
 
-  const familyDataMutation = useMutation({
-    mutationKey: ['send-family-data'],
-    mutationFn: (payload: unknown) => api.post(Endpoints.Forms.Family_Composition, payload),
-  });
+  // Usar seletores específicos ao invés de pegar tudo
+  const setFormData = useScholarshipFormStore((state) => state.setFormData);
+  const familyCompositionData = useScholarshipFormStore((state) => state.formData.family_composition);
+  const markTabAsCompleted = useTabStore((state) => state.markTabAsCompleted);
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
-  const createEmptyRows = (count: number) => {
+  // Ref para controlar se já inicializamos o formulário
+  const hasInitialized = useRef(false);
+
+  // Query para buscar dados existentes
+  const { data: existingData, isLoading } = useFamilyCompositionData(Number(studentId));
+
+  // Mutation para salvar dados
+  const familyDataMutation = PostFamilyCompositionData();
+
+  const createEmptyRows = useCallback((count: number) => {
     return Array.from({ length: count }, () => ({
       nomeCompleto: '',
       escolaridade: '',
       escolaridade_other: '',
       grauParentesco: '',
+      grauParentesco_other: '',
       dataNascimento: '',
       profissaoAtiva: '',
       estadoCivil: '',
-      salarioBruto: '',
+      salarioBruto: 'R$ 0,00',
     }));
-  };
+  }, []);
 
-  const initialValues = (): FamilyCompositionInfo => {
-    if (formData.family_composition?.composicaoFamiliar?.length) {
-      return formData.family_composition as FamilyCompositionInfo;
-    }
+  // Função para aplicar máscaras nos dados da API
+  const applyMasksToApiData = useCallback((data: ApiFamilyMember[]): FamilyMember[] => {
+    return data.map((item) => ({
+      nomeCompleto: item.nomeCompleto || '',
+      escolaridade: item.escolaridade || '',
+      escolaridade_other: item.escolaridade_other || '',
+      grauParentesco: item.grauParentesco || '',
+      grauParentesco_other: item.grauParentesco_other || '',
+      dataNascimento: item.dataNascimento ? maskDate(item.dataNascimento.toString()) : '',
+      profissaoAtiva: item.profissaoAtiva || '',
+      estadoCivil: item.estadoCivil || '',
+      salarioBruto: item.salarioBruto ? maskCurrency(item.salarioBruto.toString()) : 'R$ 0,00',
+    }));
+  }, []);
 
+  const initialValues = useMemo((): FamilyCompositionInfo => {
+    // Sempre começar com valores vazios para evitar problemas de estado
     return {
       composicaoFamiliar: createEmptyRows(5),
       familiaresEscola: [],
       pessoasComDeficiencia: [],
       despesasMensais: [],
     };
-  };
+  }, [createEmptyRows]);
 
   const methods = useForm<z.infer<typeof FamilyCompositionSchema>>({
     resolver: zodResolver(FamilyCompositionSchema),
-    mode: 'onSubmit',
-    reValidateMode: 'onSubmit',
-    defaultValues: initialValues(),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: initialValues,
   });
 
   const {
     handleSubmit,
+    reset,
     formState: { isSubmitting },
   } = methods;
 
-  const getMasksForSection = (fields: string[]) => {
-    const masks: Record<string, 'date' | 'currency' | 'year'> = {};
-    fields.forEach((field) => {
-      if (fieldMasksMap[field]) {
-        masks[field] = fieldMasksMap[field];
-      }
+  // Memoizar as máscaras para cada seção
+  const sectionMasks = useMemo(() => {
+    const result: Record<string, Record<string, 'date' | 'currency' | 'year'>> = {};
+    dynamicSections.forEach((section) => {
+      const masks: Record<string, 'date' | 'currency' | 'year'> = {};
+      section.fields.forEach((field) => {
+        if (fieldMasksMap[field]) {
+          masks[field] = fieldMasksMap[field];
+        }
+      });
+      result[section.key] = masks;
     });
-    return masks;
-  };
+    return result;
+  }, []);
+
+
+  // Reset form when data from API arrives
+  useEffect(() => {
+    // Só inicializa uma vez quando terminar de carregar
+    if (!isLoading && !hasInitialized.current) {
+      hasInitialized.current = true;
+
+      // A API está retornando um array direto, não um objeto com composicaoFamiliar
+      const composicaoFamiliar = Array.isArray(existingData) ? existingData : existingData?.composicaoFamiliar || [];
+
+      // Se não houver dados da API, usar 5 linhas default
+      const finalComposicaoFamiliar = composicaoFamiliar.length > 0
+        ? applyMasksToApiData(composicaoFamiliar)
+        : createEmptyRows(5);
+
+      const formDataToReset = {
+        composicaoFamiliar: finalComposicaoFamiliar,
+        familiaresEscola: [],
+        pessoasComDeficiencia: [],
+        despesasMensais: [],
+      };
+      reset(formDataToReset);
+
+      // Marcar tab como concluída se há dados válidos
+      if (composicaoFamiliar.length > 0) {
+        markTabAsCompleted('family_composition');
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingData, isLoading, reset]);
+
+  // Removed auto-save to prevent issues with multiple rows being created on reload
 
   const onSubmit = async (data: FamilyCompositionInfo) => {
     try {
-      const partiallyFilledRows = data.composicaoFamiliar.some((row) => {
-        const filledFields = Object.values(row).filter((value, index) => {
-          const key = Object.keys(row)[index];
-          return !key.endsWith('_other') && value && value.trim() !== '';
-        }).length;
-        return filledFields > 0 && filledFields < 7;
-      });
+      // Função para verificar se uma linha está completamente vazia
+      const isRowEmpty = (row: FamilyMember) => {
+        const nome = row.nomeCompleto?.trim() || '';
+        const escolaridade = row.escolaridade?.trim() || '';
+        const grauParentesco = row.grauParentesco?.trim() || '';
+        const dataNascimento = row.dataNascimento?.trim() || '';
+        const profissaoAtiva = row.profissaoAtiva?.trim() || '';
+        const estadoCivil = row.estadoCivil?.trim() || '';
+        const salario = row.salarioBruto?.trim() || '';
 
-      if (partiallyFilledRows) {
-        toast.error(
-          'Erro de validação',
-          'Todas as informações são obrigatórias em cada linha preenchida.'
-        );
-        return;
-      }
+        return !nome && !escolaridade && !grauParentesco && !dataNascimento &&
+               !profissaoAtiva && !estadoCivil && (!salario || salario === 'R$ 0,00');
+      };
 
+      // Filtrar apenas linhas preenchidas (não vazias)
+      const filledRows = data.composicaoFamiliar.filter(row => !isRowEmpty(row));
+
+      // Usar a mesma função de verificação para filtrar as linhas vazias
       const filteredData = {
         ...data,
-        composicaoFamiliar: data.composicaoFamiliar.filter((item) => {
-          const mainFields = [
-            'nomeCompleto',
-            'escolaridade',
-            'grauParentesco',
-            'dataNascimento',
-            'profissaoAtiva',
-            'estadoCivil',
-            'salarioBruto',
-          ];
-
-          return mainFields.some((field) => (item[field]?.trim?.() ?? '') !== '');
-        }),
+        composicaoFamiliar: filledRows,
       };
 
       setFormData('family_composition', {
         composicaoFamiliar: filteredData.composicaoFamiliar,
-        familiaresEscola: formData.family_composition?.familiaresEscola ?? [],
-        pessoasComDeficiencia: formData.family_composition?.pessoasComDeficiencia ?? [],
-        despesasMensais: formData.family_composition?.despesasMensais ?? [],
+        familiaresEscola: familyCompositionData?.familiaresEscola ?? [],
+        pessoasComDeficiencia: familyCompositionData?.pessoasComDeficiencia ?? [],
+        despesasMensais: familyCompositionData?.despesasMensais ?? [],
       });
 
       const payload = {
@@ -139,15 +204,33 @@ export const FamilyComposition = ({ label }: { label: string }) => {
       };
 
       await familyDataMutation.mutateAsync(payload);
-      toast.success('Sucesso!', 'Composição familiar salva com sucesso!');
+
+      // Marcar a aba como concluída e navegar para a próxima
+      markTabAsCompleted('family_composition');
+      setSelectedTab('required_documents');
+
     } catch (error) {
       console.error('Erro no processamento:', error);
-      toast.error('Erro', 'Ocorreu um erro ao salvar a composição familiar.');
+      // O toast de erro já é tratado na mutation
     }
   };
 
-  const footerMessage =
-    '* Preencha os dados de todos os membros da família. As linhas em branco não serão salvas.';
+  const footerMessage = useMemo(() =>
+    '* Preencha os dados de todos os membros da família. As linhas em branco não serão salvas.'
+  , []);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando dados da composição familiar...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <FormProvider {...methods}>
@@ -165,21 +248,23 @@ export const FamilyComposition = ({ label }: { label: string }) => {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-8">
-              {dynamicSections.map((section) => (
-                <div key={section.key} className="w-full">
-                  <DynamicInputSection
-                    columns={section.columns}
-                    fieldNames={section.fields}
-                    namePrefix={section.key}
-                    required={section.required}
-                    fieldMasks={getMasksForSection(section.fields)}
-                    footerMessage={footerMessage}
-                    dateFields={dateFieldsMap[section.key] || []}
-                    selectFields={selectFieldsMap[section.key] || []}
-                    showTotalRow={section.showTotalRow}
-                  />
-                </div>
-              ))}
+              {dynamicSections.map((section) => {
+                return (
+                  <div key={section.key} className="w-full">
+                    <DynamicInputSection
+                      columns={section.columns}
+                      fieldNames={section.fields}
+                      namePrefix={section.key}
+                      required={section.required}
+                      fieldMasks={sectionMasks[section.key]}
+                      footerMessage={footerMessage}
+                      dateFields={dateFieldsMap[section.key] || []}
+                      selectFields={selectFieldsMap[section.key] || []}
+                      showTotalRow={section.showTotalRow}
+                    />
+                  </div>
+                );
+              })}
             </div>
 
             <div className="flex justify-end pt-6">

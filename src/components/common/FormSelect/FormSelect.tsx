@@ -47,7 +47,7 @@ const FormSelect = ({
     } else {
       setShowOtherField(false);
     }
-  }, []);
+  }, [selectedValue, withOtherOption]);
 
   useEffect(() => {
     if (withOtherOption && selectedValue === withOtherOption.otherValue) {
@@ -101,12 +101,12 @@ const FormSelect = ({
               disabled={disabled}
             >
               <SelectTrigger
-                className={`peer w-full border border-gray-300 outline-none focus:outline-none rounded-lg px-4 ${compact ? 'py-2' : 'py-3'} text-sm transition-all justify-between min-h-[50px] ${fieldState.error
-                    ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                    : 'text-gray-700 placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white'
+                className={`peer w-full border outline-none focus:outline-none rounded-lg px-4 text-sm transition-all justify-between min-h-[50px] ${compact ? 'py-2' : 'py-3'} ${fieldState.error
+                    ? 'text-red-500 border-red-500 bg-red-50 focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+                    : 'text-gray-700 border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
                   }`}
               >
-                <SelectValue placeholder="Selecion a opção" className="text-gray-500" />
+                <SelectValue placeholder="Selecion a opção" className={fieldState.error ? 'text-red-500' : 'text-gray-500'} />
               </SelectTrigger>
               <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200 max-h-[300px] overflow-y-auto">
                 {options.map((option) => (

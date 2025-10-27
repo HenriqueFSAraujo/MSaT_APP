@@ -35,6 +35,7 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
   });
 
   const { errors } = methods.formState;
+  const { watch } = methods;
 
   useEffect(() => {
     if (data) {
@@ -44,6 +45,20 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
       });
     }
   }, [data, methods]);
+
+  // Auto-save functionality
+  const watchedValues = watch();
+
+  useEffect(() => {
+    // Debounce auto-save to avoid too many saves
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        setFormData('parents_data', watchedValues);
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 

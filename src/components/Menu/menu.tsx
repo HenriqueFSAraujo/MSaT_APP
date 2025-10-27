@@ -51,8 +51,8 @@ export default function MobileMenu() {
 
       <SheetContent
         side="left"
-        className="w-64 p-4 [&>button:first-of-type]:hidden"
-        style={{ backgroundColor: 'oklch(70.7% 0.022 261.325)' }}
+        className="w-64 p-4 [&>button:first-of-type]:hidden bg-blue-300"
+        style={{ backgroundColor: '#93c5fd ' }}
       >
         <Button
           variant="ghost"
@@ -66,7 +66,7 @@ export default function MobileMenu() {
         <nav className="mt-8 space-y-4">
           <div className="flex items-center justify-center mb-4">
             <img
-              src="https://pbs.twimg.com/profile_images/440769852/Logo_Eb_400x400.jpg"
+              src="/imgs/logo-educa.png"
               alt="Logo"
               className="h-14 w-auto object-contain cursor-pointer"
             />

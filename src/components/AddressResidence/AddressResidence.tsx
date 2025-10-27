@@ -94,7 +94,7 @@ export const AddressResidence = ({ label }: { label: string }) => {
       const { markTabAsCompleted } = useTabStore.getState();
       markTabAsCompleted('address_info');
 
-      setSelectedTab('required_documents');
+      setSelectedTab('family_composition');
 
       const payload = {
         userId: Number(StudentId),

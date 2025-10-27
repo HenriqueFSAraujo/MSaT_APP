@@ -8,7 +8,7 @@ import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { useTabNavigation } from '@/hooks/useTabNavigation';
 import { TabNavigation } from '@/components/TabNavigation/TabNavigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { scholarshipProcessSchema, type ScholarshipProcessForm } from './fomrData';
@@ -19,11 +19,12 @@ export function ScholarshipProcessInfo() {
   const { data } = useScholarShipData(Number(StudentId));
   const { mutate: FormSubmit } = PostScholarshipProcess();
   const { setFormData, formData } = useScholarshipFormStore();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const form = useForm<ScholarshipProcessForm>({
     resolver: zodResolver(scholarshipProcessSchema),
     defaultValues: {
-      segmentToStudy2025: '',
+      segmentYearToStudy: '',
       specificGrade: '',
       wantsToParticipate: undefined,
       hadScholarshipLastYear: undefined,
@@ -41,7 +42,21 @@ export function ScholarshipProcessInfo() {
   } = form;
 
   const hadScholarshipLastYear = watch('hadScholarshipLastYear');
-  const segmentToStudy2025 = watch('segmentToStudy2025');
+  const segmentYearToStudy = watch('segmentYearToStudy');
+
+  // Auto-save functionality
+  const watchedValues = watch();
+
+  useEffect(() => {
+    // Debounce auto-save to avoid too many saves
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        setFormData('scholarship_info', watchedValues);
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
 
   const getGradeOptions = (segment: string) => {
     switch (segment) {
@@ -84,24 +99,125 @@ export function ScholarshipProcessInfo() {
     }
   }, [hadScholarshipLastYear, setValue]);
 
+  // Limpar specificGrade quando segmentYearToStudy muda (exceto no carregamento inicial)
   useEffect(() => {
-    setValue('specificGrade', '');
-  }, [segmentToStudy2025, setValue]);
+    // Só limpar se não estamos carregando dados iniciais E o usuário mudou manualmente
+    if (!isInitialLoad && segmentYearToStudy) {
+      const currentSpecificGrade = watch('specificGrade');
+      // Só limpar se o grade atual não for compatível com o novo segmento
+      const compatibleGrades = getGradeOptions(segmentYearToStudy);
+      const isCompatible = compatibleGrades.some(option => option.value === currentSpecificGrade);
 
-  useEffect(() => {
-    if (data) {
-      setValue('wantsToParticipate', data.vaiParticipar ? 'sim' : 'nao');
-      setValue('hadScholarshipLastYear', data.jaFoiContemplado ? 'sim' : 'nao');
-      if (data.percentual) {
-        setValue('previousScholarshipPercentage', data.percentual.toString() as '50' | '100');
+      if (!isCompatible && currentSpecificGrade) {
+        console.log('Limpando specificGrade porque não é compatível com o novo segmento');
+        setValue('specificGrade', '');
       }
     }
-  }, [data, setValue]);
+  }, [segmentYearToStudy, setValue, isInitialLoad, watch]);
+
+  const scholarshipProcessData = formData.scholarship_info;
+
+  // Carregar dados - PRIORIDADE: API > Zustand Store
+  useEffect(() => {
+    // Se houver dados da API, usar eles (tem prioridade)
+    if (data) {
+      console.log('Carregando dados da API:', data);
+
+      // Marcar que estamos carregando ANTES de definir os valores
+      setIsInitialLoad(true);
+
+      // Usar setTimeout para garantir que os valores sejam definidos após todos os useEffects
+      const timer = setTimeout(() => {
+        console.log('Definindo valores do formulário...');
+
+        // Definir AMBOS os campos ao mesmo tempo em uma única operação
+        const updates: Partial<ScholarshipProcessForm> = {};
+
+        if (data.segmentoAno) {
+          console.log('Definindo segmentYearToStudy:', data.segmentoAno);
+          updates.segmentYearToStudy = data.segmentoAno;
+        }
+        if (data.serieAno) {
+          console.log('Definindo specificGrade:', data.serieAno);
+          updates.specificGrade = data.serieAno;
+        }
+        updates.wantsToParticipate = data.vaiParticipar ? 'sim' : 'nao';
+        updates.hadScholarshipLastYear = data.jaFoiContemplado ? 'sim' : 'nao';
+        if (data.percentual) {
+          updates.previousScholarshipPercentage = data.percentual.toString() as '50' | '100';
+        }
+
+        // Definir todos os valores de uma vez
+        (Object.keys(updates) as Array<keyof ScholarshipProcessForm>).forEach(key => {
+          setValue(key, updates[key] as ScholarshipProcessForm[typeof key], { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        });
+
+        console.log('Valores definidos:', updates);
+
+        // Só marcar como não inicial DEPOIS de definir todos os valores
+        setTimeout(() => {
+          console.log('Marcando isInitialLoad como false');
+          setIsInitialLoad(false);
+        }, 50);
+      }, 150); // Aumentei o delay para 150ms
+
+      return () => clearTimeout(timer);
+    }
+    // Se não houver dados da API, mas houver no store, usar o store
+    else if (scholarshipProcessData && !data) {
+      console.log('Carregando dados do Zustand store:', scholarshipProcessData);
+
+      setIsInitialLoad(true);
+
+      const timer = setTimeout(() => {
+        if (scholarshipProcessData.segmentYearToStudy) {
+          setValue('segmentYearToStudy', scholarshipProcessData.segmentYearToStudy, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+        if (scholarshipProcessData.specificGrade) {
+          setValue('specificGrade', scholarshipProcessData.specificGrade, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+        if (scholarshipProcessData.wantsToParticipate) {
+          setValue('wantsToParticipate', scholarshipProcessData.wantsToParticipate, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+        if (scholarshipProcessData.hadScholarshipLastYear) {
+          setValue('hadScholarshipLastYear', scholarshipProcessData.hadScholarshipLastYear, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+        if (scholarshipProcessData.previousScholarshipPercentage) {
+          setValue('previousScholarshipPercentage', scholarshipProcessData.previousScholarshipPercentage, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+
+        setTimeout(() => {
+          setIsInitialLoad(false);
+        }, 50);
+      }, 150);
+
+      return () => clearTimeout(timer);
+    }
+  }, [data, scholarshipProcessData, setValue]);
+
+  // Monitorar se os valores foram realmente definidos
+  useEffect(() => {
+    const currentValues = watch();
+    console.log('Valores atuais do formulário:', currentValues);
+
+    // Se temos dados da API mas os campos não estão preenchidos, forçar novamente
+    if (data && (!currentValues.segmentYearToStudy || !currentValues.specificGrade)) {
+      console.log('Campos não preenchidos, forçando novamente...');
+      setTimeout(() => {
+        if (data.segmentoAno) {
+          setValue('segmentYearToStudy', data.segmentoAno, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+        if (data.serieAno) {
+          setValue('specificGrade', data.serieAno, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        }
+      }, 50);
+    }
+  }, [watch, data, setValue]);
 
   const onSubmit = async (formData: ScholarshipProcessForm) => {
     try {
       // Validar se todos os campos obrigatórios estão preenchidos
-      const isFormValid = formData.segmentToStudy2025 &&
+      const isFormValid = formData.segmentYearToStudy &&
         formData.specificGrade &&
         formData.wantsToParticipate &&
         formData.hadScholarshipLastYear &&
@@ -114,7 +230,7 @@ export function ScholarshipProcessInfo() {
 
       const payload = {
         userId: Number(StudentId),
-        segmento2025: formData.segmentToStudy2025,
+        segmentoAno: formData.segmentYearToStudy,
         serieAno: formData.specificGrade,
         vaiParticipar: formData.wantsToParticipate === 'sim',
         jaFoiContemplado: formData.hadScholarshipLastYear === 'sim',
@@ -139,29 +255,20 @@ export function ScholarshipProcessInfo() {
     console.log('Download Edital');
   };
 
-  const scholarshipProcessData = formData.scholarship_info;
-
-  useEffect(() => {
-    if (scholarshipProcessData) {
-      setValue('wantsToParticipate', scholarshipProcessData.wantsToParticipate);
-      setValue('hadScholarshipLastYear', scholarshipProcessData.hadScholarshipLastYear);
-      setValue('previousScholarshipPercentage', scholarshipProcessData.previousScholarshipPercentage);
-    }
-  }, [scholarshipProcessData, setValue]);
-
   // Verificar se a tab deve ser marcada como incompleta se campos obrigatórios estiverem vazios
-  useEffect(() => {
-    const currentValues = watch();
-    const hasRequiredFields = currentValues.segmentToStudy2025 &&
-      currentValues.specificGrade &&
-      currentValues.wantsToParticipate &&
-      currentValues.hadScholarshipLastYear;
+  // DESABILITADO: Interfere com a marcação automática quando os dados vêm da API
+  // useEffect(() => {
+  //   const currentValues = watch();
+  //   const hasRequiredFields = currentValues.segmentYearToStudy &&
+  //     currentValues.specificGrade &&
+  //     currentValues.wantsToParticipate &&
+  //     currentValues.hadScholarshipLastYear;
 
-    if (!hasRequiredFields) {
-      const { resetSpecificTab } = useTabStore.getState();
-      resetSpecificTab('scholarship_info');
-    }
-  }, [watch]);
+  //   if (!hasRequiredFields) {
+  //     const { resetSpecificTab } = useTabStore.getState();
+  //     resetSpecificTab('scholarship_info');
+  //   }
+  // }, [watch]);
 
   return (
     <Card>
@@ -206,7 +313,7 @@ export function ScholarshipProcessInfo() {
 
             <div className='space-y-4'>
               <FormSelect
-                name="segmentToStudy2025"
+                name="segmentYearToStudy"
                 label="Segmento a cursar em 2025:"
                 required
                 options={[
@@ -215,14 +322,14 @@ export function ScholarshipProcessInfo() {
                   { value: 'Ensino Fundamental Anos Finais', label: 'Ensino Fundamental Anos Finais' },
                   { value: 'Ensino Médio', label: 'Ensino Médio' },
                 ]}
-                error={errors.segmentToStudy2025?.message}
+                error={errors.segmentYearToStudy?.message}
               />
-              {segmentToStudy2025 && (
+              {segmentYearToStudy && (
                 <FormSelect
                   name="specificGrade"
-                  label={`${segmentToStudy2025}:`}
+                  label={`${segmentYearToStudy}:`}
                   required
-                  options={getGradeOptions(segmentToStudy2025)}
+                  options={getGradeOptions(segmentYearToStudy)}
                   error={errors.specificGrade?.message}
                 />
               )}
@@ -321,7 +428,7 @@ export function ScholarshipProcessInfo() {
                     <Button
                       type="submit"
                       disabled={
-                        !watch('segmentToStudy2025') ||
+                        !watch('segmentYearToStudy') ||
                         !watch('specificGrade') ||
                         !watch('wantsToParticipate') ||
                         !watch('hadScholarshipLastYear') ||

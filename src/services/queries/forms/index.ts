@@ -1,6 +1,9 @@
 // Address Data
 export * from './AddressData';
 
+// Family Composition Data
+export * from './FamilyCompositionData';
+
 // TODO: Document Data
 
 
