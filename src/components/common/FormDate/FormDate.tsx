@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/for
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useState } from 'react';
 import { FieldError, FieldErrorsImpl, Merge, useFormContext } from 'react-hook-form';
 
@@ -239,7 +239,14 @@ const FormDate: React.FC<FormDateProps> = ({
                 <div className="p-4">
                   <Calendar
                     mode="single"
-                    selected={field.value ? (typeof field.value === 'string' ? new Date(field.value.split('/').reverse().join('-')) : field.value) : undefined}
+                    selected={field.value ? (typeof field.value === 'string'
+                      ? (field.value.includes('/')
+                          ? (() => {
+                              const [day, month, year] = field.value.split('/');
+                              return new Date(Number(year), Number(month) - 1, Number(day));
+                            })()
+                          : new Date(field.value))
+                      : field.value) : undefined}
                     onSelect={(date) => {
                       if (date) {
                         setJustSelected(true);
@@ -346,9 +353,11 @@ const FormDate: React.FC<FormDateProps> = ({
                   <span className={`flex-1 ${field.value ? 'text-gray-900' : 'text-gray-500'} placeholder:text-gray-500`}>
                     {field.value
                       ? typeof field.value === 'string'
-                        ? field.value
+                        ? (field.value.includes('/')
+                            ? field.value
+                            : format(new Date(field.value), 'dd/MM/yyyy', { locale: ptBR }))
                         : format(field.value, 'dd/MM/yyyy', { locale: ptBR })
-                      : 'Selecione uma data'} 
+                      : 'Selecione uma data'}
                   </span>
                 </Button>
               </PopoverTrigger>

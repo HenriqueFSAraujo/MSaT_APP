@@ -32,6 +32,8 @@ interface ApiFamilyMember {
 }
 
 export const FamilyComposition = ({ label }: { label: string }) => {
+  console.log('🟢 FamilyComposition renderizado');
+
   const { id: studentId } = useParams<{ id: string }>();
 
   // Usar seletores específicos ao invés de pegar tudo
@@ -102,6 +104,26 @@ export const FamilyComposition = ({ label }: { label: string }) => {
     formState: { isSubmitting },
   } = methods;
 
+  // Função para verificar se uma linha está completamente vazia
+  const isRowEmpty = useCallback((row: FamilyMember, index?: number) => {
+    const nome = row.nomeCompleto?.trim() || '';
+    const escolaridade = row.escolaridade?.trim() || '';
+    const grauParentesco = row.grauParentesco?.trim() || '';
+    const dataNascimento = row.dataNascimento?.trim() || '';
+    const profissaoAtiva = row.profissaoAtiva?.trim() || '';
+    const estadoCivil = row.estadoCivil?.trim() || '';
+    const salario = row.salarioBruto?.trim() || '';
+
+    const isEmpty = !nome && !escolaridade && !grauParentesco && !dataNascimento &&
+                    !profissaoAtiva && !estadoCivil && (!salario || salario === 'R$ 0,00');
+
+    if (isEmpty && index !== undefined) {
+      console.log(`  ⚪ Linha ${index + 1} está vazia`);
+    }
+
+    return isEmpty;
+  }, []);
+
   // Memoizar as máscaras para cada seção
   const sectionMasks = useMemo(() => {
     const result: Record<string, Record<string, 'date' | 'currency' | 'year'>> = {};
@@ -151,29 +173,40 @@ export const FamilyComposition = ({ label }: { label: string }) => {
   // Removed auto-save to prevent issues with multiple rows being created on reload
 
   const onSubmit = async (data: FamilyCompositionInfo) => {
+    console.log('🔵 onSubmit chamado (função direta)');
+    console.log('🔵 Total de linhas:', data.composicaoFamiliar.length);
+
     try {
+      // Filtrar apenas linhas preenchidas (não vazias) PRIMEIRO
+      console.log('🔵 Verificando quais linhas estão vazias...');
+      data.composicaoFamiliar.forEach((row, idx) => {
+        isRowEmpty(row, idx);
+      });
+      const filledRows = data.composicaoFamiliar.filter(row => !isRowEmpty(row));
+      console.log('🔵 Linhas vazias removidas:', data.composicaoFamiliar.length - filledRows.length);
+      console.log('🔵 Linhas preenchidas:', filledRows.length);
+
+      // Atualizar o formulário removendo linhas vazias visualmente ANTES de validar
+      console.log('🔵 Atualizando formulário visualmente com apenas linhas preenchidas...');
+      reset({
+        ...data,
+        composicaoFamiliar: filledRows,
+      });
+
+      // Aguardar um pouco para o formulário se atualizar visualmente
+      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('✅ Formulário atualizado visualmente');
+
       // Validar todos os campos antes de prosseguir
       const isValid = await trigger();
-      if (!isValid) return
+      console.log('🔵 Validação passou?', isValid);
 
-      // Função para verificar se uma linha está completamente vazia
-      const isRowEmpty = (row: FamilyMember) => {
-        const nome = row.nomeCompleto?.trim() || '';
-        const escolaridade = row.escolaridade?.trim() || '';
-        const grauParentesco = row.grauParentesco?.trim() || '';
-        const dataNascimento = row.dataNascimento?.trim() || '';
-        const profissaoAtiva = row.profissaoAtiva?.trim() || '';
-        const estadoCivil = row.estadoCivil?.trim() || '';
-        const salario = row.salarioBruto?.trim() || '';
+      if (!isValid) {
+        console.log('❌ Validação falhou, retornando');
+        return;
+      }
 
-        return !nome && !escolaridade && !grauParentesco && !dataNascimento &&
-               !profissaoAtiva && !estadoCivil && (!salario || salario === 'R$ 0,00');
-      };
-
-      // Filtrar apenas linhas preenchidas (não vazias)
-      const filledRows = data.composicaoFamiliar.filter(row => !isRowEmpty(row));
-
-      // Usar a mesma função de verificação para filtrar as linhas vazias
+      // Preparar dados filtrados sem linhas vazias (já filtrados acima)
       const filteredData = {
         ...data,
         composicaoFamiliar: filledRows,
@@ -208,14 +241,18 @@ export const FamilyComposition = ({ label }: { label: string }) => {
         }),
       };
 
+      console.log('🔵 Enviando dados para API...');
       await familyDataMutation.mutateAsync(payload);
+      console.log('✅ Dados salvos com sucesso!');
 
       // Marcar a aba como concluída e navegar para a próxima tab (DocumentData)
+      console.log('🔵 Marcando tab como concluída e navegando...');
       markTabAsCompleted('family_composition');
       setSelectedTab('required_documents');
+      console.log('✅ Navegação concluída');
 
     } catch (error) {
-      console.error('Erro no processamento:', error);
+      console.error('❌ Erro no processamento:', error);
       // O toast de erro já é tratado na mutation
     }
   };

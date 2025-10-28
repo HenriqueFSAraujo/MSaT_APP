@@ -106,7 +106,7 @@ const FormSelect = ({
                     : 'text-gray-700 border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
                   }`}
               >
-                <SelectValue placeholder="Selecion a opção" className={fieldState.error ? 'text-red-500' : 'text-gray-500'} />
+                <SelectValue placeholder="Selecione a opção" className={fieldState.error ? 'text-red-500' : 'text-gray-500'} />
               </SelectTrigger>
               <SelectContent className="bg-white shadow-lg rounded-lg border border-gray-200 max-h-[300px] overflow-y-auto">
                 {options.map((option) => (

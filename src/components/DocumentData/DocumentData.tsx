@@ -1,15 +1,14 @@
 import { useForm, FormProvider, FieldValues } from 'react-hook-form';
 import { InputFile } from '../common/InputFile/InputFile';
-import { AlertCircle, CheckCircle2, Download, FileCheck, XCircle, Eye, Upload } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Download, Eye, FileText } from 'lucide-react';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { PostMultipleDocumentsData, DocumentUploadPayload, useAllDocumentsList, useViewDocument } from '@/services/queries/forms/DocumentData';
 
 const REQUIRED_DOCUMENTS = [
   'singleRegistryRegistration',
@@ -17,21 +16,19 @@ const REQUIRED_DOCUMENTS = [
   'identityDocuments',
 ];
 
-interface DocumentValidation {
-  [key: string]: {
-    status: 'pending' | 'approved' | 'rejected';
-    validator?: string;
-    comment?: string;
-    validatedAt?: Date;
-  };
-}
+// Todos os tipos de documentos disponíveis
+const ALL_DOCUMENT_TYPES = DOCUMENT_GROUPS.flat().map(doc => doc.name);
 
 export const DocumentData = ({ label }: { label: string }) => {
+  const { id: StudentId } = useParams<{ id: string }>();
   const [submitted, setSubmitted] = useState(false);
-  const [documentValidations, setDocumentValidations] = useState<DocumentValidation>({});
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_selectedDocument, setSelectedDocument] = useState<string | null>(null);
-  const [validationComment, setValidationComment] = useState('');
+
+  const { mutate: uploadDocuments, isPending: isUploading } = PostMultipleDocumentsData();
+  const { data: documentsList, refetch: refetchDocuments } = useAllDocumentsList(
+    Number(StudentId),
+    ALL_DOCUMENT_TYPES
+  );
+  const { mutate: viewDocument } = useViewDocument();
 
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -58,155 +55,145 @@ export const DocumentData = ({ label }: { label: string }) => {
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
+  // Função para obter documentos de um tipo específico
+  const getDocumentsByType = (documentType: string) => {
+    if (!documentsList) return [];
+    return documentsList.filter(doc => doc.documentType === documentType);
+  };
+
   const hasValidFile = (fieldName: keyof FormValues) => {
+    // Se já existem documentos salvos, considerar como válido
+    const savedDocuments = getDocumentsByType(fieldName);
+    if (savedDocuments.length > 0) return true;
+
     const value = formValues[fieldName];
-    return typeof value !== 'string' && value?.file?.value instanceof File;
+    if (typeof value === 'string') return false;
+
+    // Suporte para múltiplos arquivos
+    const hasFiles = value?.files && value.files.length > 0;
+    // Compatibilidade com versão anterior
+    const hasFile = value?.file?.value instanceof File;
+
+    return hasFiles || hasFile;
   };
 
   const isRequiredAndEmpty = (fieldName: keyof FormValues) => {
+    // Se já existem documentos salvos para este campo, não é obrigatório
+    const savedDocuments = getDocumentsByType(fieldName);
+    if (savedDocuments.length > 0) return false;
+
     const value = formValues[fieldName];
+    if (typeof value === 'string') return REQUIRED_DOCUMENTS.includes(fieldName);
+
+    const hasFiles = value?.files && value.files.length > 0;
+    const hasFile = value?.file?.value instanceof File;
+    const hasValidOption = value?.option?.value && value.option.value !== 'none';
+
     return (
       REQUIRED_DOCUMENTS.includes(fieldName) &&
-      !(typeof value !== 'string' && value?.file?.value) &&
-      !(typeof value !== 'string' && value?.option?.value && value.option.value !== 'none')
+      !hasFiles &&
+      !hasFile &&
+      !hasValidOption
     );
   };
 
-  const validateDocument = (documentKey: string, status: 'approved' | 'rejected') => {
-    setDocumentValidations(prev => ({
-      ...prev,
-      [documentKey]: {
-        status,
-        validator: 'Admin User',
-        comment: validationComment,
-        validatedAt: new Date()
-      }
-    }));
-    setValidationComment('');
-    setSelectedDocument(null);
-    toast.success(`Documento ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso!`);
-  };
-
-  const downloadDocument = (documentKey: string) => {
-    // Aqui você implementaria a lógica de download
-    toast.success(`Download do documento ${documentKey} iniciado`);
-  };
-
-  const previewDocument = (documentKey: string) => {
-    // Aqui você implementaria a lógica de preview
-    toast.success(`Preview do documento ${documentKey}`);
-  };
-
-  const getDocumentStatus = (documentKey: string) => {
-    const validation = documentValidations[documentKey];
-    if (!validation) return 'pending';
-    return validation.status;
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <CheckCircle2 className="w-4 h-4 text-green-600" />;
-      case 'rejected':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return <AlertCircle className="w-4 h-4 text-yellow-600" />;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <Badge className="bg-green-100 text-green-800">Aprovado</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive">Rejeitado</Badge>;
-      default:
-        return <Badge variant="outline">Pendente</Badge>;
-    }
-  };
 
   const onSubmit = async (data: FieldValues) => {
     try {
       setSubmitted(true);
 
       const hasError = REQUIRED_DOCUMENTS.some((fieldName) => {
+        // Se já existem documentos salvos para este campo, não há erro
+        const savedDocuments = getDocumentsByType(fieldName);
+        if (savedDocuments.length > 0) return false;
+
         const fieldData = data[fieldName];
 
         if (!fieldData) return true;
 
+        const hasFiles = fieldData.files && fieldData.files.length > 0;
         const hasValidFile = fieldData.file?.value instanceof File;
-
         const hasValidOption = fieldData.option?.value && fieldData.option.value !== 'none';
 
-        return !(hasValidFile || hasValidOption);
+        return !(hasFiles || hasValidFile || hasValidOption);
       });
 
       if (hasError) {
         toast.error('Documentos incompletos', 'Por favor, complete todos os campos obrigatórios.');
-
         return;
       }
 
-      const payload: Record<string, unknown> = {};
+      if (!StudentId) {
+        toast.error('Erro', 'ID do aluno não encontrado. Atualize a página e tente novamente.');
+        return;
+      }
+
+      const documentsToUpload: DocumentUploadPayload[] = [];
 
       for (const [fieldName, fieldData] of Object.entries(data)) {
         if (!fieldData) continue;
 
-        payload[fieldName] = {};
-
-        if (fieldData.file?.value) {
-          payload[fieldName] = {
-            mimeType: fieldData.file.mimeType,
-            type: 'file',
-            value: await convertFileToBase64(fieldData.file.value),
-            ...(fieldData.option && { selectedOption: fieldData.option.value }),
-          };
-        } else if (fieldData.option) {
-          payload[fieldName] = {
-            type: fieldData.option.type,
-            value: fieldData.option.value,
-            ...(fieldData.option.value !== 'none' && { selectedOption: fieldData.option.value }),
-          };
+        // Suporte para múltiplos arquivos (nova versão)
+        if (fieldData.files && fieldData.files.length > 0) {
+          fieldData.files.forEach((fileItem: { value: File; mimeType: string }) => {
+            if (fileItem.value instanceof File) {
+              documentsToUpload.push({
+                file: fileItem.value,
+                userId: Number(StudentId),
+                documentType: fieldName, // Sempre usa o fieldName como tipo de documento
+              });
+            }
+          });
+        }
+        // Compatibilidade com versão anterior (arquivo único)
+        else if (fieldData.file?.value instanceof File) {
+          documentsToUpload.push({
+            file: fieldData.file.value,
+            userId: Number(StudentId),
+            documentType: fieldName, // Sempre usa o fieldName como tipo de documento
+          });
         }
       }
 
-      // Exemplo de envio:
-      // const response = await fetch('/api/submit', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(payload)
-      // });
+      if (documentsToUpload.length === 0) {
+        toast.error('Erro', 'Nenhum documento válido para upload.');
+        return;
+      }
 
+      uploadDocuments(documentsToUpload, {
+        onSuccess: () => {
+          toast.success('Sucesso!', 'Documentos enviados com sucesso!');
 
-      toast.success('Sucesso!', 'Documentos enviados com sucesso!');
+          const { markTabAsCompleted } = useTabStore.getState();
+          markTabAsCompleted('required_documents');
 
-      // Marcar tab como completa apenas se o envio foi bem-sucedido
-      const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('required_documents');
+          // Refetch documentos após upload bem-sucedido
+          refetchDocuments();
 
-      setSelectedTab('property_relations');
+          setSelectedTab('property_relations');
+        },
+        onError: () => {
+          toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
+        },
+      });
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
     }
   };
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        resolve(result.split(',')[1]);
-      };
-      reader.onerror = () => reject(new Error('Falha na conversão do arquivo'));
-      reader.readAsDataURL(file);
-    });
-  };
-
   const isError = (name: string): boolean => {
     return submitted && isRequiredAndEmpty(name as keyof FormValues);
+  };
+
+  // Função para visualizar documento
+  const handleViewDocument = (documentId: number, documentType: string) => {
+    if (!StudentId) return;
+    viewDocument({
+      documentId,
+      documentType,
+      userId: Number(StudentId),
+    });
   };
 
   return (
@@ -224,20 +211,7 @@ export const DocumentData = ({ label }: { label: string }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="upload" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="upload" className="flex items-center gap-2">
-                <Upload className="w-4 h-4" />
-                Upload de Documentos
-              </TabsTrigger>
-              <TabsTrigger value="validation" className="flex items-center gap-2">
-                <FileCheck className="w-4 h-4" />
-                Validação de Documentos
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="upload" className="space-y-8">
-              <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
                 {DOCUMENT_GROUPS.map((group, groupIndex) => (
                   <div key={`group-${groupIndex}`} className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {group.map(
@@ -292,6 +266,40 @@ export const DocumentData = ({ label }: { label: string }) => {
                             downloadLink={downloadLink}
                           />
 
+                          {/* Exibir documentos já enviados */}
+                          {getDocumentsByType(name).length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-gray-200">
+                              <p className="text-xs font-medium text-gray-600 mb-2">
+                                Documentos enviados ({getDocumentsByType(name).length}):
+                              </p>
+                              <div className="space-y-2">
+                                {getDocumentsByType(name).map((doc, idx) => (
+                                  <div
+                                    key={doc.id}
+                                    className="flex items-center justify-between bg-gray-50 p-2 rounded-md"
+                                  >
+                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                      <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                                      <span className="text-xs text-gray-700 truncate">
+                                        {doc.nomeArquivo || doc.fileName || `Documento ${idx + 1}`}
+                                      </span>
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleViewDocument(doc.id, name)}
+                                      className="h-7 px-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                      title="Visualizar documento"
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
                           {submitted && isRequiredAndEmpty(name as keyof FormValues) && (
                             <p className="text-xs text-red-500 mt-2">Documento obrigatório</p>
                           )}
@@ -303,139 +311,15 @@ export const DocumentData = ({ label }: { label: string }) => {
                 <div className="flex justify-end w-full">
                   <Button
                     type="submit"
-                    className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+                    disabled={isUploading}
+                    className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Salvar e continuar
+                    {isUploading ? 'Enviando...' : 'Salvar e continuar'}
                   </Button>
                 </div>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="validation" className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800">Validação de Documentos</h3>
-                <p className="text-sm text-gray-600">
-                  Aqui você pode visualizar, baixar e validar os documentos enviados pelos alunos.
-                </p>
-
-                {DOCUMENT_GROUPS.map((group, groupIndex) => (
-                  <div key={`validation-group-${groupIndex}`} className="space-y-4">
-                    {group.map(({ name, label, desc }) => {
-                      const status = getDocumentStatus(name);
-                      const hasFile = hasValidFile(name as keyof FormValues);
-
-                      return (
-                        <Card key={name} className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <h4 className="font-medium text-gray-800">{label}</h4>
-                                {getStatusIcon(status)}
-                                {getStatusBadge(status)}
-                              </div>
-                              <p className="text-sm text-gray-600 mb-3">{desc}</p>
-
-                              {documentValidations[name] && (
-                                <div className="text-xs text-gray-500 space-y-1">
-                                  <p>Validado por: {documentValidations[name].validator}</p>
-                                  <p>Data: {documentValidations[name].validatedAt?.toLocaleDateString('pt-BR')}</p>
-                                  {documentValidations[name].comment && (
-                                    <p>Comentário: {documentValidations[name].comment}</p>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              {hasFile && (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => previewDocument(name)}
-                                    className="flex items-center gap-1"
-                                  >
-                                    <Eye className="w-4 h-4" />
-                                    Preview
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => downloadDocument(name)}
-                                    className="flex items-center gap-1"
-                                  >
-                                    <Download className="w-4 h-4" />
-                                    Download
-                                  </Button>
-                                </>
-                              )}
-
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="flex items-center gap-1"
-                                  >
-                                    <FileCheck className="w-4 h-4" />
-                                    Validar
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Validar Documento: {label}</DialogTitle>
-                                  </DialogHeader>
-                                  <div className="space-y-4">
-                                    <div>
-                                      <label className="text-sm font-medium">Comentário (opcional)</label>
-                                      <textarea
-                                        value={validationComment}
-                                        onChange={(e) => setValidationComment(e.target.value)}
-                                        className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-                                        rows={3}
-                                        placeholder="Adicione um comentário sobre a validação..."
-                                      />
-                                    </div>
-                                    <div className="flex justify-end gap-2">
-                                      <Button
-                                        variant="outline"
-                                        onClick={() => {
-                                          setSelectedDocument(null);
-                                          setValidationComment('');
-                                        }}
-                                      >
-                                        Cancelar
-                                      </Button>
-                                      <Button
-                                        variant="destructive"
-                                        onClick={() => validateDocument(name, 'rejected')}
-                                      >
-                                        <XCircle className="w-4 h-4 mr-1" />
-                                        Rejeitar
-                                      </Button>
-                                      <Button
-                                        onClick={() => validateDocument(name, 'approved')}
-                                        className="bg-green-600 hover:bg-green-700"
-                                      >
-                                        <CheckCircle2 className="w-4 h-4 mr-1" />
-                                        Aprovar
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                            </div>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+          </form>
         </CardContent>
       </Card>
-    </FormProvider >
+    </FormProvider>
   );
 };

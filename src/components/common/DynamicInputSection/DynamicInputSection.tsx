@@ -31,6 +31,7 @@ type DynamicInputSectionProps = {
     fieldToSum: string;
     label: string;
   };
+  onRemoveRow?: (index: number) => void;
 };
 
 const DynamicInputSectionComponent = ({
@@ -45,6 +46,7 @@ const DynamicInputSectionComponent = ({
   dateFields = [],
   selectFields = [],
   showTotalRow,
+  onRemoveRow,
 }: DynamicInputSectionProps) => {
   const {
     control,
@@ -122,14 +124,18 @@ const DynamicInputSectionComponent = ({
     const scrollContainer = tableBodyRef.current?.closest('.overflow-y-auto');
     const scrollTop = scrollContainer?.scrollTop || 0;
 
-    remove(index);
+    if (onRemoveRow) {
+      onRemoveRow(index);
+    } else {
+      remove(index);
+    }
 
     if (scrollContainer) {
       setTimeout(() => {
         scrollContainer.scrollTop = scrollTop;
       }, 0);
     }
-  }, [remove]);
+  }, [remove, onRemoveRow]);
 
   const hasError = Array.isArray(errors[namePrefix])
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))

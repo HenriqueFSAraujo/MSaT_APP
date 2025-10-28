@@ -80,6 +80,7 @@ const FormInput = ({
           {mask ? (
             <CustomMaskedInput
               {...field}
+              value={field.value ?? ''}
               mask={mask === 'money' ? (value) => moneyMask(value) : maskPatterns[mask]}
               guide={false}
               disabled={disabled}
@@ -106,6 +107,7 @@ const FormInput = ({
           ) : (
             <Input
               {...field}
+              value={field.value ?? ''}
               type={type}
               disabled={disabled}
               className={`peer w-full border border-gray-300 rounded-lg px-4 py-3 text-sm transition-all outline-none focus:outline-none ${

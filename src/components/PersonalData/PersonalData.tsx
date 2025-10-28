@@ -88,15 +88,24 @@ export const PersonalData = ({ label }: { label: string }) => {
       };
 
       if (formData.dateBirth && typeof formData.dateBirth === 'string') {
-        const dateObj = new Date(formData.dateBirth);
-        if (!isNaN(dateObj.getTime())) {
-          formData.dateBirth = dateObj.toISOString().split('T')[0];
+        // Se já está em formato DD/MM/YYYY, não precisa converter
+        if (formData.dateBirth.includes('/')) {
+          // Já está no formato correto
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { dateBirth, ...formDataWithoutDate } = formData;
-          methods.reset(formDataWithoutDate);
-          setHasLoadedFromAPI(true);
-          return;
+          // Assumir que está em formato ISO (YYYY-MM-DD)
+          // Parse manualmente para evitar problemas de timezone
+          const parts = formData.dateBirth.split('T')[0].split('-'); // Pega só a parte da data
+          if (parts.length === 3) {
+            const [year, month, day] = parts;
+            formData.dateBirth = `${day}/${month}/${year}`;
+          } else {
+            // Se não conseguir fazer parse, remover o campo
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { dateBirth, ...formDataWithoutDate } = formData;
+            methods.reset(formDataWithoutDate);
+            setHasLoadedFromAPI(true);
+            return;
+          }
         }
       }
 
@@ -123,17 +132,23 @@ export const PersonalData = ({ label }: { label: string }) => {
       const currentValues = methods.getValues();
 
       if (storeData.dateBirth && typeof storeData.dateBirth === 'string') {
-        const dateObj = new Date(storeData.dateBirth);
-        if (!isNaN(dateObj.getTime())) {
-          storeData.dateBirth = dateObj.toISOString().split('T')[0];
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { dateBirth, ...storeDataWithoutDate } = storeData;
-          methods.reset({
-            ...currentValues,
-            ...storeDataWithoutDate,
-          });
-          return;
+        // Se já está em formato DD/MM/YYYY, manter
+        if (!storeData.dateBirth.includes('/')) {
+          // Se está em outro formato (ISO), converter para DD/MM/YYYY
+          const parts = storeData.dateBirth.split('T')[0].split('-');
+          if (parts.length === 3) {
+            const [year, month, day] = parts;
+            storeData.dateBirth = `${day}/${month}/${year}`;
+          } else {
+            // Se não conseguir fazer parse, remover o campo
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { dateBirth, ...storeDataWithoutDate } = storeData;
+            methods.reset({
+              ...currentValues,
+              ...storeDataWithoutDate,
+            });
+            return;
+          }
         }
       }
 

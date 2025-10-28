@@ -4,8 +4,8 @@ export * from './AddressData';
 // Family Composition Data
 export * from './FamilyCompositionData';
 
-// TODO: Document Data
-
+// Document Data
+export * from './DocumentData';
 
 // Housing Conditions
 export * from './HousingData';
