@@ -14,11 +14,13 @@ import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/Dialo
 import { useTabStore } from '@/store/tabStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { useFormValidationStore } from '@/store/formValidationStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FamilyComposition } from '@/components/FamilyComposition/FamilyComposition';
 import { Home } from 'lucide-react';
+import { DialogConfirmReset } from '@/components/FormValidation/DialogConfirmReset';
 
 const StudentForm = () => {
   const { role } = useAuthStore();
@@ -27,15 +29,38 @@ const StudentForm = () => {
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const { completedTabs, showTabValidation } = useTabStore();
   const [changePasswordModal, setChangePasswordModal] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { firstLogin } = useAuthStore();
   const navigate = useNavigate();
+  const { hasChanges, reset } = useFormValidationStore();
+
   useEffect(() => {
     console.log(StudentId);
     if (firstLogin) {
       setChangePasswordModal(true);
     }
-    useScholarshipFormStore.getState().clearFormData();
+
+    // Verificar se há alterações na validação antes de resetar
+    if (hasChanges()) {
+      setShowConfirmDialog(true);
+    } else {
+      // Se não houver alterações, resetar normalmente
+      useScholarshipFormStore.getState().clearFormData();
+      reset();
+    }
   }, [firstLogin, StudentId]);
+
+  const handleConfirmReset = () => {
+    setShowConfirmDialog(false);
+    useScholarshipFormStore.getState().clearFormData();
+    reset();
+  };
+
+  const handleCancel = () => {
+    setShowConfirmDialog(false);
+    // Voltar para a página anterior
+    navigate(-1);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -230,6 +255,11 @@ const StudentForm = () => {
         </motion.div>
       </div>
       <DialogPerfilAction open={changePasswordModal} onOpenChange={setChangePasswordModal} />
+      <DialogConfirmReset
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        onConfirm={handleConfirmReset}
+      />
     </motion.div>
   );
 };

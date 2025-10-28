@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FormValidationHeader } from '@/components/FormValidation/FormValidationHeader';
 import { FormValidationSidebar } from '@/components/FormValidation/FormValidationSidebar';
 import { FormValidationContent } from '@/components/FormValidation/FormValidationContent';
+import { useFormValidationStore } from '@/store/formValidationStore';
 import {
     useScholarShipData,
     usePersonalData,
@@ -59,17 +60,38 @@ const FormValidation = () => {
     const studentId = getStudentIdFromUrl();
     const userId = studentId ? parseInt(studentId, 10) : 0;
 
-    // Buscar dados reais via queries
-    const { data: scholarshipData } = useScholarShipData(userId);
-    const { data: personalData } = usePersonalData(userId);
-    const { data: parentalData } = useParentalData(userId);
-    const { data: addressData } = useAddressData(userId);
-    const { data: familyCompositionData } = useFamilyCompositionData(userId);
-    const { data: propertyData } = usePropertyData(userId);
+    // Obter activeTab do store
+    const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, validationStatus: savedValidationStatus, setValidationStatus: saveValidationStatus } = useFormValidationStore();
+    const [activeTab, setActiveTab] = useState<string>(savedActiveTab);
 
-    // Buscar documentos
-    const documentTypes = ['cpf', 'rg', 'certidao_nascimento', 'cadastro_unico'];
-    const { data: documentsData } = useAllDocumentsList(userId, documentTypes);
+    // Lazy loading: carregar apenas quando a aba for ativada
+    const enabledMap: Record<string, boolean> = {
+        'scholarship_info': activeTab === 'scholarship_info',
+        'personal_data': activeTab === 'personal_data',
+        'parents_data': activeTab === 'parents_data',
+        'address_info': activeTab === 'address_info',
+        'family_composition': activeTab === 'family_composition',
+        'property_relations': activeTab === 'property_relations',
+        'required_documents': activeTab === 'required_documents',
+        'consent_terms': activeTab === 'consent_terms',
+    };
+
+    // Buscar dados reais via queries (só quando a aba for ativada)
+    const { data: scholarshipData, isLoading: isLoadingScholarship } = useScholarShipData(userId, { enabled: enabledMap.scholarship_info });
+    const { data: personalData, isLoading: isLoadingPersonal } = usePersonalData(userId, { enabled: enabledMap.personal_data });
+    const { data: parentalData, isLoading: isLoadingParental } = useParentalData(userId, { enabled: enabledMap.parents_data });
+    const { data: addressData, isLoading: isLoadingAddress } = useAddressData(userId, { enabled: enabledMap.address_info });
+    const { data: familyCompositionData, isLoading: isLoadingFamily } = useFamilyCompositionData(userId, { enabled: enabledMap.family_composition });
+    const { data: propertyData, isLoading: isLoadingProperty } = usePropertyData(userId, { enabled: enabledMap.property_relations });
+
+    // Verificar se está carregando a aba ativa
+    const isLoadingActiveTab =
+        (activeTab === 'scholarship_info' && isLoadingScholarship) ||
+        (activeTab === 'personal_data' && isLoadingPersonal) ||
+        (activeTab === 'parents_data' && isLoadingParental) ||
+        (activeTab === 'address_info' && isLoadingAddress) ||
+        (activeTab === 'family_composition' && isLoadingFamily) ||
+        (activeTab === 'property_relations' && isLoadingProperty);
 
     // Função para mapear dados da API para o formato esperado
     const mapScholarshipData = (data: ApiScholarshipData | null | undefined) => {
@@ -116,11 +138,7 @@ const FormValidation = () => {
         address_info: addressData || null, // API já retorna no formato correto
         family_composition: processFamilyComposition(familyCompositionData), // Processa array da API
         property_relations: propertyData || null,
-        required_documents: documentsData ? {
-            singleRegistryRegistration: documentsData.some((doc: { documentType?: string }) => doc.documentType === 'cadastro_unico'),
-            maritalStatus: false, // Ajustar conforme a estrutura real
-            identityDocuments: documentsData.some((doc: { documentType?: string }) => doc.documentType === 'cpf' || doc.documentType === 'rg')
-        } : null,
+        required_documents: null, // Não precisa buscar aqui, RequiredDocumentsTab faz isso
         consent_terms: null // Não há endpoint específico para termos de consentimento ainda
     };
 
@@ -232,14 +250,10 @@ const FormValidation = () => {
     };
 
     // Usar dados reais se disponíveis, caso contrário usar dados mockados como fallback
-    const hasRealData = scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData || documentsData;
+    const hasRealData = scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData;
     const displayFormData = hasRealData ? realFormData : mockFormData;
 
-    // Verificar se está carregando (pode ser usado futuramente para mostrar loading spinner)
-    // const isLoading = isLoadingScholarship || isLoadingPersonal || isLoadingParental || isLoadingAddress || isLoadingFamily || isLoadingProperty || isLoadingDocuments;
-
-    const [validationStatus, setValidationStatus] = useState<Record<string, string>>({});
-    const [activeTab, setActiveTab] = useState<string>('scholarship_info');
+    const [validationStatus, setValidationStatus] = useState<Record<string, string>>(savedValidationStatus);
 
     const getValidationStatus = (section: string) => {
         return validationStatus[section] || 'pending';
@@ -272,10 +286,11 @@ const FormValidation = () => {
     };
 
     const validateSection = (section: string, status: 'approved' | 'rejected') => {
-        setValidationStatus(prev => ({
-            ...prev,
-            [section]: status
-        }));
+        setValidationStatus(prev => {
+            const updated = { ...prev, [section]: status };
+            saveValidationStatus(updated);
+            return updated;
+        });
     };
 
     const handleSaveValidation = () => {
@@ -294,6 +309,7 @@ const FormValidation = () => {
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
+        saveActiveTab(tab);
     };
 
     return (
@@ -315,13 +331,22 @@ const FormValidation = () => {
                 />
 
                 <div className="flex-1 overflow-y-auto">
-                    <FormValidationContent
-                        formData={displayFormData}
-                        validationStatus={validationStatus}
-                        validateSection={validateSection}
-                        activeTab={activeTab}
-                        studentId={studentId}
-                    />
+                    {isLoadingActiveTab ? (
+                        <div className="flex items-center justify-center h-full">
+                            <div className="text-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                                <p className="text-gray-600">Carregando dados...</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <FormValidationContent
+                            formData={displayFormData}
+                            validationStatus={validationStatus}
+                            validateSection={validateSection}
+                            activeTab={activeTab}
+                            studentId={studentId}
+                        />
+                    )}
                 </div>
             </div>
         </div>

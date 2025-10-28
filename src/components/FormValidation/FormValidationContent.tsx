@@ -15,10 +15,14 @@ import {
     X,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { formatCpf } from '@/utils/transformMasks';
 import { extractDisplayValue } from '@/utils/valueMappings';
 import { useAllDocumentsList } from '@/services/queries/forms/DocumentData';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RequiredDocumentsTab } from '@/components/FormValidation/tabs/RequiredDocumentsTab';
+import { FamilyCompositionTab } from '@/components/FormValidation/tabs/FamilyCompositionTab';
 
 const formatDate = (dateString: string | Date) => {
     try {
@@ -53,12 +57,15 @@ const FieldDisplay = ({ label, value, className = "", fieldType }: { label: stri
 };
 
 interface FormValidationContentProps {
-    formData: any;
+    formData: Record<string, unknown>;
     validationStatus: Record<string, string>;
     validateSection: (section: string, status: 'approved' | 'rejected') => void;
     activeTab: string;
     studentId: string | null;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FormDataT = any;
 
 export const FormValidationContent = ({
     formData,
@@ -67,6 +74,7 @@ export const FormValidationContent = ({
     activeTab,
     studentId
 }: FormValidationContentProps) => {
+    const formDataTyped = formData as FormDataT;
     // Buscar documentos
     const documentTypes = ['singleRegistryRegistration', 'maritalStatus', 'identityDocuments', 'guardianshipDocuments', 'vaccinationCard',
         'proofOfResidence', 'workContract', 'bankingRelationsReport', 'proofOfIncome', 'supportingDocumentation',
@@ -79,6 +87,8 @@ export const FormValidationContent = ({
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [selectedDocuments, setSelectedDocuments] = useState<number[]>([]);
     const [documentIndices, setDocumentIndices] = useState<Map<number, number>>(new Map());
+    const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+    const [expandedFamilyMembers, setExpandedFamilyMembers] = useState<Set<number>>(new Set());
 
     // Função para agrupar documentos por tipo
     const getDocumentsByType = (documentType: string) => {
@@ -293,17 +303,17 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.scholarship_info ? (
+                            {formDataTyped.scholarship_info ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Informações Acadêmicas</h3>
                                         <FieldDisplay
                                             label="Segmento a cursar em 2025"
-                                            value={formData.scholarship_info.segmentYearToStudy}
+                                            value={formDataTyped.scholarship_info.segmentYearToStudy}
                                         />
                                         <FieldDisplay
                                             label="Série/Ano específico"
-                                            value={formData.scholarship_info.specificGrade}
+                                            value={formDataTyped.scholarship_info.specificGrade}
                                         />
                                     </div>
 
@@ -311,16 +321,16 @@ export const FormValidationContent = ({
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Participação no Processo</h3>
                                         <FieldDisplay
                                             label="Deseja participar do processo"
-                                            value={formData.scholarship_info.wantsToParticipate === 'sim' ? 'Sim' : 'Não'}
+                                            value={formDataTyped.scholarship_info.wantsToParticipate === 'sim' ? 'Sim' : 'Não'}
                                         />
                                         <FieldDisplay
                                             label="Teve bolsa no ano anterior"
-                                            value={formData.scholarship_info.hadScholarshipLastYear === 'sim' ? 'Sim' : 'Não'}
+                                            value={formDataTyped.scholarship_info.hadScholarshipLastYear === 'sim' ? 'Sim' : 'Não'}
                                         />
-                                        {formData.scholarship_info.previousScholarshipPercentage && (
+                                        {formDataTyped.scholarship_info.previousScholarshipPercentage && (
                                             <FieldDisplay
                                                 label="Percentual da bolsa anterior"
-                                                value={`${formData.scholarship_info.previousScholarshipPercentage}%`}
+                                                value={`${formDataTyped.scholarship_info.previousScholarshipPercentage}%`}
                                             />
                                         )}
                                     </div>
@@ -361,29 +371,29 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.personal_data ? (
+                            {formDataTyped.personal_data ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Identificação</h3>
                                         <FieldDisplay
                                             label="Nome Completo"
-                                            value={formData.personal_data.fullName}
+                                            value={formDataTyped.personal_data.fullName}
                                         />
                                         <FieldDisplay
                                             label="E-mail"
-                                            value={formData.personal_data.email}
+                                            value={formDataTyped.personal_data.email}
                                         />
                                         <FieldDisplay
                                             label="CPF"
-                                            value={formData.personal_data.cpf ? formatCpf(formData.personal_data.cpf) : ''}
+                                            value={formDataTyped.personal_data.cpf ? formatCpf(formDataTyped.personal_data.cpf) : ''}
                                         />
                                         <FieldDisplay
                                             label="RG"
-                                            value={formData.personal_data.rg}
+                                            value={formDataTyped.personal_data.rg}
                                         />
                                         <FieldDisplay
                                             label="Data de Nascimento"
-                                            value={formData.personal_data.dateBirth ? formatDate(formData.personal_data.dateBirth) : ''}
+                                            value={formDataTyped.personal_data.dateBirth ? formatDate(formDataTyped.personal_data.dateBirth) : ''}
                                         />
                                     </div>
 
@@ -391,29 +401,29 @@ export const FormValidationContent = ({
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Informações Pessoais</h3>
                                         <FieldDisplay
                                             label="Nacionalidade"
-                                            value={formData.personal_data.nationality}
+                                            value={formDataTyped.personal_data.nationality}
                                         />
                                         <FieldDisplay
                                             label="Naturalidade"
-                                            value={formData.personal_data.birthplace}
+                                            value={formDataTyped.personal_data.birthplace}
                                         />
                                         <FieldDisplay
                                             label="Raça/Cor"
-                                            value={formData.personal_data.race}
+                                            value={formDataTyped.personal_data.race}
                                         />
                                         <FieldDisplay
                                             label="Gênero"
-                                            value={formData.personal_data.gender}
+                                            value={formDataTyped.personal_data.gender}
                                             fieldType="gender"
                                         />
                                         <FieldDisplay
                                             label="Pessoa com deficiência"
-                                            value={formData.personal_data.deficiency}
+                                            value={formDataTyped.personal_data.deficiency}
                                             fieldType="deficiency"
                                         />
                                         <FieldDisplay
                                             label="Celular"
-                                            value={formData.personal_data.phone}
+                                            value={formDataTyped.personal_data.phone}
                                         />
                                     </div>
                                 </div>
@@ -453,25 +463,25 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.parents_data ? (
+                            {formDataTyped.parents_data ? (
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Genitor 1</h3>
                                         <FieldDisplay
                                             label="Nome Completo"
-                                            value={formData.parents_data.parent1FullName}
+                                            value={formDataTyped.parents_data.parent1FullName}
                                         />
                                         <FieldDisplay
                                             label="CPF"
-                                            value={formData.parents_data.parent1Cpf ? formatCpf(formData.parents_data.parent1Cpf) : ''}
+                                            value={formDataTyped.parents_data.parent1Cpf ? formatCpf(formDataTyped.parents_data.parent1Cpf) : ''}
                                         />
                                         <FieldDisplay
                                             label="Telefone de Contato"
-                                            value={formData.parents_data.parent1Phone}
+                                            value={formDataTyped.parents_data.parent1Phone}
                                         />
                                         <FieldDisplay
                                             label="Estado Civil"
-                                            value={formData.parents_data.parent1MaritalStatus}
+                                            value={formDataTyped.parents_data.parent1MaritalStatus}
                                             fieldType="maritalStatus"
                                         />
                                     </div>
@@ -480,19 +490,19 @@ export const FormValidationContent = ({
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Genitor 2</h3>
                                         <FieldDisplay
                                             label="Nome Completo"
-                                            value={formData.parents_data.parent2FullName}
+                                            value={formDataTyped.parents_data.parent2FullName}
                                         />
                                         <FieldDisplay
                                             label="CPF"
-                                            value={formData.parents_data.parent2Cpf ? formatCpf(formData.parents_data.parent2Cpf) : ''}
+                                            value={formDataTyped.parents_data.parent2Cpf ? formatCpf(formDataTyped.parents_data.parent2Cpf) : ''}
                                         />
                                         <FieldDisplay
                                             label="Telefone de Contato"
-                                            value={formData.parents_data.parent2Phone}
+                                            value={formDataTyped.parents_data.parent2Phone}
                                         />
                                         <FieldDisplay
                                             label="Estado Civil"
-                                            value={formData.parents_data.parent2MaritalStatus}
+                                            value={formDataTyped.parents_data.parent2MaritalStatus}
                                             fieldType="maritalStatus"
                                         />
                                     </div>
@@ -533,29 +543,29 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.address_info ? (
+                            {formDataTyped.address_info ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Endereço</h3>
                                         <FieldDisplay
                                             label="Endereço"
-                                            value={formData.address_info.address}
+                                            value={formDataTyped.address_info.address}
                                         />
                                         <FieldDisplay
                                             label="Bairro"
-                                            value={formData.address_info.neighborhood}
+                                            value={formDataTyped.address_info.neighborhood}
                                         />
                                         <FieldDisplay
                                             label="Cidade"
-                                            value={formData.address_info.city}
+                                            value={formDataTyped.address_info.city}
                                         />
                                         <FieldDisplay
                                             label="CEP"
-                                            value={formData.address_info.zipCode}
+                                            value={formDataTyped.address_info.zipCode}
                                         />
                                         <FieldDisplay
                                             label="Ponto de Referência"
-                                            value={formData.address_info.referencePoint}
+                                            value={formDataTyped.address_info.referencePoint}
                                         />
                                     </div>
 
@@ -563,23 +573,23 @@ export const FormValidationContent = ({
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Tipo de Residência</h3>
                                         <FieldDisplay
                                             label="Onde o candidato reside"
-                                            value={formData.address_info.residenceType}
+                                            value={formDataTyped.address_info.residenceType}
                                         />
                                         <FieldDisplay
                                             label="Tipo de estrutura"
-                                            value={formData.address_info.structureType}
+                                            value={formDataTyped.address_info.structureType}
                                         />
                                         <FieldDisplay
                                             label="Possui esgoto"
-                                            value={formData.address_info.hasSewage}
+                                            value={formDataTyped.address_info.hasSewage}
                                         />
                                         <FieldDisplay
                                             label="Fonte de energia elétrica"
-                                            value={formData.address_info.electricitySource}
+                                            value={formDataTyped.address_info.electricitySource}
                                         />
                                         <FieldDisplay
                                             label="Abastecimento de água"
-                                            value={formData.address_info.waterSupply}
+                                            value={formDataTyped.address_info.waterSupply}
                                         />
                                     </div>
                                 </div>
@@ -611,7 +621,14 @@ export const FormValidationContent = ({
                 </TabsContent>
 
                 {/* Family Composition */}
-                <TabsContent value="family_composition" className="p-6 m-0">
+                <TabsContent value="family_composition" className="m-0">
+                    <FamilyCompositionTab
+                        familyData={formDataTyped.family_composition}
+                        validateSection={validateSection}
+                    />
+                </TabsContent>
+
+                <TabsContent value="old_family_composition_hidden" className="hidden" style={{display: 'none'}}>
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                         <div className="p-6 border-b border-gray-200">
                             <h2 className="text-xl font-semibold text-gray-800">Composição Familiar</h2>
@@ -619,47 +636,99 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.family_composition ? (
+                            {formDataTyped.family_composition ? (
                                 <div className="space-y-6">
-                                    {formData.family_composition.composicaoFamiliar && formData.family_composition.composicaoFamiliar.length > 0 && (
+                                    {formDataTyped.family_composition.composicaoFamiliar && formDataTyped.family_composition.composicaoFamiliar.length > 0 && (
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-800 mb-4">Composição Familiar</h3>
                                             <div className="space-y-4">
-                                                {formData.family_composition.composicaoFamiliar.map((membro: any, index: number) => (
-                                                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                                                        <h4 className="font-medium text-gray-800 mb-2">Membro {index + 1}</h4>
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                            <FieldDisplay
-                                                                label="Nome Completo"
-                                                                value={membro.nomeCompleto}
-                                                            />
-                                                            <FieldDisplay
-                                                                label="Escolaridade"
-                                                                value={membro.escolaridade}
-                                                            />
-                                                            <FieldDisplay
-                                                                label="Grau de Parentesco"
-                                                                value={membro.grauParentesco}
-                                                            />
-                                                            <FieldDisplay
-                                                                label="Data de Nascimento"
-                                                                value={formatDate(membro.dataNascimento)}
-                                                            />
-                                                            <FieldDisplay
-                                                                label="Profissão Ativa"
-                                                                value={membro.profissaoAtiva}
-                                                            />
-                                                            <FieldDisplay
-                                                                label="Estado Civil"
-                                                                value={membro.estadoCivil}
-                                                            />
-                                                            <FieldDisplay
-                                                                label="Salário Bruto"
-                                                                value={formatCurrency(membro.salarioBruto)}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                                {formDataTyped.family_composition.composicaoFamiliar.map((membro: FormDataT, index: number) => {
+                                                    const isExpanded = expandedFamilyMembers.has(index);
+                                                    const toggleMember = () => {
+                                                        setExpandedFamilyMembers(prev => {
+                                                            const newSet = new Set(prev);
+                                                            if (newSet.has(index)) {
+                                                                newSet.delete(index);
+                                                            } else {
+                                                                newSet.add(index);
+                                                            }
+                                                            return newSet;
+                                                        });
+                                                    };
+
+                                                    return (
+                                                        <motion.div
+                                                            key={index}
+                                                            className="p-4 bg-gray-50 rounded-lg"
+                                                            initial={{ opacity: 0, y: -10 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                                                        >
+                                                            <button
+                                                                onClick={toggleMember}
+                                                                className="w-full flex items-center justify-between text-left mb-2 hover:bg-gray-100 -m-2 p-2 rounded transition-colors"
+                                                            >
+                                                                <h4 className="font-medium text-gray-800">
+                                                                    {membro.nomeCompleto || `Membro ${index + 1}`}
+                                                                </h4>
+                                                                <motion.div
+                                                                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                                                                    transition={{ duration: 0.3 }}
+                                                                >
+                                                                    {isExpanded ? (
+                                                                        <ChevronUp className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                                                                    ) : (
+                                                                        <ChevronDown className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                                                                    )}
+                                                                </motion.div>
+                                                            </button>
+
+                                                            <AnimatePresence>
+                                                                {isExpanded && (
+                                                                    <motion.div
+                                                                        initial={{ height: 0, opacity: 0 }}
+                                                                        animate={{ height: 'auto', opacity: 1 }}
+                                                                        exit={{ height: 0, opacity: 0 }}
+                                                                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                                                        className="overflow-hidden"
+                                                                    >
+                                                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                                            <FieldDisplay
+                                                                                label="Nome Completo"
+                                                                                value={membro.nomeCompleto}
+                                                                            />
+                                                                            <FieldDisplay
+                                                                                label="Escolaridade"
+                                                                                value={membro.escolaridade}
+                                                                            />
+                                                                            <FieldDisplay
+                                                                                label="Grau de Parentesco"
+                                                                                value={membro.grauParentesco}
+                                                                            />
+                                                                            <FieldDisplay
+                                                                                label="Data de Nascimento"
+                                                                                value={formatDate(membro.dataNascimento)}
+                                                                            />
+                                                                            <FieldDisplay
+                                                                                label="Profissão Ativa"
+                                                                                value={membro.profissaoAtiva}
+                                                                            />
+                                                                            <FieldDisplay
+                                                                                label="Estado Civil"
+                                                                                value={membro.estadoCivil}
+                                                                                fieldType="maritalStatus"
+                                                                            />
+                                                                            <FieldDisplay
+                                                                                label="Salário Bruto"
+                                                                                value={formatCurrency(membro.salarioBruto)}
+                                                                            />
+                                                                        </div>
+                                                                    </motion.div>
+                                                                )}
+                                                            </AnimatePresence>
+                                                        </motion.div>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -692,7 +761,14 @@ export const FormValidationContent = ({
                 </TabsContent>
 
                 {/* Required Documents */}
-                <TabsContent value="required_documents" className="p-6 m-0">
+                <TabsContent value="required_documents" className="m-0">
+                    <RequiredDocumentsTab
+                        studentId={studentId}
+                        validateSection={validateSection}
+                    />
+                </TabsContent>
+
+                <TabsContent value="old_required_documents_hidden" className="hidden" style={{display: 'none'}}>
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                         <div className="p-6 border-b border-gray-200">
                             <div className="flex justify-between items-center">
@@ -736,14 +812,58 @@ export const FormValidationContent = ({
                                         const docs = getDocumentsByType(docType);
                                         if (docs.length === 0) return null;
 
+                                        const isExpanded = expandedSections.has(docType);
+                                        const toggleSection = () => {
+                                            setExpandedSections(prev => {
+                                                const newSet = new Set(prev);
+                                                if (newSet.has(docType)) {
+                                                    newSet.delete(docType);
+                                                } else {
+                                                    newSet.add(docType);
+                                                }
+                                                return newSet;
+                                            });
+                                        };
+
                                         return (
-                                            <div key={docType} className="p-4 bg-gray-50 rounded-lg">
-                                                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                                                    {documentLabels[docType] || docType}
-                                                    <span className="text-sm text-gray-600 ml-2">({docs.length} arquivo{docs.length > 1 ? 's' : ''})</span>
-                                                </h3>
-                                                <div className="space-y-2">
-                                                    {docs.map((doc, idx) => (
+                                            <motion.div
+                                                key={docType}
+                                                className="p-4 bg-gray-50 rounded-lg"
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                <button
+                                                    onClick={toggleSection}
+                                                    className="w-full flex items-center justify-between text-left mb-4 hover:bg-gray-100 -m-2 p-2 rounded transition-colors"
+                                                >
+                                                    <h3 className="text-lg font-semibold text-gray-800">
+                                                        {documentLabels[docType] || docType}
+                                                        <span className="text-sm text-gray-600 ml-2">({docs.length} arquivo{docs.length > 1 ? 's' : ''})</span>
+                                                    </h3>
+                                                    <motion.div
+                                                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                                                        transition={{ duration: 0.3 }}
+                                                    >
+                                                        {isExpanded ? (
+                                                            <ChevronUp className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                                                        ) : (
+                                                            <ChevronDown className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                                                        )}
+                                                    </motion.div>
+                                                </button>
+
+                                                <AnimatePresence>
+                                                    {isExpanded && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                                            className="overflow-hidden"
+                                                        >
+                                                            <div className="space-y-2">
+                                                                {docs.map((doc, idx) => (
                                                 <div
                                                     key={doc.id}
                                                     className="flex items-center justify-between bg-white p-3 rounded-md border border-gray-200 hover:border-blue-300 transition-colors"
@@ -785,8 +905,11 @@ export const FormValidationContent = ({
                                                             </div>
                                                         </div>
                                                     ))}
-                                        </div>
-                                    </div>
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </motion.div>
                                         );
                                     })}
                                 </div>
@@ -913,13 +1036,13 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.property_relations ? (
+                            {formDataTyped.property_relations ? (
                                 <div className="space-y-6">
-                                    {formData.property_relations.veiculos && formData.property_relations.veiculos.length > 0 && (
+                                    {formDataTyped.property_relations.veiculos && formDataTyped.property_relations.veiculos.length > 0 && (
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-800 mb-4">Veículos</h3>
                                             <div className="space-y-4">
-                                                {formData.property_relations.veiculos.map((veiculo: any, index: number) => (
+                                                {formDataTyped.property_relations.veiculos.map((veiculo: FormDataT, index: number) => (
                                                     <div key={index} className="p-4 bg-gray-50 rounded-lg">
                                                         <h4 className="font-medium text-gray-800 mb-2">Veículo {index + 1}</h4>
                                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -978,26 +1101,26 @@ export const FormValidationContent = ({
                         </div>
 
                         <div className="p-6">
-                            {formData.consent_terms ? (
+                            {formDataTyped.consent_terms ? (
                                 <div className="space-y-6">
                                     <div>
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Declaração 1</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                             <FieldDisplay
                                                 label="Nome do Declarante"
-                                                value={formData.consent_terms.declaranteNome}
+                                                value={formDataTyped.consent_terms.declaranteNome}
                                             />
                                             <FieldDisplay
                                                 label="RG do Declarante"
-                                                value={formData.consent_terms.declaranteRG}
+                                                value={formDataTyped.consent_terms.declaranteRG}
                                             />
                                             <FieldDisplay
                                                 label="CPF do Declarante"
-                                                value={formData.consent_terms.declaranteCPF ? formatCpf(formData.consent_terms.declaranteCPF) : ''}
+                                                value={formDataTyped.consent_terms.declaranteCPF ? formatCpf(formDataTyped.consent_terms.declaranteCPF) : ''}
                                             />
                                             <FieldDisplay
                                                 label="Nome do Aluno Candidato"
-                                                value={formData.consent_terms.alunoNome}
+                                                value={formDataTyped.consent_terms.alunoNome}
                                             />
                                         </div>
                                     </div>
@@ -1007,7 +1130,7 @@ export const FormValidationContent = ({
                                         <div className="p-4 bg-gray-50 rounded-lg">
                                             <FieldDisplay
                                                 label="Aceita os Termos"
-                                                value={formData.consent_terms.aceitaTermos ? 'Sim' : 'Não'}
+                                                value={formDataTyped.consent_terms.aceitaTermos ? 'Sim' : 'Não'}
                                             />
                                         </div>
                                     </div>
