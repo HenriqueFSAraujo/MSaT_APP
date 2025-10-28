@@ -1,19 +1,130 @@
-import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
-import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle2, XCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FormValidationHeader } from '@/components/FormValidation/FormValidationHeader';
 import { FormValidationSidebar } from '@/components/FormValidation/FormValidationSidebar';
 import { FormValidationContent } from '@/components/FormValidation/FormValidationContent';
+import {
+    useScholarShipData,
+    usePersonalData,
+    useParentalData,
+    useAddressData,
+    useFamilyCompositionData,
+    usePropertyData
+} from '@/services/queries/forms';
+import { useAllDocumentsList } from '@/services/queries/forms/DocumentData';
+
+interface ApiScholarshipData {
+    segmentoAno?: string;
+    serieAno?: string;
+    vaiParticipar?: boolean;
+    jaFoiContemplado?: boolean;
+    percentual?: number;
+    segmentYearToStudy?: string;
+    specificGrade?: string;
+    wantsToParticipate?: string;
+    hadScholarshipLastYear?: string;
+    previousScholarshipPercentage?: string;
+}
 
 const FormValidation = () => {
-    const { formData } = useScholarshipFormStore();
     const navigate = useNavigate();
-    const params = useParams<{ id: string }>();
 
-    // Dados de exemplo para teste (remover quando formData estiver funcionando)
+    const getStudentIdFromUrl = () => {
+        const pathname = window.location.pathname;
+        let match = pathname.match(/form-validation\/(\d+)/);
+        if (!match) {
+            match = pathname.match(/form-validation\/([^/]+)/);
+        }
+
+        if (match) {
+            return match[1];
+        }
+
+        const patterns = [
+            /form-validation\/(\d+)/,
+            /form-validation\/([^/]+)/,
+            /form-validation\/(.*)/
+        ];
+
+        for (const pattern of patterns) {
+            const testMatch = pathname.match(pattern);
+            if (testMatch) {
+                return testMatch[1];
+            }
+        }
+
+        return null;
+    };
+
+    const studentId = getStudentIdFromUrl();
+    const userId = studentId ? parseInt(studentId, 10) : 0;
+
+    // Buscar dados reais via queries
+    const { data: scholarshipData } = useScholarShipData(userId);
+    const { data: personalData } = usePersonalData(userId);
+    const { data: parentalData } = useParentalData(userId);
+    const { data: addressData } = useAddressData(userId);
+    const { data: familyCompositionData } = useFamilyCompositionData(userId);
+    const { data: propertyData } = usePropertyData(userId);
+
+    // Buscar documentos
+    const documentTypes = ['cpf', 'rg', 'certidao_nascimento', 'cadastro_unico'];
+    const { data: documentsData } = useAllDocumentsList(userId, documentTypes);
+
+    // Função para mapear dados da API para o formato esperado
+    const mapScholarshipData = (data: ApiScholarshipData | null | undefined) => {
+        if (!data) return null;
+        return {
+            segmentYearToStudy: data.segmentoAno || data.segmentYearToStudy,
+            specificGrade: data.serieAno || data.specificGrade,
+            wantsToParticipate: typeof data.vaiParticipar === 'boolean'
+                ? data.vaiParticipar ? 'sim' : 'nao'
+                : data.wantsToParticipate,
+            hadScholarshipLastYear: typeof data.jaFoiContemplado === 'boolean'
+                ? data.jaFoiContemplado ? 'sim' : 'nao'
+                : data.hadScholarshipLastYear,
+            previousScholarshipPercentage: data.percentual
+                ? data.percentual.toString()
+                : data.previousScholarshipPercentage
+        };
+    };
+
+
+    // Função para processar composição familiar
+    const processFamilyComposition = (data: unknown) => {
+        if (!data) return null;
+
+        // Se a API retorna um array direto
+        if (Array.isArray(data)) {
+            return {
+                composicaoFamiliar: data,
+                familiaresEscola: [],
+                pessoasComDeficiencia: [],
+                despesasMensais: []
+            };
+        }
+
+        // Se já vem no formato correto
+        return data;
+    };
+
+    // Combinar dados reais da API com mapeamento quando necessário
+    const realFormData = {
+        scholarship_info: mapScholarshipData(scholarshipData),
+        personal_data: personalData || null, // API já retorna no formato correto
+        parents_data: parentalData || null, // API já retorna no formato correto
+        address_info: addressData || null, // API já retorna no formato correto
+        family_composition: processFamilyComposition(familyCompositionData), // Processa array da API
+        property_relations: propertyData || null,
+        required_documents: documentsData ? {
+            singleRegistryRegistration: documentsData.some((doc: { documentType?: string }) => doc.documentType === 'cadastro_unico'),
+            maritalStatus: false, // Ajustar conforme a estrutura real
+            identityDocuments: documentsData.some((doc: { documentType?: string }) => doc.documentType === 'cpf' || doc.documentType === 'rg')
+        } : null,
+        consent_terms: null // Não há endpoint específico para termos de consentimento ainda
+    };
+
+    // Dados de exemplo para teste (será substituído quando formData estiver funcionando)
     const mockFormData = {
         scholarship_info: {
             segmentYearToStudy: 'Educação Infantil',
@@ -120,67 +231,18 @@ const FormValidation = () => {
         }
     };
 
-    const displayFormData = Object.keys(formData).length > 0 ? formData : mockFormData;
+    // Usar dados reais se disponíveis, caso contrário usar dados mockados como fallback
+    const hasRealData = scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData || documentsData;
+    const displayFormData = hasRealData ? realFormData : mockFormData;
 
-    const getStudentIdFromUrl = () => {
-        const pathname = window.location.pathname;
-        let match = pathname.match(/\/form-validation\/(\d+)/);
-        if (!match) {
-            match = pathname.match(/\/form-validation\/([^\/]+)/);
-        }
-
-        if (match) {
-            return match[1];
-        }
-
-        const patterns = [
-            /\/form-validation\/(\d+)/,
-            /\/form-validation\/([^\/]+)/,
-            /\/form-validation\/(.*)/
-        ];
-
-        for (const pattern of patterns) {
-            const testMatch = pathname.match(pattern);
-            if (testMatch) {
-                return testMatch[1];
-            }
-        }
-
-        return null;
-    };
-
-    const studentId = getStudentIdFromUrl();
+    // Verificar se está carregando (pode ser usado futuramente para mostrar loading spinner)
+    // const isLoading = isLoadingScholarship || isLoadingPersonal || isLoadingParental || isLoadingAddress || isLoadingFamily || isLoadingProperty || isLoadingDocuments;
 
     const [validationStatus, setValidationStatus] = useState<Record<string, string>>({});
-    const [validationComments, setValidationComments] = useState<Record<string, string>>({});
     const [activeTab, setActiveTab] = useState<string>('scholarship_info');
-
-    const formatDate = (dateString: string | Date) => {
-        try {
-            const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-            return date.toLocaleDateString('pt-BR');
-        } catch {
-            return 'Data inválida';
-        }
-    };
-
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'approved':
-                return <CheckCircle2 className="w-4 h-4 text-green-600" />;
-            case 'rejected':
-                return <XCircle className="w-4 h-4 text-red-600" />;
-            default:
-                return <XCircle className="w-4 h-4 text-yellow-600" />;
-        }
-    };
 
     const getValidationStatus = (section: string) => {
         return validationStatus[section] || 'pending';
-    };
-
-    const getValidationIcon = (section: string) => {
-        return getStatusIcon(getValidationStatus(section));
     };
 
     const getValidationBadge = (section: string, isActive: boolean = false) => {
@@ -217,7 +279,7 @@ const FormValidation = () => {
     };
 
     const handleSaveValidation = () => {
-        console.log('Salvando validação:', { validationStatus, validationComments });
+        console.log('Salvando validação:', validationStatus);
     };
 
     const handleBack = () => {
@@ -258,6 +320,7 @@ const FormValidation = () => {
                         validationStatus={validationStatus}
                         validateSection={validateSection}
                         activeTab={activeTab}
+                        studentId={studentId}
                     />
                 </div>
             </div>
