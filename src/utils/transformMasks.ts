@@ -92,7 +92,9 @@ export function maskCurrencyInput(value: string) {
     return 'R$ 0,00';
   }
 
-  const number = parseInt(onlyNumbers, 10) / 100;
+  // Para valores inteiros, não dividir por 100
+  // Simplesmente converter para número
+  const number = parseInt(onlyNumbers, 10);
 
   return number.toLocaleString('pt-BR', {
     style: 'currency',

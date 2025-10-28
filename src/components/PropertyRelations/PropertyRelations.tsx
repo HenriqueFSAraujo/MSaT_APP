@@ -2,7 +2,7 @@ import { PostPropertyData, usePropertyData } from '@/services/queries/forms/inde
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { toast } from '@/utils/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import type { z } from 'zod';
@@ -22,23 +22,120 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     mode: 'onSubmit',
     defaultValues: {
       veiculos: [{ marcaModelo: '', anoFabricacao: '', utilizacao: '' }],
-      familiaresEscola: [{ nome: '', escola: '', valorMensal: '' }],
-      pessoasComDeficiencia: [{ nome: '', tipoDeficiencia: '', despesaMensal: '' }],
-      despesasMensais: [{ descricao: '', valor: '' }],
+      familiaresEscola: [{ nome: '', escola: '', valorMensal: 'R$ 0,00' }],
+      pessoasComDeficiencia: [{ nome: '', tipoDeficiencia: '', despesaMensal: 'R$ 0,00' }],
+      despesasMensais: [{ descricao: '', valor: 'R$ 0,00' }],
       ...(formData.property_relations as Partial<PropertyRelationsInfo>),
     },
   });
 
   const { handleSubmit } = methods;
 
+  // Função para formatar valores monetários do servidor
+  const formatCurrencyFromServer = useCallback((value: string | number | null | undefined): string => {
+    if (!value && value !== 0) return 'R$ 0,00';
+
+    // Se já está formatado, retorna como está
+    if (typeof value === 'string' && value.includes('R$')) {
+      return value;
+    }
+
+    // Converte string ou número para número
+    let numValue: number;
+    if (typeof value === 'number') {
+      // Servidor envia em centavos, então divide por 100
+      numValue = value / 100;
+    } else {
+      // Remove qualquer caractere não numérico
+      const cleanValue = String(value).replace(/\D/g, '');
+
+      if (!cleanValue) return 'R$ 0,00';
+
+      // Trata como centavos (divide por 100)
+      numValue = parseInt(cleanValue, 10) / 100;
+    }
+
+    if (isNaN(numValue)) return 'R$ 0,00';
+
+    // Formata como moeda brasileira
+    return numValue.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }, []);
+
+  // Função para aplicar máscaras aos dados do servidor
+  const applyMasksToData = useCallback((serverData: Partial<PropertyRelationsInfo>): Partial<PropertyRelationsInfo> => {
+    const maskedData = { ...serverData };
+
+    // Aplicar máscara de moeda para familiaresEscola
+    if (maskedData.familiaresEscola) {
+      maskedData.familiaresEscola = maskedData.familiaresEscola.map((item) => ({
+        ...item,
+        valorMensal: formatCurrencyFromServer(item.valorMensal),
+      }));
+    }
+
+    // Aplicar máscara de moeda para pessoasComDeficiencia
+    if (maskedData.pessoasComDeficiencia) {
+      maskedData.pessoasComDeficiencia = maskedData.pessoasComDeficiencia.map((item) => ({
+        ...item,
+        despesaMensal: formatCurrencyFromServer(item.despesaMensal),
+      }));
+    }
+
+    // Aplicar máscara de moeda para despesasMensais
+    if (maskedData.despesasMensais) {
+      maskedData.despesasMensais = maskedData.despesasMensais.map((item) => ({
+        ...item,
+        valor: formatCurrencyFromServer(item.valor),
+      }));
+    }
+
+    // Aplicar máscara de ano para veiculos
+    if (maskedData.veiculos) {
+      maskedData.veiculos = maskedData.veiculos.map((item) => ({
+        ...item,
+        anoFabricacao: item.anoFabricacao ? String(item.anoFabricacao) : '',
+      }));
+    }
+
+    return maskedData;
+  }, [formatCurrencyFromServer]);
+
+  // Limpar cache antigo ao montar (uma vez por sessão)
+  useEffect(() => {
+    const hasClearedCache = sessionStorage.getItem('has-cleared-mask-cache');
+    if (!hasClearedCache) {
+      // Limpar dados antigos que podem ter formatação errada
+      const storageData = sessionStorage.getItem('scholarship-form');
+      if (storageData) {
+        try {
+          const parsed = JSON.parse(storageData);
+          if (parsed.state?.formData?.property_relations) {
+            // Remover dados antigos do cache
+            delete parsed.state.formData.property_relations;
+            sessionStorage.setItem('scholarship-form', JSON.stringify(parsed));
+            sessionStorage.setItem('has-cleared-mask-cache', 'true');
+          }
+        } catch {
+          // Ignorar erros
+        }
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (data) {
+      const maskedData = applyMasksToData(data);
       methods.reset({
         ...methods.getValues(),
-        ...(data as Partial<PropertyRelationsInfo>),
+        ...(maskedData as Partial<PropertyRelationsInfo>),
       });
     }
-  }, [data, methods]);
+  }, [data, methods, applyMasksToData]);
 
   const unmaskDigits = (value: string) => value.replace(/\D/g, '');
 

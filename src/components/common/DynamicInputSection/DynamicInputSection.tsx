@@ -1,6 +1,6 @@
-import { maskDate, parseCurrency, maskCurrencyInput } from '@/utils/transformMasks';
+import { maskDate, parseCurrency } from '@/utils/transformMasks';
 import { Info, Plus, Trash } from 'lucide-react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type FieldError, useFieldArray, useFormContext } from 'react-hook-form';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
@@ -52,6 +52,8 @@ const DynamicInputSectionComponent = ({
     control,
     register,
     formState: { errors },
+    setValue,
+    getValues,
   } = useFormContext();
   const [openModal, setOpenModal] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -64,6 +66,43 @@ const DynamicInputSectionComponent = ({
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const isAddingRef = useRef(false);
   const lastAddTimeRef = useRef<number>(0);
+
+  // Aplicar máscaras aos valores existentes quando os dados são carregados
+  useEffect(() => {
+    if (fields.length === 0) return;
+
+    fields.forEach((field, index) => {
+      fieldNames.forEach((fieldName) => {
+        const mask = fieldMasks[fieldName];
+        const fieldKey = `${namePrefix}.${index}.${fieldName}`;
+
+        if (mask === 'currency') {
+          const currentValue = getValues(fieldKey);
+
+          // Se o valor existe e não está formatado
+          if (currentValue && String(currentValue).trim() !== '' && !String(currentValue).includes('R$')) {
+            // Remove caracteres não numéricos
+            const cleanValue = String(currentValue).replace(/\D/g, '');
+
+            if (cleanValue && cleanValue !== '0') {
+              // Tratar como centavos (dividir por 100)
+              const numValue = parseInt(cleanValue, 10) / 100;
+
+              if (!isNaN(numValue)) {
+                const formatted = numValue.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                });
+                setValue(fieldKey, formatted, { shouldValidate: false });
+              }
+            }
+          }
+        }
+      });
+    });
+  }, [fields, fieldMasks, fieldNames, namePrefix, getValues, setValue]);
 
   // Calculate total diretamente dos fields do useFieldArray
   const totalValue = useMemo(() => {
@@ -142,7 +181,7 @@ const DynamicInputSectionComponent = ({
     : false;
 
   const createMaskedInput = useCallback((path: string, mask: MaskType | undefined, fieldError?: FieldError, placeholder?: string) => {
-    const { onChange, onBlur, ...registerProps } = register(path, {
+    const { onBlur, ...registerProps } = register(path, {
       required: required ? 'Campo obrigatório' : false,
       validate: (val: string) => {
         if (mask === 'year') {
@@ -168,20 +207,52 @@ const DynamicInputSectionComponent = ({
       } else if (mask === 'date') {
         val = maskDate(val);
       } else if (mask === 'currency') {
-        val = maskCurrencyInput(val);
+        // Extrair apenas os números e REMOVER ZEROS À ESQUERDA
+        let onlyNumbers = val.replace(/\D/g, '');
+
+        // CRUCIAL: Remover zeros à esquerda para evitar "000150"
+        onlyNumbers = onlyNumbers.replace(/^0+/, '') || '0';
+
+        if (onlyNumbers === '0') {
+          val = 'R$ 0,00';
+        } else {
+          // Converter para centavos (dividir por 100)
+          // 150 → 1.50 → R$ 1,50
+          const number = parseInt(onlyNumbers, 10) / 100;
+
+          // Formatar como moeda brasileira
+          val = number.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        }
       }
 
-      // Criar um novo evento com o valor mascarado
-      const maskedEvent = {
-        ...e,
-        target: {
-          ...e.target,
-          value: val
-        }
-      } as React.ChangeEvent<HTMLInputElement>;
+      // Usar setValue diretamente para garantir que o valor seja atualizado
+      setValue(path, val, { shouldValidate: false, shouldDirty: true });
+    };
 
-      // Chamar o onChange do register com o valor mascarado
-      onChange(maskedEvent);
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Para máscaras numéricas, bloquear teclas não-numéricas
+      if (mask === 'year' || mask === 'currency') {
+        // Permitir teclas de controle
+        const allowedKeys = [
+          'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
+          'ArrowUp', 'ArrowDown', 'Home', 'End', 'Tab'
+        ];
+
+        // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        if (e.ctrlKey || e.metaKey) {
+          return;
+        }
+
+        // Bloquear teclas que não são números ou teclas permitidas
+        if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) {
+          e.preventDefault();
+        }
+      }
     };
 
     return (
@@ -193,6 +264,7 @@ const DynamicInputSectionComponent = ({
           }
           onChange={handleChange}
           onBlur={onBlur}
+          onKeyDown={handleKeyDown}
           inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? 'numeric' : 'text'}
           maxLength={mask === 'year' ? 4 : mask === 'date' ? 10 : undefined}
           className={`
@@ -210,7 +282,7 @@ const DynamicInputSectionComponent = ({
         )}
       </div>
     );
-  }, [register, required]);
+  }, [register, required, setValue]);
 
   const renderField = useCallback((
     fieldName: string,
