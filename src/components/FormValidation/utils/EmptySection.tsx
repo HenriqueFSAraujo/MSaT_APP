@@ -4,7 +4,7 @@ interface EmptySectionProps {
     title: string;
 }
 
-export const EmptySection = ({ title }: EmptySectionProps) => (
+export const EmptySection = () => (
     <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="p-4 bg-gray-100 rounded-full mb-4">
             <XCircle className="w-8 h-8 text-gray-400" />

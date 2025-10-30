@@ -12,7 +12,6 @@ import {
     useFamilyCompositionData,
     usePropertyData
 } from '@/services/queries/forms';
-import { useAllDocumentsList } from '@/services/queries/forms/DocumentData';
 
 interface ApiScholarshipData {
     segmentoAno?: string;

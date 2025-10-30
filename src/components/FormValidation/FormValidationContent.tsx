@@ -69,7 +69,6 @@ type FormDataT = any;
 
 export const FormValidationContent = ({
     formData,
-    validationStatus,
     validateSection,
     activeTab,
     studentId
@@ -267,20 +266,20 @@ export const FormValidationContent = ({
             const indicesMap = new Map<number, number>();
             let currentDisplayIndex = 1;
 
-            documentTypes.forEach((docType) => {
-                const docs = getDocumentsByType(docType);
-                docs.forEach((doc, idx) => {
-                    indicesMap.set(doc.id, currentDisplayIndex);
-                    currentDisplayIndex++;
-                });
-            });
+                                            documentTypes.forEach((docType) => {
+                                                const docs = getDocumentsByType(docType);
+                                                docs.forEach((doc) => {
+                                                    indicesMap.set(doc.id, currentDisplayIndex);
+                                                    currentDisplayIndex++;
+                                                });
+                                            });
 
             setDocumentIndices(indicesMap);
             setSelectedDocuments(documentsData.map(doc => doc.id));
         }
     };
 
-    const renderEmptySection = (title: string) => (
+    const renderEmptySection = () => (
         <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="p-4 bg-gray-100 rounded-full mb-4">
                 <XCircle className="w-8 h-8 text-gray-400" />
@@ -336,7 +335,7 @@ export const FormValidationContent = ({
                                     </div>
                                 </div>
                             ) : (
-                                renderEmptySection('Processo de Bolsa de Estudo')
+                                renderEmptySection()
                             )}
                         </div>
 
@@ -428,7 +427,7 @@ export const FormValidationContent = ({
                                     </div>
                                 </div>
                             ) : (
-                                renderEmptySection('Dados Pessoais')
+                                renderEmptySection()
                             )}
                         </div>
 
@@ -508,7 +507,7 @@ export const FormValidationContent = ({
                                     </div>
                                 </div>
                             ) : (
-                                renderEmptySection('Dados dos Pais')
+                                renderEmptySection()
                             )}
                         </div>
 
@@ -594,7 +593,7 @@ export const FormValidationContent = ({
                                     </div>
                                 </div>
                             ) : (
-                                renderEmptySection('Endereço')
+                                renderEmptySection()
                             )}
                         </div>
 
@@ -692,37 +691,37 @@ export const FormValidationContent = ({
                                                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                                                                         className="overflow-hidden"
                                                                     >
-                                                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                                            <FieldDisplay
-                                                                                label="Nome Completo"
-                                                                                value={membro.nomeCompleto}
-                                                                            />
-                                                                            <FieldDisplay
-                                                                                label="Escolaridade"
-                                                                                value={membro.escolaridade}
-                                                                            />
-                                                                            <FieldDisplay
-                                                                                label="Grau de Parentesco"
-                                                                                value={membro.grauParentesco}
-                                                                            />
-                                                                            <FieldDisplay
-                                                                                label="Data de Nascimento"
-                                                                                value={formatDate(membro.dataNascimento)}
-                                                                            />
-                                                                            <FieldDisplay
-                                                                                label="Profissão Ativa"
-                                                                                value={membro.profissaoAtiva}
-                                                                            />
-                                                                            <FieldDisplay
-                                                                                label="Estado Civil"
-                                                                                value={membro.estadoCivil}
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                            <FieldDisplay
+                                                                label="Nome Completo"
+                                                                value={membro.nomeCompleto}
+                                                            />
+                                                            <FieldDisplay
+                                                                label="Escolaridade"
+                                                                value={membro.escolaridade}
+                                                            />
+                                                            <FieldDisplay
+                                                                label="Grau de Parentesco"
+                                                                value={membro.grauParentesco}
+                                                            />
+                                                            <FieldDisplay
+                                                                label="Data de Nascimento"
+                                                                value={formatDate(membro.dataNascimento)}
+                                                            />
+                                                            <FieldDisplay
+                                                                label="Profissão Ativa"
+                                                                value={membro.profissaoAtiva}
+                                                            />
+                                                            <FieldDisplay
+                                                                label="Estado Civil"
+                                                                value={membro.estadoCivil}
                                                                                 fieldType="maritalStatus"
-                                                                            />
-                                                                            <FieldDisplay
-                                                                                label="Salário Bruto"
-                                                                                value={formatCurrency(membro.salarioBruto)}
-                                                                            />
-                                                                        </div>
+                                                            />
+                                                            <FieldDisplay
+                                                                label="Salário Bruto"
+                                                                value={formatCurrency(membro.salarioBruto)}
+                                                            />
+                                                        </div>
                                                                     </motion.div>
                                                                 )}
                                                             </AnimatePresence>
@@ -734,7 +733,7 @@ export const FormValidationContent = ({
                                     )}
                                 </div>
                             ) : (
-                                renderEmptySection('Composição Familiar')
+                                renderEmptySection()
                             )}
                         </div>
 
@@ -878,7 +877,7 @@ export const FormValidationContent = ({
                                                         <span className="text-sm text-gray-700 truncate">
                                                             {getFriendlyDocumentName(doc, idx + 1)}
                                                         </span>
-                                                    </div>
+                                        </div>
                                                             <div className="flex gap-2">
                                                                 <Button
                                                                     type="button"
@@ -902,7 +901,7 @@ export const FormValidationContent = ({
                                                                     <Download className="h-4 w-4 mr-2" />
                                                                     Baixar
                                                                 </Button>
-                                                            </div>
+                                    </div>
                                                         </div>
                                                     ))}
                                                             </div>
@@ -914,7 +913,7 @@ export const FormValidationContent = ({
                                     })}
                                 </div>
                             ) : (
-                                renderEmptySection('Documentos Necessários')
+                                renderEmptySection()
                             )}
 
                             {/* Seção para documentos selecionados para revisão */}
@@ -959,8 +958,8 @@ export const FormValidationContent = ({
                                                     return { type, items: sortedItems };
                                                 });
 
-                                            return sortedGroups.map(({ type, items }) =>
-                                                items.map(({ id: docId, doc, displayIndex }) => {
+                                return sortedGroups.map(({ items }) =>
+                                    items.map(({ id: docId, doc, displayIndex }) => {
                                                     // Extrair apenas o nome sem o contador para exibir
                                                     const friendlyName = doc.documentType && documentLabels[doc.documentType]
                                                         ? documentLabels[doc.documentType]
@@ -1066,7 +1065,7 @@ export const FormValidationContent = ({
                                     )}
                                 </div>
                             ) : (
-                                renderEmptySection('Bens e Posses')
+                                renderEmptySection()
                             )}
                         </div>
 
@@ -1136,7 +1135,7 @@ export const FormValidationContent = ({
                                     </div>
                                 </div>
                             ) : (
-                                renderEmptySection('Termos de Consentimento')
+                                renderEmptySection()
                             )}
                         </div>
 

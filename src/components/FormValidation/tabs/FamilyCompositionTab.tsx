@@ -119,7 +119,7 @@ export const FamilyCompositionTab = ({ familyData, validateSection }: FamilyComp
                         )}
                     </div>
                 ) : (
-                    <EmptySection title="Composição Familiar" />
+                    <EmptySection />
                 )}
             </div>
 

@@ -10,9 +10,10 @@ import {
   TableHeader
 } from '@/components/ui/table';
 import { User } from '@/services/queries/useGetUsers';
+import type { SortField, SortOrder } from '@/store/useUsersPaginationStore';
 import { formatCpf } from '@/utils/transformMasks';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, ClipboardList, FilePenLine, Eye } from 'lucide-react';
+import { ArrowUp, ArrowDown, ChevronDown, ClipboardList, FilePenLine, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogChangeStatusUser } from '../common/DialogChangeStatusUser/DialogChangeStatusUser';
@@ -24,6 +25,9 @@ interface UsersTableProps {
   onStatusChange: (status: string) => void;
   generateOpinion: (studantId: number) => void;
   goesForm: (studantId: number) => void;
+  sortField: SortField;
+  sortOrder: SortOrder;
+  onSortChange: (field: SortField, order: SortOrder) => void;
 }
 
 type handleStatusModalProps = {
@@ -33,12 +37,59 @@ type handleStatusModalProps = {
 
 const statusOptions = ['ativo', 'inativo'];
 
+const SortableHeader = ({
+  label,
+  field,
+  currentSortField,
+  currentSortOrder,
+  onSort,
+}: {
+  label: string;
+  field: SortField;
+  currentSortField: SortField;
+  currentSortOrder: SortOrder;
+  onSort: (field: SortField, order: SortOrder) => void;
+}) => {
+  const isActive = currentSortField === field;
+  const handleClick = () => {
+    if (isActive) {
+      // Alterna entre asc e desc
+      onSort(field, currentSortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Define como asc quando não está ativo
+      onSort(field, 'asc');
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none text-white focus:outline-none focus:ring-0 p-0"
+      onClick={handleClick}
+    >
+      <span>{label}</span>
+      {isActive ? (
+        currentSortOrder === 'asc' ? (
+          <ArrowUp className="h-4 w-4 text-white" />
+        ) : (
+          <ArrowDown className="h-4 w-4 text-white" />
+        )
+      ) : (
+        <ArrowUp className="h-4 w-4 text-white/40" />
+      )}
+    </button>
+  );
+};
+
 export function UsersTable({
   users,
   statusFilter,
   onStatusChange,
   generateOpinion,
   goesForm,
+  sortField,
+  sortOrder,
+  onSortChange,
 }: UsersTableProps) {
   const [UserStatus, setUserStatus] = useState(false);
   const [selectedUserID, setSelectedUserID] = useState<number | undefined>();
@@ -130,10 +181,33 @@ export function UsersTable({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <TableHead className="text-white">Id</TableHead>
-            <TableHead className="text-white">Nome</TableHead>
-            <TableHead className="text-white">CPF</TableHead>
-            <TableHead className="text-white">E-mail</TableHead>
+            <TableHead className="text-white">
+              <SortableHeader
+                label="Nome"
+                field="name"
+                currentSortField={sortField}
+                currentSortOrder={sortOrder}
+                onSort={onSortChange}
+              />
+            </TableHead>
+            <TableHead className="text-white">
+              <SortableHeader
+                label="CPF"
+                field="cpf"
+                currentSortField={sortField}
+                currentSortOrder={sortOrder}
+                onSort={onSortChange}
+              />
+            </TableHead>
+            <TableHead className="text-white">
+              <SortableHeader
+                label="E-mail"
+                field="email"
+                currentSortField={sortField}
+                currentSortOrder={sortOrder}
+                onSort={onSortChange}
+              />
+            </TableHead>
             <TableHead className="text-white">Tipo</TableHead>
             <TableHead className="text-white">
               <Popover>
@@ -173,7 +247,7 @@ export function UsersTable({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <TableCell colSpan={6} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   Nenhum usuário encontrado
                 </TableCell>
               </motion.tr>
@@ -187,9 +261,6 @@ export function UsersTable({
                   whileHover="hover"
                   className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
                 >
-                  <TableCell className="text-gray-800 flex items-center gap-2 mt-[0.3rem]">
-                    {user.userId}
-                  </TableCell>
                   <TableCell className="text-gray-800">{user.name}</TableCell>
                   <TableCell className="text-gray-800">{formatCpf(user.cpf || '')}</TableCell>
                   <TableCell className="text-gray-800">{user.email}</TableCell>

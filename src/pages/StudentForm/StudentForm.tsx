@@ -48,6 +48,7 @@ const StudentForm = () => {
       useScholarshipFormStore.getState().clearFormData();
       reset();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstLogin, StudentId]);
 
   const handleConfirmReset = () => {
@@ -56,11 +57,11 @@ const StudentForm = () => {
     reset();
   };
 
-  const handleCancel = () => {
-    setShowConfirmDialog(false);
-    // Voltar para a página anterior
-    navigate(-1);
-  };
+  // const handleCancel = () => {
+  //   setShowConfirmDialog(false);
+  //   // Voltar para a página anterior
+  //   navigate(-1);
+  // };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -92,7 +93,7 @@ const StudentForm = () => {
   };
 
   const handleClickBack = () => {
-    if (role === 'ROLE_ADMIN') return navigate('/dashboard-users');
+    if (role === 'ROLE_ADMIN') return navigate(`/form-validation/${StudentId}`);
     navigate(`/student-portal/${StudentId}`);
   };
 

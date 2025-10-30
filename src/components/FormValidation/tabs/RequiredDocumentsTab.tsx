@@ -1,8 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CheckCircle2, Eye, FileText, Download, X, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAllDocumentsList } from '@/services/queries/forms/DocumentData';
 import { useFormValidationStore } from '@/store/formValidationStore';
 
@@ -77,7 +76,7 @@ const getFriendlyDocumentName = (doc: { documentType?: string; nomeArquivo?: str
     return name;
 };
 
-const renderEmptySection = (title: string) => (
+const renderEmptySection = () => (
     <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="p-4 bg-gray-100 rounded-full mb-4">
             <X className="w-8 h-8 text-gray-400" />
@@ -87,9 +86,9 @@ const renderEmptySection = (title: string) => (
     </div>
 );
 
-export const RequiredDocumentsTab = ({ studentId, validateSection }: RequiredDocumentsTabProps) => {
+export const RequiredDocumentsTab = ({ studentId }: RequiredDocumentsTabProps) => {
     const userId = studentId ? parseInt(studentId, 10) : 0;
-    const { data: documentsData, isLoading: isDocumentsLoading, refetch } = useAllDocumentsList(userId, documentTypes);
+    const { data: documentsData, isLoading: isDocumentsLoading } = useAllDocumentsList(userId, documentTypes);
 
     // Usar store Zustand
     const {
@@ -281,7 +280,7 @@ export const RequiredDocumentsTab = ({ studentId, validateSection }: RequiredDoc
                         })}
                     </div>
                 ) : (
-                    renderEmptySection('Documentos Necessários')
+                    renderEmptySection()
                 )}
 
                 {/* Seção para documentos selecionados para revisão */}
@@ -323,7 +322,7 @@ export const RequiredDocumentsTab = ({ studentId, validateSection }: RequiredDoc
                                         return { type, items: sortedItems };
                                     });
 
-                                return sortedGroups.map(({ type, items }) =>
+                                return sortedGroups.map(({ items }) =>
                                     items.map(({ id: docId, doc, displayIndex }) => {
                                         const friendlyName = doc.documentType && documentLabels[doc.documentType]
                                             ? documentLabels[doc.documentType]

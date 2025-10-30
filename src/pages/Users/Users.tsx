@@ -1,16 +1,19 @@
-import { Role, UsersFilters } from '@/components/UsersFilters/UsersFilters';
+import { UsersFilters } from '@/components/UsersFilters/UsersFilters';
+import type { Role, SortField, SortOrder } from '@/store/useUsersPaginationStore';
 import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCards';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
 import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
 import { Card, CardContent } from '@/components/ui/card';
+import { Pagination } from '@/components/ui/pagination';
 import { useGetUsers, User } from '@/services/queries/useGetUsers';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { useUsersPaginationStore } from '@/store/useUsersPaginationStore';
 import { motion } from 'framer-motion';
 import { BookOpenText } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export enum RoleFilter {
@@ -20,17 +23,145 @@ export enum RoleFilter {
 }
 
 export default function UsuariosPage() {
-  const [filters, setFilters] = useState({
-    status: ['ativo', 'inativo'],
-    role: 'Aluno' as Role,
-    searchTerm: '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const isInitializing = useRef(true);
+  const isSyncingFromUrl = useRef(false);
 
-  const searchableFields: (keyof User)[] = ['name', 'email', 'cpf'];
+  // Função para sincronizar URL com Zustand
+  const syncUrlToStore = () => {
+    isSyncingFromUrl.current = true;
+
+    // Ler da URL ou usar defaults
+    const currentPage = parseInt(searchParams.get('page') || '1', 10);
+    const itemsPerPage = parseInt(searchParams.get('limit') || '10', 10);
+    const searchTerm = searchParams.get('search') || '';
+    const role = (searchParams.get('role') || 'Aluno') as Role;
+    const statusParam = searchParams.get('status');
+    const status = statusParam ? statusParam.split(',') : ['ativo', 'inativo'];
+    const sortField = (searchParams.get('sortField') || 'name') as SortField;
+    const sortOrder = (searchParams.get('sortOrder') || 'asc') as SortOrder;
+
+    // Atualizar o store
+    useUsersPaginationStore.getState().setCurrentPage(currentPage);
+    useUsersPaginationStore.getState().setItemsPerPage(itemsPerPage);
+    useUsersPaginationStore.getState().setSearchTerm(searchTerm);
+    useUsersPaginationStore.getState().setRole(role);
+    useUsersPaginationStore.getState().setStatus(status);
+    useUsersPaginationStore.getState().setSort(sortField, sortOrder);
+
+    // Resetar flag após um pequeno delay para permitir que o store atualize
+    setTimeout(() => {
+      isSyncingFromUrl.current = false;
+    }, 0);
+  };
+
+  // Sincronizar URL para store na montagem
+  useEffect(() => {
+    syncUrlToStore();
+    isInitializing.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sincronizar quando a URL mudar (navegação do browser - voltar/avançar)
+  useEffect(() => {
+    if (!isInitializing.current) {
+      syncUrlToStore();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.toString()]);
+
+  const {
+    currentPage,
+    itemsPerPage,
+    searchTerm,
+    role,
+    status,
+    sortField,
+    sortOrder,
+    setCurrentPage,
+    setItemsPerPage,
+    setSearchTerm,
+    setRole,
+    setStatus,
+    setSort,
+    resetPagination,
+  } = useUsersPaginationStore();
+
+  // Função para atualizar URL quando valores mudarem
+  const updateUrl = (
+    updates: Partial<{
+      page: number;
+      limit: number;
+      search: string;
+      role: Role;
+      status: string[];
+      sortField: SortField;
+      sortOrder: SortOrder;
+    }>
+  ) => {
+    const newParams = new URLSearchParams(searchParams);
+
+    if (updates.page !== undefined) {
+      if (updates.page === 1) {
+        newParams.delete('page');
+      } else {
+        newParams.set('page', updates.page.toString());
+      }
+    }
+
+    if (updates.limit !== undefined) {
+      if (updates.limit === 10) {
+        newParams.delete('limit');
+      } else {
+        newParams.set('limit', updates.limit.toString());
+      }
+    }
+
+    if (updates.search !== undefined) {
+      if (updates.search === '') {
+        newParams.delete('search');
+      } else {
+        newParams.set('search', updates.search);
+      }
+    }
+
+    if (updates.role !== undefined) {
+      if (updates.role === 'Aluno') {
+        newParams.delete('role');
+      } else {
+        newParams.set('role', updates.role);
+      }
+    }
+
+    if (updates.status !== undefined) {
+      if (updates.status.length === 2 || updates.status.length === 0) {
+        newParams.delete('status');
+      } else {
+        newParams.set('status', updates.status.join(','));
+      }
+    }
+
+    if (updates.sortField !== undefined) {
+      if (updates.sortField === 'name') {
+        newParams.delete('sortField');
+      } else {
+        newParams.set('sortField', updates.sortField);
+      }
+    }
+
+    if (updates.sortOrder !== undefined) {
+      if (updates.sortOrder === 'asc') {
+        newParams.delete('sortOrder');
+      } else {
+        newParams.set('sortOrder', updates.sortOrder);
+      }
+    }
+
+    setSearchParams(newParams, { replace: true });
+  };
 
   const { data: users = [] } = useGetUsers();
-
-  const navigate = useNavigate();
 
   const normalizedUsers: User[] = users.map((user) => {
     let roleName = user.roleName;
@@ -55,28 +186,33 @@ export default function UsuariosPage() {
       setChangePasswordModal(true);
     }
     useScholarshipFormStore.getState().clearFormData();
-  }, []);
+  }, [firstLogin]);
 
   const [openModal, setOpenModal] = useState(false);
 
-  const toggleStatus = (status: string) => {
-    setFilters((prev) => {
-      const statusSet = new Set(prev.status);
-      if (statusSet.has(status)) {
-        statusSet.delete(status);
-      } else {
-        statusSet.add(status);
-      }
-      return { ...prev, status: Array.from(statusSet) };
-    });
+  const toggleStatus = (statusItem: string) => {
+    const statusSet = new Set(status);
+    if (statusSet.has(statusItem)) {
+      statusSet.delete(statusItem);
+    } else {
+      statusSet.add(statusItem);
+    }
+    const newStatus = Array.from(statusSet);
+    setStatus(newStatus);
+    resetPagination();
+    updateUrl({ status: newStatus, page: 1 });
   };
 
-  const handleRoleChange = (role: Role) => {
-    setFilters((prev) => ({ ...prev, role }));
+  const handleRoleChange = (newRole: Role) => {
+    setRole(newRole);
+    resetPagination();
+    updateUrl({ role: newRole, page: 1 });
   };
 
-  const handleSearch = (searchTerm: string) => {
-    setFilters((prev) => ({ ...prev, searchTerm }));
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    resetPagination();
+    updateUrl({ search: term, page: 1 });
   };
 
   const handleNewUser = () => {
@@ -92,30 +228,116 @@ export default function UsuariosPage() {
   };
 
   const filteredUsers = useMemo(() => {
+    const searchableFields: (keyof User)[] = ['name', 'email', 'cpf'];
     const roleLabelToApi: Record<Role, string> = {
       Aluno: 'ROLE_USER',
       Gestor: 'ROLE_ADMIN',
       Todos: 'Todos',
     };
 
-    const apiRole = roleLabelToApi[filters.role];
+    const apiRole = roleLabelToApi[role];
 
-    return normalizedUsers.filter((user: User) => {
+    let filtered = normalizedUsers.filter((user: User) => {
       const matchesRole = apiRole === 'Todos' || user.roleName === apiRole;
 
-      const searchTerm = filters.searchTerm.toLowerCase();
+      const searchTermLower = searchTerm.toLowerCase();
       const matchesSearch = searchableFields.some((field) =>
         String(user[field] ?? '')
           .toLowerCase()
-          .includes(searchTerm)
+          .includes(searchTermLower)
       );
 
       const matchesStatus =
-        filters.status.length === 0 || filters.status.includes(user.active ? 'ativo' : 'inativo');
+        status.length === 0 || status.includes(user.active ? 'ativo' : 'inativo');
 
       return matchesRole && matchesSearch && matchesStatus;
     });
-  }, [normalizedUsers, filters]);
+
+    // Aplicar ordenação
+    filtered = [...filtered].sort((a, b) => {
+      let aValue: string = '';
+      let bValue: string = '';
+
+      if (sortField === 'name') {
+        aValue = (a.name || '').toLowerCase();
+        bValue = (b.name || '').toLowerCase();
+      } else if (sortField === 'email') {
+        aValue = (a.email || '').toLowerCase();
+        bValue = (b.email || '').toLowerCase();
+      } else if (sortField === 'cpf') {
+        aValue = (a.cpf || '').toLowerCase();
+        bValue = (b.cpf || '').toLowerCase();
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue.localeCompare(bValue);
+      } else {
+        return bValue.localeCompare(aValue);
+      }
+    });
+
+    return filtered;
+  }, [normalizedUsers, role, searchTerm, status, sortField, sortOrder]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredUsers.slice(startIndex, endIndex);
+  }, [filteredUsers, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+      updateUrl({ page: 1 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalPages, currentPage, setCurrentPage]);
+
+  // Sincronizar mudanças do store com a URL (apenas se vieram do store, não da URL)
+  useEffect(() => {
+    // Não atualizar URL se estiver inicializando ou sincronizando da URL
+    if (isInitializing.current || isSyncingFromUrl.current) {
+      return;
+    }
+
+    // Verificar se os valores da URL são diferentes dos do store
+    // Isso significa que os valores mudaram através do store, não da URL
+    const urlPage = parseInt(searchParams.get('page') || '1', 10);
+    const urlLimit = parseInt(searchParams.get('limit') || '10', 10);
+    const urlSearch = searchParams.get('search') || '';
+    const urlRole = searchParams.get('role') || 'Aluno';
+    const urlStatus = searchParams.get('status')?.split(',') || ['ativo', 'inativo'];
+    const urlSortField = searchParams.get('sortField') || 'name';
+    const urlSortOrder = searchParams.get('sortOrder') || 'asc';
+
+    // Comparar arrays de status ordenados
+    const statusEqual =
+      JSON.stringify(urlStatus.sort()) === JSON.stringify(status.sort());
+
+    // Se houver diferença entre URL e store, atualizar URL
+    if (
+      urlPage !== currentPage ||
+      urlLimit !== itemsPerPage ||
+      urlSearch !== searchTerm ||
+      urlRole !== role ||
+      !statusEqual ||
+      urlSortField !== sortField ||
+      urlSortOrder !== sortOrder
+    ) {
+      updateUrl({
+        page: currentPage,
+        limit: itemsPerPage,
+        search: searchTerm,
+        role,
+        status,
+        sortField,
+        sortOrder,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, itemsPerPage, searchTerm, role, status, sortField, sortOrder]);
 
   const metrics = useMemo(() => {
     const totalAlunos = filteredUsers.filter((user) => user.roleName === 'ROLE_USER').length;
@@ -176,9 +398,9 @@ export default function UsuariosPage() {
 
             <motion.div variants={itemVariants}>
               <UsersFilters
-                searchTerm={filters.searchTerm}
+                searchTerm={searchTerm}
                 onSearchChange={handleSearch}
-                selectedRole={filters.role}
+                selectedRole={role}
                 onRoleChange={handleRoleChange}
                 onNewUser={handleNewUser}
               />
@@ -191,12 +413,42 @@ export default function UsuariosPage() {
               transition={{ delay: 0.3 }}
             >
               <UsersTable
-                users={filteredUsers}
-                statusFilter={filters.status}
+                users={paginatedUsers}
+                statusFilter={status}
                 onStatusChange={toggleStatus}
                 generateOpinion={handleEditUser}
                 goesForm={goesForm}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={(field, order) => {
+                  setSort(field, order);
+                  updateUrl({ sortField: field, sortOrder: order });
+                }}
               />
+              {filteredUsers.length > 0 && (
+                <motion.div
+                  variants={itemVariants}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => {
+                      setCurrentPage(page);
+                      updateUrl({ page });
+                    }}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={filteredUsers.length}
+                    onItemsPerPageChange={(items) => {
+                      setItemsPerPage(items);
+                      setCurrentPage(1);
+                      updateUrl({ limit: items, page: 1 });
+                    }}
+                  />
+                </motion.div>
+              )}
             </motion.div>
           </CardContent>
         </Card>
