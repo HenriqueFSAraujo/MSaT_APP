@@ -5,6 +5,8 @@ import { FormValidationHeader } from '@/components/FormValidation/FormValidation
 import { FormValidationSidebar } from '@/components/FormValidation/FormValidationSidebar';
 import { FormValidationContent } from '@/components/FormValidation/FormValidationContent';
 import { useFormValidationStore } from '@/store/formValidationStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { DialogConfirmReset } from '@/components/FormValidation/DialogConfirmReset';
 import {
     useScholarShipData,
     usePersonalData,
@@ -31,21 +33,23 @@ const FormValidation = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { id } = useParams<{ id: string }>();
-    
+
     // Obter o studentId do parâmetro da URL de forma reativa
     const studentId = id || null;
     const userId = studentId ? parseInt(studentId, 10) : 0;
 
     // Obter activeTab do store
-    const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, validationStatus: savedValidationStatus, setValidationStatus: saveValidationStatus } = useFormValidationStore();
+    const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, validationStatus: savedValidationStatus, setValidationStatus: saveValidationStatus, hasChanges, reset } = useFormValidationStore();
     const [activeTab, setActiveTab] = useState<string>(savedActiveTab);
     const [validationStatus, setValidationStatus] = useState<Record<string, string>>(savedValidationStatus);
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
     // Garantir que quando o ID mudar, os dados sejam recarregados e o estado seja resetado
     useEffect(() => {
         if (userId && userId > 0) {
             // Invalidar todas as queries relacionadas a este usuário para forçar recarregamento
-            queryClient.invalidateQueries({ 
+            queryClient.invalidateQueries({
                 predicate: (query) => {
                     // Invalidar queries que contêm dados de formulário deste userId
                     const queryKey = query.queryKey;
@@ -60,7 +64,7 @@ const FormValidation = () => {
                     );
                 }
             });
-            
+
             // Resetar status de validação quando mudar de usuário
             setValidationStatus({});
             saveValidationStatus({});
@@ -83,7 +87,7 @@ const FormValidation = () => {
                     queryKey[0] === 'get-property-data' ||
                     queryKey[0] === 'documents-list'
                 );
-                
+
                 if (isFormQuery && queryKey[1] !== userId) {
                     return true;
                 }
@@ -335,8 +339,32 @@ const FormValidation = () => {
 
     const handleEditForm = () => {
         if (studentId) {
-            navigate(`/students-form/${studentId}`);
+            // Verificar se há alterações ANTES de navegar
+            if (hasChanges()) {
+                // Armazenar a navegação pendente e mostrar dialog
+                setPendingNavigation(`/students-form/${studentId}`);
+                setShowConfirmDialog(true);
+            } else {
+                // Se não houver alterações, navegar normalmente
+                navigate(`/students-form/${studentId}`);
+            }
         }
+    };
+
+    const handleConfirmReset = () => {
+        if (pendingNavigation) {
+            // Resetar tudo e navegar
+            useScholarshipFormStore.getState().clearFormData();
+            reset();
+            navigate(pendingNavigation);
+            setPendingNavigation(null);
+        }
+        setShowConfirmDialog(false);
+    };
+
+    const handleCancelReset = () => {
+        setShowConfirmDialog(false);
+        setPendingNavigation(null);
     };
 
     const handleTabChange = (tab: string) => {
@@ -381,6 +409,13 @@ const FormValidation = () => {
                     )}
                 </div>
             </div>
+
+            {/* Dialog de confirmação para resetar alterações antes de navegar */}
+            <DialogConfirmReset
+                open={showConfirmDialog}
+                onOpenChange={handleCancelReset}
+                onConfirm={handleConfirmReset}
+            />
         </div>
     );
 };

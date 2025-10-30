@@ -20,7 +20,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FamilyComposition } from '@/components/FamilyComposition/FamilyComposition';
 import { Home } from 'lucide-react';
-import { DialogConfirmReset } from '@/components/FormValidation/DialogConfirmReset';
 
 const StudentForm = () => {
   const { role } = useAuthStore();
@@ -29,10 +28,9 @@ const StudentForm = () => {
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const { completedTabs, showTabValidation } = useTabStore();
   const [changePasswordModal, setChangePasswordModal] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { firstLogin } = useAuthStore();
   const navigate = useNavigate();
-  const { hasChanges, reset } = useFormValidationStore();
+  const { reset } = useFormValidationStore();
 
   useEffect(() => {
     console.log(StudentId);
@@ -45,28 +43,13 @@ const StudentForm = () => {
       setChangePasswordModal(true);
     }
 
-    // Verificar se há alterações na validação antes de resetar
-    if (hasChanges()) {
-      setShowConfirmDialog(true);
-    } else {
-      // Se não houver alterações, resetar normalmente
-      useScholarshipFormStore.getState().clearFormData();
-      reset();
-    }
+    // Resetar normalmente quando entrar no formulário
+    // O dialog já foi mostrado na tela anterior (FormValidation) se necessário
+    useScholarshipFormStore.getState().clearFormData();
+    reset();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstLogin, StudentId]);
 
-  const handleConfirmReset = () => {
-    setShowConfirmDialog(false);
-    useScholarshipFormStore.getState().clearFormData();
-    reset();
-  };
-
-  // const handleCancel = () => {
-  //   setShowConfirmDialog(false);
-  //   // Voltar para a página anterior
-  //   navigate(-1);
-  // };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -261,11 +244,6 @@ const StudentForm = () => {
         </motion.div>
       </div>
       <DialogPerfilAction open={changePasswordModal} onOpenChange={setChangePasswordModal} />
-      <DialogConfirmReset
-        open={showConfirmDialog}
-        onOpenChange={setShowConfirmDialog}
-        onConfirm={handleConfirmReset}
-      />
     </motion.div>
   );
 };
