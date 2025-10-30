@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { FormValidationHeader } from '@/components/FormValidation/FormValidationHeader';
 import { FormValidationSidebar } from '@/components/FormValidation/FormValidationSidebar';
 import { FormValidationContent } from '@/components/FormValidation/FormValidationContent';
@@ -28,40 +29,73 @@ interface ApiScholarshipData {
 
 const FormValidation = () => {
     const navigate = useNavigate();
-
-    const getStudentIdFromUrl = () => {
-        const pathname = window.location.pathname;
-        let match = pathname.match(/form-validation\/(\d+)/);
-        if (!match) {
-            match = pathname.match(/form-validation\/([^/]+)/);
-        }
-
-        if (match) {
-            return match[1];
-        }
-
-        const patterns = [
-            /form-validation\/(\d+)/,
-            /form-validation\/([^/]+)/,
-            /form-validation\/(.*)/
-        ];
-
-        for (const pattern of patterns) {
-            const testMatch = pathname.match(pattern);
-            if (testMatch) {
-                return testMatch[1];
-            }
-        }
-
-        return null;
-    };
-
-    const studentId = getStudentIdFromUrl();
+    const queryClient = useQueryClient();
+    const { id } = useParams<{ id: string }>();
+    
+    // Obter o studentId do parâmetro da URL de forma reativa
+    const studentId = id || null;
     const userId = studentId ? parseInt(studentId, 10) : 0;
 
     // Obter activeTab do store
     const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, validationStatus: savedValidationStatus, setValidationStatus: saveValidationStatus } = useFormValidationStore();
     const [activeTab, setActiveTab] = useState<string>(savedActiveTab);
+    const [validationStatus, setValidationStatus] = useState<Record<string, string>>(savedValidationStatus);
+
+    // Garantir que quando o ID mudar, os dados sejam recarregados e o estado seja resetado
+    useEffect(() => {
+        if (userId && userId > 0) {
+            // Invalidar todas as queries relacionadas a este usuário para forçar recarregamento
+            queryClient.invalidateQueries({ 
+                predicate: (query) => {
+                    // Invalidar queries que contêm dados de formulário deste userId
+                    const queryKey = query.queryKey;
+                    return (
+                        (queryKey[0] === 'get-scholar-ship-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'get-personal-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'get-parental-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'get-address-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'get-family-composition-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'get-property-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'documents-list' && queryKey[1] === userId)
+                    );
+                }
+            });
+            
+            // Resetar status de validação quando mudar de usuário
+            setValidationStatus({});
+            saveValidationStatus({});
+        }
+    }, [userId, queryClient, saveValidationStatus]);
+
+    // Validar se os dados retornados correspondem ao userId atual
+    // Isso garante que dados em cache antigos não sejam exibidos
+    useEffect(() => {
+        if (userId && userId > 0) {
+            // Verificar se há queries antigas com IDs diferentes no cache
+            const queriesToRemove = queryClient.getQueryCache().getAll().filter(query => {
+                const queryKey = query.queryKey;
+                const isFormQuery = (
+                    queryKey[0] === 'get-scholar-ship-data' ||
+                    queryKey[0] === 'get-personal-data' ||
+                    queryKey[0] === 'get-parental-data' ||
+                    queryKey[0] === 'get-address-data' ||
+                    queryKey[0] === 'get-family-composition-data' ||
+                    queryKey[0] === 'get-property-data' ||
+                    queryKey[0] === 'documents-list'
+                );
+                
+                if (isFormQuery && queryKey[1] !== userId) {
+                    return true;
+                }
+                return false;
+            });
+
+            // Remover queries antigas se necessário
+            queriesToRemove.forEach(query => {
+                queryClient.removeQueries({ queryKey: query.queryKey });
+            });
+        }
+    }, [userId, queryClient]);
 
     // Lazy loading: carregar apenas quando a aba for ativada
     const enabledMap: Record<string, boolean> = {
@@ -249,10 +283,9 @@ const FormValidation = () => {
     };
 
     // Usar dados reais se disponíveis, caso contrário usar dados mockados como fallback
-    const hasRealData = scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData;
+    // IMPORTANTE: Só usar dados reais se o userId corresponder - garantir que não exibimos dados de outro usuário
+    const hasRealData = (userId > 0) && (scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData);
     const displayFormData = hasRealData ? realFormData : mockFormData;
-
-    const [validationStatus, setValidationStatus] = useState<Record<string, string>>(savedValidationStatus);
 
     const getValidationStatus = (section: string) => {
         return validationStatus[section] || 'pending';

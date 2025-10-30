@@ -216,9 +216,49 @@ export const PersonalData = ({ label }: { label: string }) => {
       setFormData('personal_data', formValues);
 
       const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('personal_data');
+      markTabAsCompleted('personal_data', StudentId);
 
       setSelectedTab('parents_data');
+
+      // Converter dateBirth para formato ISO sempre
+      const formatDateToISO = (date: Date | string | undefined): string => {
+        if (!date) return '';
+        
+        // Se já for um objeto Date, converter diretamente
+        if (date instanceof Date) {
+          return date.toISOString();
+        }
+        
+        if (typeof date === 'string') {
+          // Se já estiver em formato ISO, retornar como está
+          if (date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+            return date;
+          }
+          
+          // Se estiver no formato DD/MM/YYYY (formato brasileiro)
+          const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+          const match = date.match(dateRegex);
+          if (match) {
+            const [, day, month, year] = match;
+            // Criar Date no formato YYYY-MM-DD e converter para ISO
+            const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            if (!isNaN(dateObj.getTime())) {
+              return dateObj.toISOString();
+            }
+          }
+          
+          // Tentar converter string para Date diretamente (para outros formatos)
+          const dateObj = new Date(date);
+          if (!isNaN(dateObj.getTime())) {
+            return dateObj.toISOString();
+          }
+          
+          // Fallback: retornar a string original se não puder converter
+          return date;
+        }
+        
+        return '';
+      };
 
       const payload = {
         userId: Number(StudentId),
@@ -232,11 +272,7 @@ export const PersonalData = ({ label }: { label: string }) => {
         cpfScholarship: formValues.cpfScholarship ?? '',
         phone: formValues.phone,
         gender: formValues.gender,
-        dateBirth: formValues.dateBirth
-          ? (typeof formValues.dateBirth === 'string'
-              ? formValues.dateBirth
-              : (formValues.dateBirth as Date).toISOString())
-          : '',
+        dateBirth: formatDateToISO(formValues.dateBirth),
         deficiency: formValues.deficiency,
         educasenso: formValues.educacenso ?? '',
       };

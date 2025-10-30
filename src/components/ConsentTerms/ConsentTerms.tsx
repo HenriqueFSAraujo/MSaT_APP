@@ -77,7 +77,7 @@ export const ConsentTerms = ({ label }: { label: string }) => {
             setFormData('consent_terms', formValues);
 
             const { markTabAsCompleted } = useTabStore.getState();
-            markTabAsCompleted('consent_terms');
+            markTabAsCompleted('consent_terms', StudentId || null);
 
             console.log('Processo finalizado com sucesso!');
 

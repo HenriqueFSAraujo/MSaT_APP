@@ -764,6 +764,8 @@ export const FormValidationContent = ({
                     <RequiredDocumentsTab
                         studentId={studentId}
                         validateSection={validateSection}
+                        onViewDocument={handleViewDocument}
+                        onDownloadDocument={handleDownloadDocument}
                     />
                 </TabsContent>
 

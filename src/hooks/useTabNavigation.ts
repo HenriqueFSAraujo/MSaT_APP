@@ -44,7 +44,8 @@ export const useTabNavigation = (currentTab: string, form?: any) => {
     };
 
     const completeCurrentTab = () => {
-        markTabAsCompleted(currentTab);
+        const { currentUserId } = useTabStore.getState();
+        markTabAsCompleted(currentTab, currentUserId);
     };
 
     const navigateToNextTab = async () => {

@@ -165,7 +165,7 @@ export const DocumentData = ({ label }: { label: string }) => {
           toast.success('Sucesso!', 'Documentos enviados com sucesso!');
 
           const { markTabAsCompleted } = useTabStore.getState();
-          markTabAsCompleted('required_documents');
+          markTabAsCompleted('required_documents', StudentId);
 
           // Refetch documentos após upload bem-sucedido
           refetchDocuments();

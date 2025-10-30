@@ -8,6 +8,8 @@ import { useFormValidationStore } from '@/store/formValidationStore';
 interface RequiredDocumentsTabProps {
     studentId: string | null;
     validateSection: (section: string, status: 'approved' | 'rejected') => void;
+    onViewDocument?: (doc: { id: number; conteudoBase64?: string; nomeArquivo?: string; fileName?: string }) => void;
+    onDownloadDocument?: (doc: { id: number; conteudoBase64?: string; nomeArquivo?: string; fileName?: string }) => void;
 }
 
 // Labels para cada tipo de documento
@@ -86,7 +88,7 @@ const renderEmptySection = () => (
     </div>
 );
 
-export const RequiredDocumentsTab = ({ studentId }: RequiredDocumentsTabProps) => {
+export const RequiredDocumentsTab = ({ studentId, onViewDocument, onDownloadDocument }: RequiredDocumentsTabProps) => {
     const userId = studentId ? parseInt(studentId, 10) : 0;
     const { data: documentsData, isLoading: isDocumentsLoading } = useAllDocumentsList(userId, documentTypes);
 
@@ -253,6 +255,7 @@ export const RequiredDocumentsTab = ({ studentId }: RequiredDocumentsTabProps) =
                                                                     type="button"
                                                                     variant="ghost"
                                                                     size="sm"
+                                                                    onClick={() => onViewDocument && onViewDocument(doc)}
                                                                     className="h-8 px-3 text-blue-600 hover:text-blue-800 hover:bg-blue-50 flex-shrink-0"
                                                                     title="Visualizar documento"
                                                                 >
@@ -263,7 +266,7 @@ export const RequiredDocumentsTab = ({ studentId }: RequiredDocumentsTabProps) =
                                                                     type="button"
                                                                     variant="ghost"
                                                                     size="sm"
-                                                                    onClick={() => handleDownloadAll()}
+                                                                    onClick={() => onDownloadDocument && onDownloadDocument(doc)}
                                                                     className="h-8 px-3 text-green-600 hover:text-green-800 hover:bg-green-50 flex-shrink-0"
                                                                     title="Baixar documento"
                                                                 >

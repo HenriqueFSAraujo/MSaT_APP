@@ -92,7 +92,7 @@ export const AddressResidence = ({ label }: { label: string }) => {
     try {
       setFormData('address_info', data);
       const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('address_info');
+      markTabAsCompleted('address_info', StudentId);
 
       setSelectedTab('family_composition');
 

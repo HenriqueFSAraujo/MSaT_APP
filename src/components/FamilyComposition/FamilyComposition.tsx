@@ -164,7 +164,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
       // Marcar tab como concluída se há dados válidos
       if (composicaoFamiliar.length > 0) {
-        markTabAsCompleted('family_composition');
+        markTabAsCompleted('family_composition', studentId);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -247,7 +247,7 @@ export const FamilyComposition = ({ label }: { label: string }) => {
 
       // Marcar a aba como concluída e navegar para a próxima tab (DocumentData)
       console.log('🔵 Marcando tab como concluída e navegando...');
-      markTabAsCompleted('family_composition');
+      markTabAsCompleted('family_composition', studentId);
       setSelectedTab('required_documents');
       console.log('✅ Navegação concluída');
 

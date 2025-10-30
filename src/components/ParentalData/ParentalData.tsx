@@ -71,7 +71,7 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
 
       // Marcar tab como completa apenas se a validação passou
       const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('parents_data');
+      markTabAsCompleted('parents_data', StudentId);
 
       setSelectedTab('address_info');
       const payload = {

@@ -36,6 +36,11 @@ const StudentForm = () => {
 
   useEffect(() => {
     console.log(StudentId);
+
+    // Configurar o userId no tabStore quando o ID mudar
+    const { setCurrentUserId } = useTabStore.getState();
+    setCurrentUserId(StudentId || null);
+
     if (firstLogin) {
       setChangePasswordModal(true);
     }

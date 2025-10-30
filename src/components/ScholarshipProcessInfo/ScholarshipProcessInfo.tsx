@@ -220,7 +220,7 @@ export function ScholarshipProcessInfo() {
 
       // Marcar tab como completa apenas se todos os campos estiverem preenchidos
       const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('scholarship_info');
+      markTabAsCompleted('scholarship_info', StudentId);
 
       // Navegar para próxima tab
       await navigateToNextTab();

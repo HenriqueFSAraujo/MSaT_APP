@@ -68,10 +68,11 @@ export function PostFamilyCompositionData() {
       return api.post(Endpoints.Forms.Family_Composition, transformedData);
     },
 
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       toast.success('Dados de composição familiar salvos com sucesso!');
       const { markTabAsCompleted, setSelectedTab } = useTabStore.getState();
-      markTabAsCompleted('family_composition');
+      // Usar o userInfoId do payload como userId
+      markTabAsCompleted('family_composition', variables.userInfoId.toString());
       setSelectedTab('housing_conditions');
     },
 

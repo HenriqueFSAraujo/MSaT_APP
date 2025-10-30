@@ -10,6 +10,8 @@ import { useGetUsers, User } from '@/services/queries/useGetUsers';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { useUsersPaginationStore } from '@/store/useUsersPaginationStore';
+import { useTabStore } from '@/store/tabStore';
+import { useFormValidationStore } from '@/store/formValidationStore';
 import { motion } from 'framer-motion';
 import { BookOpenText } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -56,10 +58,17 @@ export default function UsuariosPage() {
     }, 0);
   };
 
-  // Sincronizar URL para store na montagem
+  // Sincronizar URL para store na montagem e resetar stores de formulário
   useEffect(() => {
     syncUrlToStore();
     isInitializing.current = false;
+
+    // Resetar todos os stores relacionados ao formulário quando entrar na listagem de usuários
+    useScholarshipFormStore.getState().clearFormData();
+    useFormValidationStore.getState().reset();
+    useTabStore.getState().resetTabProgress();
+    useTabStore.getState().setCurrentUserId(null);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

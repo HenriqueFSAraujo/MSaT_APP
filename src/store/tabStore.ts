@@ -4,13 +4,17 @@ import { persist } from 'zustand/middleware';
 interface TabStore {
   selectedTab: string;
   completedTabs: string[];
+  completedTabsByUserId: Record<string, string[]>; // Armazenar por userId
+  currentUserId: string | null; // ID do usuário atual
   showTabValidation: boolean;
   setSelectedTab: (tab: string) => void;
-  markTabAsCompleted: (tab: string) => void;
+  setCurrentUserId: (userId: string | null) => void;
+  markTabAsCompleted: (tab: string, userId?: string | null) => void;
   canNavigateToTab: (targetTab: string) => boolean;
   toggleTabValidation: () => void;
-  resetTabProgress: () => void;
+  resetTabProgress: (userId?: string | null) => void;
   resetSpecificTab: (tab: string) => void;
+  loadCompletedTabsForUser: (userId: string | null) => void;
 }
 
 // Importar TABS para validação
@@ -30,7 +34,26 @@ export const useTabStore = create<TabStore>()(
     (set, get) => ({
       selectedTab: 'scholarship_info',
       completedTabs: [],
+      completedTabsByUserId: {}, // Armazenar abas completas por userId
+      currentUserId: null, // ID do usuário atual
       showTabValidation: false, // Toggle para ativar/desativar validação (desativado por padrão)
+
+      setCurrentUserId: (userId: string | null) => {
+        set({ currentUserId: userId });
+        // Carregar abas completas para este usuário
+        get().loadCompletedTabsForUser(userId);
+      },
+
+      loadCompletedTabsForUser: (userId: string | null) => {
+        if (!userId) {
+          set({ completedTabs: [] });
+          return;
+        }
+
+        const { completedTabsByUserId } = get();
+        const userCompletedTabs = completedTabsByUserId[userId] || [];
+        set({ completedTabs: userCompletedTabs });
+      },
 
       setSelectedTab: (tab: string) => {
         const { canNavigateToTab, showTabValidation } = get();
@@ -47,10 +70,34 @@ export const useTabStore = create<TabStore>()(
         }
       },
 
-      markTabAsCompleted: (tab: string) => {
-        set((state) => ({
-          completedTabs: [...new Set([...state.completedTabs, tab])]
-        }));
+      markTabAsCompleted: (tab: string, userId?: string | null) => {
+        const { currentUserId, completedTabsByUserId } = get();
+        const targetUserId = userId || currentUserId;
+
+        if (!targetUserId) {
+          console.warn('markTabAsCompleted: userId não fornecido');
+          return;
+        }
+
+        set((state) => {
+          const userCompletedTabs = state.completedTabsByUserId[targetUserId] || [];
+          const updatedUserTabs = [...new Set([...userCompletedTabs, tab])];
+          
+          const newCompletedTabsByUserId = {
+            ...state.completedTabsByUserId,
+            [targetUserId]: updatedUserTabs
+          };
+
+          // Atualizar completedTabs apenas se for o usuário atual
+          const newCompletedTabs = targetUserId === state.currentUserId 
+            ? updatedUserTabs 
+            : state.completedTabs;
+
+          return {
+            completedTabsByUserId: newCompletedTabsByUserId,
+            completedTabs: newCompletedTabs
+          };
+        });
       },
 
       canNavigateToTab: (targetTab: string) => {
@@ -63,17 +110,6 @@ export const useTabStore = create<TabStore>()(
 
         const currentIndex = TABS.findIndex(t => t.value === selectedTab);
         const targetIndex = TABS.findIndex(t => t.value === targetTab);
-
-        // Debug: mostrar informações de navegação
-        console.log('Debug canNavigateToTab:', {
-          selectedTab,
-          targetTab,
-          currentIndex,
-          targetIndex,
-          completedTabs,
-          isCurrentTabCompleted: completedTabs.includes(selectedTab),
-          isMovingForward: targetIndex > currentIndex
-        });
 
         // Pode navegar para frente apenas se a tab atual estiver completa
         if (targetIndex > currentIndex) {
@@ -90,17 +126,59 @@ export const useTabStore = create<TabStore>()(
         }));
       },
 
-      resetTabProgress: () => {
-        set({
-          selectedTab: 'scholarship_info',
-          completedTabs: []
+      resetTabProgress: (userId?: string | null) => {
+        const { currentUserId } = get();
+        const targetUserId = userId || currentUserId;
+
+        if (!targetUserId) {
+          set({
+            selectedTab: 'scholarship_info',
+            completedTabs: []
+          });
+          return;
+        }
+
+        set((state) => {
+          const newCompletedTabsByUserId = {
+            ...state.completedTabsByUserId,
+            [targetUserId]: []
+          };
+
+          // Atualizar completedTabs apenas se for o usuário atual
+          const newCompletedTabs = targetUserId === state.currentUserId ? [] : state.completedTabs;
+
+          return {
+            selectedTab: 'scholarship_info',
+            completedTabsByUserId: newCompletedTabsByUserId,
+            completedTabs: newCompletedTabs
+          };
         });
       },
 
       resetSpecificTab: (tab: string) => {
-        set((state) => ({
-          completedTabs: state.completedTabs.filter(t => t !== tab)
-        }));
+        const { currentUserId, completedTabsByUserId } = get();
+
+        if (!currentUserId) {
+          set((state) => ({
+            completedTabs: state.completedTabs.filter(t => t !== tab)
+          }));
+          return;
+        }
+
+        set((state) => {
+          const userCompletedTabs = state.completedTabsByUserId[currentUserId] || [];
+          const updatedUserTabs = userCompletedTabs.filter(t => t !== tab);
+          
+          const newCompletedTabsByUserId = {
+            ...state.completedTabsByUserId,
+            [currentUserId]: updatedUserTabs
+          };
+
+          return {
+            completedTabsByUserId: newCompletedTabsByUserId,
+            completedTabs: updatedUserTabs
+          };
+        });
       }
     }),
     {
