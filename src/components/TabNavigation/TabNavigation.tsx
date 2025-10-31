@@ -11,11 +11,10 @@ interface TabNavigationProps {
 export const TabNavigation = ({ currentTab, form, className = "" }: TabNavigationProps) => {
     const {
         navigateToPreviousTab,
-        canGoBack,
-        showTabValidation
+        canGoBack
     } = useTabNavigation(currentTab, form);
 
-    if (!showTabValidation || !canGoBack()) {
+    if (!canGoBack()) {
         return null;
     }
 

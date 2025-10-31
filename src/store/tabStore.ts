@@ -6,12 +6,10 @@ interface TabStore {
   completedTabs: string[];
   completedTabsByUserId: Record<string, string[]>; // Armazenar por userId
   currentUserId: string | null; // ID do usuário atual
-  showTabValidation: boolean;
   setSelectedTab: (tab: string) => void;
   setCurrentUserId: (userId: string | null) => void;
   markTabAsCompleted: (tab: string, userId?: string | null) => void;
   canNavigateToTab: (targetTab: string) => boolean;
-  toggleTabValidation: () => void;
   resetTabProgress: (userId?: string | null) => void;
   resetSpecificTab: (tab: string) => void;
   loadCompletedTabsForUser: (userId: string | null) => void;
@@ -36,12 +34,17 @@ export const useTabStore = create<TabStore>()(
       completedTabs: [],
       completedTabsByUserId: {}, // Armazenar abas completas por userId
       currentUserId: null, // ID do usuário atual
-      showTabValidation: false, // Toggle para ativar/desativar validação (desativado por padrão)
 
       setCurrentUserId: (userId: string | null) => {
         set({ currentUserId: userId });
-        // Carregar abas completas para este usuário
-        get().loadCompletedTabsForUser(userId);
+        // Carregar abas completas para este usuário imediatamente
+        const { completedTabsByUserId } = get();
+        if (userId) {
+          const userCompletedTabs = completedTabsByUserId[userId] || [];
+          set({ completedTabs: userCompletedTabs });
+        } else {
+          set({ completedTabs: [] });
+        }
       },
 
       loadCompletedTabsForUser: (userId: string | null) => {
@@ -56,18 +59,8 @@ export const useTabStore = create<TabStore>()(
       },
 
       setSelectedTab: (tab: string) => {
-        const { canNavigateToTab, showTabValidation } = get();
-
-        // Se validação estiver desativada, navegar livremente
-        if (!showTabValidation) {
-          set({ selectedTab: tab });
-          return;
-        }
-
-        // Se validação estiver ativada, verificar permissões
-        if (canNavigateToTab(tab)) {
-          set({ selectedTab: tab });
-        }
+        // Permitir navegação livre entre todas as tabs
+        set({ selectedTab: tab });
       },
 
       markTabAsCompleted: (tab: string, userId?: string | null) => {
@@ -101,12 +94,7 @@ export const useTabStore = create<TabStore>()(
       },
 
       canNavigateToTab: (targetTab: string) => {
-        const { completedTabs, selectedTab, showTabValidation } = get();
-
-        // Se validação estiver desativada, permitir navegação livre
-        if (!showTabValidation) {
-          return true;
-        }
+        const { completedTabs, selectedTab } = get();
 
         const currentIndex = TABS.findIndex(t => t.value === selectedTab);
         const targetIndex = TABS.findIndex(t => t.value === targetTab);
@@ -118,12 +106,6 @@ export const useTabStore = create<TabStore>()(
 
         // Pode sempre voltar para trás
         return true;
-      },
-
-      toggleTabValidation: () => {
-        set((state) => ({
-          showTabValidation: !state.showTabValidation
-        }));
       },
 
       resetTabProgress: (userId?: string | null) => {

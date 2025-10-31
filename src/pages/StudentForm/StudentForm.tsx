@@ -6,7 +6,6 @@ import { PropertyRelations } from '@/components/PropertyRelations/PropertyRelati
 import { ScholarshipProcessInfo } from '@/components/ScholarshipProcessInfo/ScholarshipProcessInfo';
 import { ConsentTerms } from '@/components/ConsentTerms/ConsentTerms';
 import { ProgressIndicator } from '@/components/ProgressIndicator/ProgressIndicator';
-import { DevModeToggle } from '@/components/DevModeToggle/DevModeToggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TABS, Tab } from './type.ds';
 
@@ -20,24 +19,38 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FamilyComposition } from '@/components/FamilyComposition/FamilyComposition';
 import { Home } from 'lucide-react';
+import { 
+  useScholarShipData, 
+  usePersonalData, 
+  useParentalData, 
+  useAddressData, 
+  useFamilyCompositionData,
+  usePropertyData
+} from '@/services/queries/forms';
 
 const StudentForm = () => {
   const { role } = useAuthStore();
   const { id: StudentId } = useParams<{ id: string }>();
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
-  const { completedTabs, showTabValidation } = useTabStore();
+  // Usar selector específico para garantir reatividade
+  const completedTabs = useTabStore((state) => state.completedTabs);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
   const { firstLogin } = useAuthStore();
   const navigate = useNavigate();
   const { reset } = useFormValidationStore();
 
+  // Buscar dados para verificar se já existem e marcar tabs como completas
+  const userId = StudentId ? parseInt(StudentId, 10) : 0;
+  const { data: scholarshipData } = useScholarShipData(userId, { enabled: !!userId });
+  const { data: personalData } = usePersonalData(userId, { enabled: !!userId });
+  const { data: parentalData } = useParentalData(userId, { enabled: !!userId });
+  const { data: addressData } = useAddressData(userId, { enabled: !!userId });
+  const { data: familyCompositionData } = useFamilyCompositionData(userId, { enabled: !!userId });
+  const { data: propertyData } = usePropertyData(userId, { enabled: !!userId });
+
   useEffect(() => {
     console.log(StudentId);
-
-    // Configurar o userId no tabStore quando o ID mudar
-    const { setCurrentUserId } = useTabStore.getState();
-    setCurrentUserId(StudentId || null);
 
     if (firstLogin) {
       setChangePasswordModal(true);
@@ -48,7 +61,46 @@ const StudentForm = () => {
     useScholarshipFormStore.getState().clearFormData();
     reset();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstLogin, StudentId]);
+  }, [firstLogin]);
+
+  // Configurar o userId no tabStore quando o ID mudar
+  useEffect(() => {
+    if (StudentId) {
+      const { setCurrentUserId } = useTabStore.getState();
+      setCurrentUserId(StudentId);
+    } else {
+      const { setCurrentUserId } = useTabStore.getState();
+      setCurrentUserId(null);
+    }
+  }, [StudentId]);
+
+  // Verificar se há dados na API e marcar tabs como completas automaticamente
+  useEffect(() => {
+    if (!StudentId) return;
+
+    const { markTabAsCompleted, completedTabs } = useTabStore.getState();
+    const userIdStr = StudentId;
+
+    // Verificar se há dados e marcar as tabs como completas
+    if (scholarshipData && !completedTabs.includes('scholarship_info')) {
+      markTabAsCompleted('scholarship_info', userIdStr);
+    }
+    if (personalData && !completedTabs.includes('personal_data')) {
+      markTabAsCompleted('personal_data', userIdStr);
+    }
+    if (parentalData && !completedTabs.includes('parents_data')) {
+      markTabAsCompleted('parents_data', userIdStr);
+    }
+    if (addressData && !completedTabs.includes('address_info')) {
+      markTabAsCompleted('address_info', userIdStr);
+    }
+    if (familyCompositionData && !completedTabs.includes('family_composition')) {
+      markTabAsCompleted('family_composition', userIdStr);
+    }
+    if (propertyData && !completedTabs.includes('property_relations')) {
+      markTabAsCompleted('property_relations', userIdStr);
+    }
+  }, [StudentId, scholarshipData, personalData, parentalData, addressData, familyCompositionData, propertyData]);
 
 
   const containerVariants = {
@@ -106,10 +158,6 @@ const StudentForm = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              {/* DevModeToggle posicionado acima das tabs */}
-              <div className="relative z-30">
-                <DevModeToggle />
-              </div>
               {/* Versão para dispositivos móveis - Menu dropdown */}
               <div className="block sm:hidden p-4">
                 <select
@@ -117,24 +165,16 @@ const StudentForm = () => {
                   onChange={(e) => setSelectedTab(e.target.value)}
                   className="w-full p-3 bg-white border-2 border-gray-200 rounded-lg text-sm font-medium shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                 >
-                  {TABS.map((tab: Tab) => {
-                    const isDisabled = showTabValidation &&
-                      !completedTabs.includes(tab.value) &&
-                      TABS.indexOf(tab) > TABS.findIndex(t => t.value === selectedTab);
-
-                    return (
+                  {TABS.map((tab: Tab) => (
                       <option
                         key={tab.value}
                         value={tab.value}
-                        disabled={isDisabled}
-                        className={isDisabled ? 'text-gray-400 bg-gray-100' : ''}
+                        className=""
                       >
                         {completedTabs.includes(tab.value) ? '✓ ' : ''}
                         {tab.label}
-                        {isDisabled ? ' (Bloqueada)' : ''}
                       </option>
-                    );
-                  })}
+                    ))}
                 </select>
               </div>
 
@@ -148,9 +188,7 @@ const StudentForm = () => {
                       </div>
                     </div>
                     {TABS.map((tab: Tab, index) => {
-                      const isDisabled = showTabValidation &&
-                        !completedTabs.includes(tab.value) &&
-                        TABS.indexOf(tab) > TABS.findIndex(t => t.value === selectedTab);
+                      const isCompleted = completedTabs.includes(tab.value);
 
                       return (
                         <motion.div
@@ -162,22 +200,19 @@ const StudentForm = () => {
                         >
                           <TabsTrigger
                             value={tab.value}
-                            disabled={isDisabled}
-                            title={isDisabled ? 'Complete a tab atual antes de acessar esta seção' : tab.label}
+                            title={tab.label}
                             className={`
                               text-xs h-8 px-3 flex items-center gap-2 transition-all duration-200 rounded-lg font-medium whitespace-nowrap border
-                              ${isDisabled
-                                ? 'bg-gray-50 text-gray-400 cursor-not-allowed opacity-60 border-gray-200'
-                                : selectedTab === tab.value
-                                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 !text-white shadow-lg border-blue-500 transform scale-105'
-                                  : completedTabs.includes(tab.value)
-                                    ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 hover:from-green-100 hover:to-emerald-100 cursor-pointer border-green-200 hover:shadow-md'
-                                    : 'bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 cursor-pointer border-gray-200 hover:border-blue-300 hover:shadow-sm'
+                              ${selectedTab === tab.value
+                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 !text-white shadow-lg border-blue-500 transform scale-105'
+                                : isCompleted
+                                  ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 hover:from-green-100 hover:to-emerald-100 cursor-pointer border-green-200 hover:shadow-md'
+                                  : 'bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 cursor-pointer border-gray-200 hover:border-blue-300 hover:shadow-sm'
                               }
                             `}
                             style={selectedTab === tab.value ? { color: 'white' } : {}}
                           >
-                            {completedTabs.includes(tab.value) && !isDisabled && (
+                            {isCompleted && (
                               <span
                                 className={`${selectedTab === tab.value ? 'text-white' : 'text-green-600'} font-bold`}
                                 style={selectedTab === tab.value ? { color: 'white' } : {}}

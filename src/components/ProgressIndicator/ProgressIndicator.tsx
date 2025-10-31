@@ -13,12 +13,8 @@ const TABS = [
 ];
 
 export const ProgressIndicator = () => {
-    const { selectedTab, showTabValidation, completedTabs } = useTabStore();
+    const { selectedTab, completedTabs } = useTabStore();
     const currentIndex = TABS.findIndex(t => t.value === selectedTab);
-
-    if (!showTabValidation) {
-        return null;
-    }
 
     return (
         <div className="mb-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">

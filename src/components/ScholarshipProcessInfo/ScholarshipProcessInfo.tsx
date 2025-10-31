@@ -304,7 +304,7 @@ export function ScholarshipProcessInfo() {
                   Deseja participar do Processo Seletivo de Bolsa de Estudo ano letivo 2026?*
                 </Label>
                 <RadioGroup
-                  value={watch('wantsToParticipate')}
+                  value={watch('wantsToParticipate') || ''}
                   onValueChange={(value) => setValue('wantsToParticipate', value as 'sim' | 'nao')}
                   className="mt-2"
                 >
@@ -328,7 +328,7 @@ export function ScholarshipProcessInfo() {
                   unidade escolar?*
                 </Label>
                 <RadioGroup
-                  value={watch('hadScholarshipLastYear')}
+                  value={watch('hadScholarshipLastYear') || ''}
                   onValueChange={(value) => setValue('hadScholarshipLastYear', value as 'sim' | 'nao')}
                   className="mt-2"
                 >
@@ -350,7 +350,7 @@ export function ScholarshipProcessInfo() {
                 <div>
                   <Label className="font-bold">Percentual de bolsa de estudo concedido em 2025:*</Label>
                   <RadioGroup
-                    value={watch('previousScholarshipPercentage')}
+                    value={watch('previousScholarshipPercentage') || ''}
                     onValueChange={(value) => setValue('previousScholarshipPercentage', value as '50' | '100')}
                     className="mt-2"
                   >

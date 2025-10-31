@@ -47,10 +47,33 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
   const {
     setValue,
+    watch,
     formState: { errors },
   } = methods;
   const { fetchAddress } = useViaCep();
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+
+  // Auto-save functionality
+  const watchedValues = watch();
+
+  useEffect(() => {
+    // Debounce auto-save to avoid too many saves
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        // Verificar se pelo menos um campo foi preenchido
+        const hasAnyValue = Object.values(watchedValues).some(
+          value => value !== '' && value !== undefined && value !== null
+        );
+
+        // Salvar se houver qualquer dado preenchido
+        if (hasAnyValue) {
+          setFormData('address_info', watchedValues);
+        }
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
 
   const handleCepBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
     const cep = event.target.value;
