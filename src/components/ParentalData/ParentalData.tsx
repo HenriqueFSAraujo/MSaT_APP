@@ -1,35 +1,25 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from '../common/FormInput/FormInput';
-import * as z from 'zod';
+import { PostParentalData, useParentalData } from '@/services/queries/forms/index';
+import { useTabStore } from '@/store/tabStore';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues } from 'react-hook-form';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import FormInput from '../common/FormInput/FormInput';
 import FormSelect from '../common/FormSelect/FormSelect';
 import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
-import { useTabStore } from '@/store/tabStore';
-import { maritalStatusOptions, residesWithBothParentsOptions } from '@/utils/optionsMock';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-
-const schema = z.object({
-  parent1FullName: z.string().min(1, 'Nome completo do Genitor 1 é obrigatório'),
-  parent1Cpf: z.string().min(1, 'CPF do Genitor 1 é obrigatório'),
-  parent1Phone: z.string().min(1, 'Telefone de contato do Genitor 1 é obrigatório'),
-  parent1MaritalStatus: z.string().min(1, 'Estado civil do Genitor 1 é obrigatório'),
-
-  parent2FullName: z.string().min(1, 'Nome completo do Genitor 2 é obrigatório'),
-  parent2Cpf: z.string().min(1, 'CPF do Genitor 2 é obrigatório'),
-  parent2Phone: z.string().min(1, 'Telefone de contato do Genitor 2 é obrigatório'),
-  parent2MaritalStatus: z.string().min(1, 'Estado civil do Genitor 2 é obrigatório'),
-
-  residesWithBothParents: z
-    .string()
-    .min(1, 'É obrigatório informar se o(a) candidato(a) reside com os dois genitores'),
-});
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { ParentalData, parentalDataSchema } from './type/formData';
 
 export const ParentalDataForm = ({ label }: { label: string }) => {
+  const { setFormData, formData } = useScholarshipFormStore();
+  const { mutate: FormSubmit } = PostParentalData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = useParentalData(Number(StudentId));
   const methods = useForm({
     mode: 'onSubmit',
-    resolver: zodResolver(schema),
+    resolver: zodResolver(parentalDataSchema),
     defaultValues: {
       parent1FullName: '',
       parent1Cpf: '',
@@ -40,40 +30,87 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
       parent2Phone: '',
       parent2MaritalStatus: '',
       residesWithBothParents: '',
+      ...(formData.parents_data as Partial<ParentalData>),
     },
   });
 
   const { errors } = methods.formState;
+  const { watch } = methods;
+
+  useEffect(() => {
+    if (data) {
+      methods.reset({
+        ...methods.getValues(),
+        ...(data as Partial<ParentalData>),
+      });
+    }
+  }, [data, methods]);
+
+  // Auto-save functionality
+  const watchedValues = watch();
+
+  useEffect(() => {
+    // Debounce auto-save to avoid too many saves
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        setFormData('parents_data', watchedValues);
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
 
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
 
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (data: ParentalData) => {
     const isValid = await methods.trigger();
+
     if (!isValid) return;
-    toast.success('Sucesso!', 'Dados enviados com sucesso!');
-    console.log('Dados do formulário:', data);
-    setSelectedTab('address_info');
+    try {
+      setFormData('parents_data', data);
+
+      // Marcar tab como completa apenas se a validação passou
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('parents_data', StudentId);
+
+      setSelectedTab('address_info');
+      const payload = {
+        userId: Number(StudentId),
+        parent1FullName: data.parent1FullName,
+        parent1Cpf: data.parent1Cpf,
+        parent1Phone: data.parent1Phone,
+        parent1MaritalStatus: data.parent1MaritalStatus,
+        parent2FullName: data.parent2FullName,
+        parent2Cpf: data.parent2Cpf,
+        parent2Phone: data.parent2Phone,
+        parent2MaritalStatus: data.parent2MaritalStatus,
+        residesWithBothParents: data.residesWithBothParents,
+      }
+      FormSubmit(payload)
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="max-w-6xl mx-auto bg-white p-6">
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 <FormInput
-                  {...methods.register('parent1FullName')}
                   name="parent1FullName"
                   label="Nome completo do genitor 1"
                   required
                   error={errors.parent1FullName?.message}
                 />
                 <FormInput
-                  {...methods.register('parent1Cpf')}
                   name="parent1Cpf"
                   label="CPF do genitor 1"
                   mask="cpf"
@@ -81,7 +118,6 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
                   error={errors.parent1Cpf?.message}
                 />
                 <FormInput
-                  {...methods.register('parent1Phone')}
                   name="parent1Phone"
                   label="Telefone de contato do genitor 1"
                   mask="phone"
@@ -98,20 +134,17 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
                   error={errors.parent1MaritalStatus?.message}
                 />
                 <FormInput
-                  {...methods.register('parent2FullName')}
                   name="parent2FullName"
                   label="Nome completo do genitor 2"
                   error={errors.parent1FullName?.message}
                 />
                 <FormInput
-                  {...methods.register('parent2Cpf')}
                   name="parent2Cpf"
                   label="CPF do genitor 2"
                   mask="cpf"
                   error={errors.parent2Cpf?.message}
                 />
                 <FormInput
-                  {...methods.register('parent2Phone')}
                   name="parent2Phone"
                   label="Telefone de contato do genitor 2"
                   mask="phone"

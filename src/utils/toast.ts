@@ -1,9 +1,7 @@
-// src/lib/toast.ts
 import { toast as sonnerToast } from 'sonner';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import React from 'react';
 
-// Toast de Erro
 export const toastError = (title: string, description?: string) => {
   sonnerToast.error(title, {
     description,
@@ -13,7 +11,7 @@ export const toastError = (title: string, description?: string) => {
   });
 };
 
-// Toast de Sucesso
+
 export const toastSuccess = (title: string, description?: string) => {
   sonnerToast.success(title, {
     description,

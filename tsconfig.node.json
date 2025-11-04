@@ -6,6 +6,7 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,

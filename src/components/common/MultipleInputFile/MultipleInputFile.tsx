@@ -55,7 +55,6 @@ export const MultipleInputFile = ({
     const [selectedType, setSelectedType] = useState<string>('');
     const files: FileData[] = watch(name) || [];
 
-    // Calcula o progresso de documentos obrigatórios enviados
     const progress = useMemo(() => {
         if (!fileTypes) return 100;
 
@@ -73,7 +72,6 @@ export const MultipleInputFile = ({
         return (completedCount / requiredTypes.length) * 100;
     }, [files, fileTypes]);
 
-    // Agrupa os arquivos por tipo
     const filesByType = useMemo(() => {
         const grouped = new Map<string, FileData[]>();
 

@@ -1,13 +1,16 @@
 import type { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
 const config: Config = {
   darkMode: ['class'],
-  content: [
-    './src/**/*.{html,js,ts,jsx,tsx}', // Caminhos para onde o Tailwind deve procurar classes
-  ],
+  content: ['./src/**/*.{html,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', ...fontFamily.sans],
+        title: ['Poppins', ...fontFamily.sans],
+      },
       keyframes: {
         'pulse-soft': {
           '0%, 100%': { opacity: '1' },

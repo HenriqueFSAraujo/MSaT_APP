@@ -4,9 +4,9 @@ import { User, BadgeCheck } from 'lucide-react';
 interface MetricsProps {
     metrics: {
         totalAlunos: number;
-        alunosAtivos: number;
+        // alunosAtivos: number;
         totalGestores: number;
-        percentageAtivos: number;
+        // percentageAtivos: number;
     };
 }
 
@@ -20,9 +20,9 @@ export function UsersMetricsCards({ metrics }: MetricsProps) {
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold">{metrics.totalAlunos}</div>
-                    <p className="text-xs text-muted-foreground">
+                    {/* <p className="text-xs text-muted-foreground">
                         {metrics.totalAlunos > 0 ? `${metrics.percentageAtivos}% ativos` : 'Nenhum aluno cadastrado'}
-                    </p>
+                    </p> */}
                 </CardContent>
             </Card>
             <Card>
@@ -31,7 +31,7 @@ export function UsersMetricsCards({ metrics }: MetricsProps) {
                     <User className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{metrics.alunosAtivos}</div>
+                    {/* <div className="text-2xl font-bold">{metrics.alunosAtivos}</div> */}
                     <p className="text-xs text-muted-foreground">
                         De um total de {metrics.totalAlunos} alunos
                     </p>

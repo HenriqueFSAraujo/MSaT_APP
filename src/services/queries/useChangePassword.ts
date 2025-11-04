@@ -3,23 +3,25 @@ import { api } from '../api';
 import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
-type ChangePasswordPayload = {
-    currentPassword: string;
-    newPassword: string;
+type useChangePasswordProps = {
+  id: number;
+  currentPassWord: string;
+  newPassword: string;
 };
 
-export function useUpdatePassword() {
-    return useMutation({
-        mutationFn: (payload: ChangePasswordPayload) =>
-            api.post(Endpoints.Profile.ChangePassword, payload),
+export function useChangePassword() {
+  return useMutation({
+    mutationKey: ['change-password'],
+    mutationFn: ({ id, ...payload }: useChangePasswordProps) =>
+      api.put(`${Endpoints.Users.ResetPassword}/${id}`, payload),
 
-        onSuccess: () => {
-            toast.success('Senha atualizada com sucesso!');
-        },
+    onSuccess: () => {
+      toast.success('Senha redefinida com sucesso!');
+      //TODO: VERIFICAR GET PARA TRAZER DADOS DO ALUNO E DAR O REFETCH NO FIRSTLOGIN DO USER
+    },
 
-        onError: () => {
-            toast.error('Erro ao atualizar senha.');
-        },
-    });
+    onError: () => {
+      toast.error('Erro ao redefinir a senha.');
+    },
+  });
 }
-

@@ -1,31 +1,28 @@
 export const Endpoints = {
-    Users: {
-        List: '/users',
-        Profile: '/users/profile',
+  Users: {
+    List: '/users',
+    Profile: '/users/profile',
+    ResetPassword: `/users/reset-password`,
+    DisableUser: `/users/deactivate`,
+    Parecer: '/parecer-socioeconomico',
+    PDFParecer: '/gerar-parecer',
+  },
+  Auth: {
+    Login: '/auth/login',
+    Logout: '/auth/logout',
+  },
+  Forms: {
+    SchoolarShip_data: '/processo-bolsas',
+    Personal_Data: '/forms',
+    Parental_Data: '/parentes',
+    Address_Data: '/enderecos',
+    Document_Data: {
+      upload: '/documentos-gerais-pdf/upload',
+      download: '/documentos-gerais-pdf/download/list'
     },
-    Auth: {
-        Login: '/auth/login',
-        Logout: '/auth/logout',
-    },
-    Profile: {
-        ChangePassword: '/profile/change-password',
-    },
-    Forms: {
-        Personal_Data: {
-            List: '/forms',
-            Update: '/personal-data/update',
-        },
-        Relative_Data: {
-            List: '',
-            Update: '/parentes',
-        },
-        Housing_Conditions: {
-            List: '',
-            Update: '/form-condicoes-habitacionais',
-        },
-        Candidates_Address: {
-            List: '',
-            Update: '/enderecos',
-        }
-    }
+    Family_Composition: '/composicao-familiar',
+    Housing_Data: '/form-condicoes-habitacionais',
+    Property_Data: '/bens-posses',
+    Consent_Terms: '/declaracoes',
+  },
 } as const;
