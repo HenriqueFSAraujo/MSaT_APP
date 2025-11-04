@@ -1,35 +1,52 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
 import { RadioButtonGroup } from '@/components/common/RadioButtonGroup/RadioButtonGroup';
+import { UseHousingData } from '@/services/queries/forms/HousingData/getHousingData';
+import { HousingDataPayload, PostHousingData } from '@/services/queries/forms/index';
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { toast } from '@/utils/toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { radioGroups } from './form.ds';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
+import { housingConditionsInfo, housingConditionsSchema } from './type/formData';
 
-const formSchema = z.object(
-  Object.fromEntries(
-    radioGroups.map((group) => [
-      group.name,
-      group.required ? z.string().min(1, 'Campo obrigatório') : z.string().optional(),
-    ])
-  )
-);
+type FormData = housingConditionsInfo;
 
 export const HousingConditions = ({ label }: { label: string }) => {
-  const methods = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: Object.fromEntries(radioGroups.map((group) => [group.name, ''])),
+  const { setFormData, formData } = useScholarshipFormStore();
+  const { mutate: FormSubmit } = PostHousingData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = UseHousingData(Number(StudentId));
+  const methods = useForm<FormData>({
+    resolver: zodResolver(housingConditionsSchema),
+    defaultValues: {
+      ...Object.fromEntries(radioGroups.map((group) => [group.name, ''])),
+    },
   });
+
+  useEffect(() => {
+    if (data) {
+      methods.reset({
+        ...methods.getValues(),
+        ...(data as Partial<FormData>),
+      });
+    }
+  }, [data, methods]);
 
   const { handleSubmit } = methods;
 
-  type FormData = z.infer<typeof formSchema>;
-
   const onSubmit = async (data: FormData) => {
     try {
-      console.log('Dados enviados:', data);
-      toast.success('Sucesso!', 'Condições de moradia salvas com sucesso!');
+      // setFormData('housing_conditions', data);
+
+      const payload: HousingDataPayload = {
+        userId: Number(StudentId),
+        ...data,
+      };
+
+      FormSubmit(payload);
     } catch (error) {
       console.error('Erro no processamento:', error);
       toast.error('Erro', 'Ocorreu um erro ao salvar as condições de moradia.');
@@ -40,7 +57,9 @@ export const HousingConditions = ({ label }: { label: string }) => {
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">

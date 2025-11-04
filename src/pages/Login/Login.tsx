@@ -1,17 +1,17 @@
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/components/ui/input.js';
+import { LoginPayload, useLogin } from '@/Auth/Login/useLogin';
 import { Button } from '@/components/ui/button.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Logins } from '@/utils/logins';
+import { Input } from '@/components/ui/input.js';
 import { useTabStore } from '@/store/tabStore';
+import { formatCpf } from '@/utils/transformMasks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  userName: z.string().min(11, 'O CPF é obrigatório'),
+  password: z.string().min(5, 'A senha deve ter pelo menos 5 caracteres'),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -20,40 +20,39 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [cpf, setCpf] = useState('');
 
-  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+  const loginMutation = useLogin();
 
   const onSubmit = async (formData: LoginForm) => {
-    setIsPending(true);
     setError(null);
     try {
-      const user = Logins.find(
-        (login) => login.user === formData.email && login.password === formData.password
-      );
-      if (user) {
-        localStorage.setItem('nameUser', user.name);
-        setSelectedTab('personal_data');
-        navigate('/students-form');
-      } else {
-        setError('Usuário ou senha inválidos.');
-      }
+      const payload: LoginPayload = {
+        userName: formData.userName.replace(/\D/g, ''),
+        password: formData.password,
+      };
+      await loginMutation.mutateAsync(payload);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      setError('Erro ao fazer login. Verifique suas credenciais.');
-      console.error('Erro ao processar submissão:', error);
-    } finally {
-      setIsPending(false);
+      setError('Usuário ou senha inválidos.');
     }
   };
 
+  const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedCPF = formatCpf(e.target.value);
+    setCpf(formattedCPF);
+    setValue('userName', formattedCPF, { shouldValidate: true });
+  };
+
   useEffect(() => {
-    localStorage.removeItem('nameUser');
-    setSelectedTab('personal_data');
+    localStorage.removeItem('token');
+    setSelectedTab('scholarship_info');
   }, []);
 
   return (
@@ -62,11 +61,11 @@ export default function LoginPage() {
         <div className="flex items-center justify-center p-12 bg-gradient-to-r from-blue-600 to-blue-800">
           <div className="text-center text-white">
             <img
-              src="/imgs/logo.jpeg"
+              src="/imgs/logo-educa.png"
               alt="Logo"
               className="max-h-60 w-auto object-contain mx-auto mb-6 p-3 bg-white"
             />
-            <h1 className="text-4xl font-bold mb-4">Bem-vindo de Volta</h1>
+            <h1 className="text-3xl font-bold mb-4">Bem-vindo de Volta</h1>
             <p className="text-lg">Por favor, insira suas credenciais para acessar sua conta.</p>
           </div>
         </div>
@@ -79,15 +78,20 @@ export default function LoginPage() {
             <CardContent>
               <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <Input
-                    type="email"
-                    placeholder="seu@email.com"
-                    {...register('email')}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Usuário (CPF)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Digite seu CPF"
+                    value={cpf}
+                    {...register('userName')}
+                    onChange={handleCPFChange}
+                    maxLength={14}
                     className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
                   />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  {errors.userName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.userName.message}</p>
                   )}
                 </div>
                 <div>
@@ -103,16 +107,13 @@ export default function LoginPage() {
                   )}
                 </div>
                 {error && <p className="text-red-500 text-sm mt-1 text-center">{error}</p>}
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground cursor-pointer hover:text-blue-500 hover:underline">
-                    Esqueceu a senha?
-                  </span>
+                <div className="flex justify-end items-center">
                   <Button
                     type="submit"
                     className="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
-                    disabled={isSubmitting || isPending}
+                    disabled={isSubmitting || loginMutation.isPending}
                   >
-                    {isPending ? 'Carregando...' : 'Entrar'}
+                    {loginMutation.isPending ? 'Carregando...' : 'Entrar'}
                   </Button>
                 </div>
               </form>

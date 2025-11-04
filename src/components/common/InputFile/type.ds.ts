@@ -19,5 +19,6 @@ export interface InputFileProps {
 
 export type DataProps = {
   file?: { value: File; mimeType: string };
+  files?: Array<{ value: File; mimeType: string }>;
   option?: { type: string; value: string };
 };

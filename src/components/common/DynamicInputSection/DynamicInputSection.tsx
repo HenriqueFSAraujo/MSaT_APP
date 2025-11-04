@@ -1,10 +1,20 @@
-import { useFormContext, useFieldArray, FieldError } from 'react-hook-form';
-import { Plus, Trash, Info } from 'lucide-react';
-import autoAnimate from '@formkit/auto-animate';
-import { AnimatedIconButton } from '../AnimatedIconButton/AnimatedIconButton';
-import { useRef, useEffect } from 'react';
+import { maskDate, parseCurrency } from '@/utils/transformMasks';
+import { Info, Plus, Trash } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type FieldError, useFieldArray, useFormContext } from 'react-hook-form';
 import { DialogAction } from '../DialogAction/DialogAction';
 import { TooltipAction } from '../TooltipAction/TooltipAction';
+import FormDate from '../FormDate/FormDate';
+import FormSelect from '../FormSelect/FormSelect';
+import { getOptionsForField } from '@/components/FamilyComposition/form.ds';
+
+type MaskType = 'date' | 'currency' | 'year';
+
+// Global lock para evitar múltiplas adições simultâneas
+const globalAddLock = {
+  isAdding: false,
+  lastAddTime: 0,
+};
 
 type DynamicInputSectionProps = {
   title?: string;
@@ -13,151 +23,481 @@ type DynamicInputSectionProps = {
   fieldNames: string[];
   namePrefix: string;
   required: boolean;
+  fieldMasks?: Record<string, MaskType>;
+  footerMessage?: string;
+  dateFields?: string[];
+  selectFields?: string[];
+  showTotalRow?: {
+    fieldToSum: string;
+    label: string;
+  };
+  onRemoveRow?: (index: number) => void;
 };
 
-export const DynamicInputSection = ({
+const DynamicInputSectionComponent = ({
   title = '',
   info = '',
   columns = [],
   fieldNames = [],
   namePrefix = '',
   required = false,
+  fieldMasks = {},
+  footerMessage,
+  dateFields = [],
+  selectFields = [],
+  showTotalRow,
+  onRemoveRow,
 }: DynamicInputSectionProps) => {
   const {
     control,
     register,
     formState: { errors },
+    setValue,
+    getValues,
   } = useFormContext();
+  const [openModal, setOpenModal] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: namePrefix,
   });
 
-  const parentRef = useRef<HTMLDivElement>(null);
-  // const actionsRef = useRef<HTMLDivElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const isAddingRef = useRef(false);
+  const lastAddTimeRef = useRef<number>(0);
 
+  // Aplicar máscaras aos valores existentes quando os dados são carregados
   useEffect(() => {
-    if (parentRef.current) {
-      autoAnimate(parentRef.current);
+    if (fields.length === 0) return;
+
+    fields.forEach((field, index) => {
+      fieldNames.forEach((fieldName) => {
+        const mask = fieldMasks[fieldName];
+        const fieldKey = `${namePrefix}.${index}.${fieldName}`;
+
+        if (mask === 'currency') {
+          const currentValue = getValues(fieldKey);
+
+          // Se o valor existe e não está formatado
+          if (currentValue && String(currentValue).trim() !== '' && !String(currentValue).includes('R$')) {
+            // Remove caracteres não numéricos
+            const cleanValue = String(currentValue).replace(/\D/g, '');
+
+            if (cleanValue && cleanValue !== '0') {
+              // Tratar como centavos (dividir por 100)
+              const numValue = parseInt(cleanValue, 10) / 100;
+
+              if (!isNaN(numValue)) {
+                const formatted = numValue.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                });
+                setValue(fieldKey, formatted, { shouldValidate: false });
+              }
+            }
+          }
+        }
+      });
+    });
+  }, [fields, fieldMasks, fieldNames, namePrefix, getValues, setValue]);
+
+  // Calculate total diretamente dos fields do useFieldArray
+  const totalValue = useMemo(() => {
+    if (!showTotalRow || !Array.isArray(fields)) {
+      return 'R$ 0,00';
     }
-  }, []);
 
-  const handleAddRow = () =>
-    append(fieldNames.reduce((acc, field) => ({ ...acc, [field]: '' }), {}));
+    const sumField = showTotalRow.fieldToSum;
+    const total = fields.reduce((sum: number, item: Record<string, string | number>) => {
+      if (item && item[sumField]) {
+        const originalValue = item[sumField] as string;
+        const parsedValue = parseCurrency(originalValue);
+        const value = parseFloat(parsedValue) || 0;
+        return sum + value;
+      }
+      return sum;
+    }, 0);
 
-  const handleRemoveRow = (index: number) => remove(index);
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(total);
+  }, [fields, showTotalRow]);
 
-  const cols = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-2',
-    3: 'grid-cols-3',
-    4: 'grid-cols-4',
-    5: 'grid-cols-5',
-    6: 'grid-cols-6',
-  };
+  const handleAddRow = useCallback(() => {
+    const now = Date.now();
 
-  const gridColsClass = cols[columns.length as keyof typeof cols] ?? 'grid-cols-1';
+    if (globalAddLock.isAdding || isAddingRef.current ||
+        (now - globalAddLock.lastAddTime < 500) || (now - lastAddTimeRef.current < 500)) {
+      return;
+    }
+
+    globalAddLock.isAdding = true;
+    globalAddLock.lastAddTime = now;
+    isAddingRef.current = true;
+    lastAddTimeRef.current = now;
+    setIsAdding(true);
+
+    const newRow = fieldNames.reduce((acc, field) => {
+      if (field === 'salarioBruto' || field === 'valorMensal' || field === 'despesaMensal' || field === 'valor') {
+        acc[field] = 'R$ 0,00';
+      } else {
+        acc[field] = '';
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    append(newRow);
+
+    setTimeout(() => {
+      globalAddLock.isAdding = false;
+      isAddingRef.current = false;
+      setIsAdding(false);
+    }, 500);
+  }, [append, fieldNames]);
+
+  const handleRemoveRow = useCallback((index: number) => {
+    const scrollContainer = tableBodyRef.current?.closest('.overflow-y-auto');
+    const scrollTop = scrollContainer?.scrollTop || 0;
+
+    if (onRemoveRow) {
+      onRemoveRow(index);
+    } else {
+      remove(index);
+    }
+
+    if (scrollContainer) {
+      setTimeout(() => {
+        scrollContainer.scrollTop = scrollTop;
+      }, 0);
+    }
+  }, [remove, onRemoveRow]);
 
   const hasError = Array.isArray(errors[namePrefix])
     ? errors[namePrefix].some((item) => fieldNames.some((fieldName) => item?.[fieldName]))
     : false;
 
-  return (
-    <div className="max-w-[950px] space-y-4">
-      <TooltipAction text="Clique aqui, para mais informações">
-        <div className="flex gap-2 items-center">
-          {title && <h3 className="font-semibold text-md text-muted-foreground">{title}</h3>}
-          {required && <span className={`ml-1 ${hasError ? 'text-red-500' : ''}`}>*</span>}
-          {info && (
-            <DialogAction
-              textButton="Entendi."
-              textTitle="Despesas mensais básicas"
-              textDescription={info}
-              icon={Info}
-              size="24"
-            />
-          )}
+  const createMaskedInput = useCallback((path: string, mask: MaskType | undefined, fieldError?: FieldError, placeholder?: string) => {
+    const { onBlur, ...registerProps } = register(path, {
+      required: required ? 'Campo obrigatório' : false,
+      validate: (val: string) => {
+        if (mask === 'year') {
+          if (!val) return true;
+          if (!/^\d{1,4}$/.test(val)) return 'Apenas números são permitidos';
+          if (val.length !== 4) return 'O ano deve conter exatamente 4 dígitos';
+          const yearNum = parseInt(val, 10);
+          if (yearNum < 1900 || yearNum > new Date().getFullYear() + 1)
+            return 'Ano inválido';
+          return true;
+        } else if (mask === 'date') {
+          return !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val) || 'Formato deve ser DD/MM/AAAA';
+        }
+        return true;
+      }
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+
+      if (mask === 'year') {
+        val = val.replace(/\D/g, '').slice(0, 4);
+      } else if (mask === 'date') {
+        val = maskDate(val);
+      } else if (mask === 'currency') {
+        // Extrair apenas os números e REMOVER ZEROS À ESQUERDA
+        let onlyNumbers = val.replace(/\D/g, '');
+
+        // CRUCIAL: Remover zeros à esquerda para evitar "000150"
+        onlyNumbers = onlyNumbers.replace(/^0+/, '') || '0';
+
+        if (onlyNumbers === '0') {
+          val = 'R$ 0,00';
+        } else {
+          // Converter para centavos (dividir por 100)
+          // 150 → 1.50 → R$ 1,50
+          const number = parseInt(onlyNumbers, 10) / 100;
+
+          // Formatar como moeda brasileira
+          val = number.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        }
+      }
+
+      // Usar setValue diretamente para garantir que o valor seja atualizado
+      setValue(path, val, { shouldValidate: false, shouldDirty: true });
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Para máscaras numéricas, bloquear teclas não-numéricas
+      if (mask === 'year' || mask === 'currency') {
+        // Permitir teclas de controle
+        const allowedKeys = [
+          'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
+          'ArrowUp', 'ArrowDown', 'Home', 'End', 'Tab'
+        ];
+
+        // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        if (e.ctrlKey || e.metaKey) {
+          return;
+        }
+
+        // Bloquear teclas que não são números ou teclas permitidas
+        if (!allowedKeys.includes(e.key) && !/^\d$/.test(e.key)) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    return (
+      <div className="w-full">
+        <input
+          {...registerProps}
+          placeholder={
+            placeholder || (mask === 'date' ? 'DD/MM/AAAA' : mask === 'year' ? 'AAAA' : 'Digite...')
+          }
+          onChange={handleChange}
+          onBlur={onBlur}
+          onKeyDown={handleKeyDown}
+          inputMode={mask === 'date' || mask === 'year' || mask === 'currency' ? 'numeric' : 'text'}
+          maxLength={mask === 'year' ? 4 : mask === 'date' ? 10 : undefined}
+          className={`
+            w-full px-4 py-3 text-sm border rounded-lg
+            placeholder:text-gray-500
+            focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500
+            transition-all min-h-[50px]
+            ${fieldError ? 'border-red-500 bg-red-50 text-red-500' : 'border-gray-300 bg-white text-gray-700'}
+          `}
+        />
+        {fieldError && (
+          <p className="text-red-500 text-xs mt-1">
+            {fieldError.message}
+          </p>
+        )}
+      </div>
+    );
+  }, [register, required, setValue]);
+
+  const renderField = useCallback((
+    fieldName: string,
+    rowIdx: number,
+    fieldError?: FieldError,
+    placeholder?: string
+  ) => {
+    const path = `${namePrefix}.${rowIdx}.${fieldName}` as const;
+    const otherPath = `${namePrefix}.${rowIdx}.${fieldName}_other` as const;
+
+    if (dateFields.includes(fieldName)) {
+      return (
+        <div className="w-full">
+          <FormDate
+            name={path}
+            label=""
+            required={required}
+            error={fieldError?.message}
+            compact={true}
+          />
         </div>
-      </TooltipAction>
+      );
+    }
+
+    if (selectFields.includes(fieldName)) {
+      const options = getOptionsForField(fieldName);
+
+      return (
+        <div className="w-full">
+          <FormSelect
+            name={path}
+            label=""
+            options={options}
+            required={required}
+            compact={true}
+            error={fieldError?.message}
+            withOtherOption={
+              options.some((opt) => opt.value === 'outros')
+                ? {
+                    otherValue: 'outros',
+                    otherFieldName: otherPath,
+                    otherPlaceholder: fieldName === 'escolaridade'
+                      ? 'Especifique a escolaridade'
+                      : fieldName === 'grauParentesco'
+                      ? 'Especifique o grau de parentesco'
+                      : 'Especifique...',
+                  }
+                : undefined
+            }
+          />
+        </div>
+      );
+    }
+
+    const mask = fieldMasks[fieldName];
+    return createMaskedInput(path, mask, fieldError, placeholder);
+  }, [namePrefix, dateFields, selectFields, required, fieldMasks, createMaskedInput]);
+
+  return (
+    <div className="w-full space-y-2">
+      <div className="flex gap-3 items-center">
+        {title && <h3 className="font-semibold text-gray-700">{title}</h3>}
+        {required && (
+          <span className={`ml-1 ${hasError ? 'text-red-500' : 'text-red-500'}`}>*</span>
+        )}
+        {info && (
+          <DialogAction
+            textButton="Entendi."
+            textTitle="Informações"
+            textDescription={info}
+            icon={Info}
+            size="16"
+            open={openModal}
+            setOpenModal={() => setOpenModal(!openModal)}
+          />
+        )}
+      </div>
 
       <div className="rounded-lg overflow-hidden border border-gray-200">
-        <div
-          className={`grid ${gridColsClass} gap-4 bg-blue-400 text-white font-medium text-sm px-1 py-1 max-w-[950px] rounded-t-lg`}
-        >
-          {columns.map((col, idx) => (
-            <div
-              key={idx}
-              className="font-bold text-white truncate bg-blue-400 p-2 rounded-t-md text-sm"
-              title={col}
-            >
-              {col}
-            </div>
-          ))}
-        </div>
-
-        {/* Linhas */}
-        <div ref={parentRef} className="max-w-[950px] divide-y ">
-          {fields.map((field, rowIdx) => (
-            <div key={field.id} className={`grid ${gridColsClass} gap-4 p-4`}>
-              {fieldNames.map((fieldName) => {
-                const fieldError = (
-                  errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
-                )?.[rowIdx]?.[fieldName];
-                return (
-                  <div key={`${field.id}-${fieldName}`} className="relative">
-                    <input
-                      {...register(`${namePrefix}.${rowIdx}.${fieldName}` as const, {
-                        required: required ? 'Campo obrigatório' : false,
-                      })}
-                      placeholder="Digite..."
-                      className={`
-                        m-1 p-2 border w-full bg-transparent text-muted-foreground
-                        placeholder-muted-foreground rounded-lg
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                        ${fieldError ? 'text-red-500 border-red-500 placeholder:text-current bg-red-200' : 'border-gray-300'}
-                      `}
-                    />
-                    {fieldError && (
-                      <p className="absolute text-red-500 text-xs mt-1 bottom-[-13px]">
-                        {fieldError.message}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-
-              {rowIdx === fields.length - 1 && (
-                <div className="flex gap-2 items-center">
-                  <TooltipAction text={'Adicionar linha'}>
-                    <div>
-                      <AnimatedIconButton
-                        onClick={handleAddRow}
-                        className="p-1 text-gray-600 rounded-full hover:bg-gray-200 transition"
-                      >
-                        <Plus size={20} />
-                      </AnimatedIconButton>
-                    </div>
-                  </TooltipAction>
-
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
+          {/* Mobile view */}
+          <div className="md:hidden">
+            {fields.map((field, rowIdx) => (
+              <div key={field.id} className="p-3 border-b last:border-b-0 bg-white">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-blue-600">Pessoa {rowIdx + 1}</h4>
                   {fields.length > 1 && (
-                    <TooltipAction text={'Remover linha'}>
-                      <div>
-                        <AnimatedIconButton
-                          onClick={() => handleRemoveRow(fields.length - 1)}
-                          className="p-1 text-gray-600 rounded-full hover:bg-gray-200 transition"
-                        >
-                          <Trash size={19} />
-                        </AnimatedIconButton>
-                      </div>
-                    </TooltipAction>
+                    <button
+                      onClick={() => handleRemoveRow(rowIdx)}
+                      className="p-1 rounded-full hover:bg-red-100 text-red-500"
+                      type="button"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
+                {fieldNames.map((fieldName, colIdx) => {
+                  const fieldError = (
+                    errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
+                  )?.[rowIdx]?.[fieldName];
+
+                  return (
+                    <div key={`${field.id}-${fieldName}`} className="mb-3">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {columns[colIdx]}
+                      </label>
+                      {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}`)}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+
+            {/* Add total row for mobile */}
+            {showTotalRow && (
+              <div className="p-3 border-t bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-800">{showTotalRow.label}</h4>
+                  <div className="font-bold text-blue-700">{totalValue}</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop table view */}
+          <table className="w-full table-fixed hidden md:table">
+            <thead className="bg-blue-500 text-white sticky top-0 z-10">
+              <tr>
+                {columns.map((col, idx) => (
+                  <th key={idx} className="text-left p-3 text-sm font-medium">
+                    {col}
+                  </th>
+                ))}
+                <th className="w-10"></th>
+              </tr>
+            </thead>
+            <tbody ref={tableBodyRef} className="divide-y divide-gray-200">
+              {fields.map((field, rowIdx) => (
+                <tr key={field.id} className="hover:bg-gray-50">
+                  {fieldNames.map((fieldName, colIdx) => {
+                    const fieldError = (
+                      errors[namePrefix] as Record<number, Record<string, FieldError>> | undefined
+                    )?.[rowIdx]?.[fieldName];
+
+                    return (
+                      <td key={`${field.id}-${fieldName}`} className="p-3 align-top">
+                        {renderField(fieldName, rowIdx, fieldError, `${columns[colIdx]}`)}
+                      </td>
+                    );
+                  })}
+                  <td className="p-3 w-10 align-middle">
+                    {fields.length > 1 && (
+                      <TooltipAction text="Remover">
+                        <button
+                          onClick={() => handleRemoveRow(rowIdx)}
+                          className="p-1 rounded-full hover:bg-red-100 text-red-500"
+                          type="button"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </TooltipAction>
+                    )}
+                  </td>
+                </tr>
+              ))}
+
+              {/* Add total row for desktop */}
+              {showTotalRow && (
+                <tr className="bg-gray-50">
+                  <td className="p-3 align-middle font-medium">{showTotalRow.label}</td>
+                  {/* Empty cells to fill the space */}
+                  {Array(columns.length - 2)
+                    .fill(0)
+                    .map((_, idx) => (
+                      <td key={`spacer-${idx}`}></td>
+                    ))}
+                  <td className="p-3 align-middle text-right font-bold text-blue-700">
+                    {totalValue}
+                  </td>
+                  <td className="w-10"></td>
+                </tr>
               )}
-            </div>
-          ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Add buttons */}
+        <div className="p-3 md:hidden">
+          <button
+            onClick={handleAddRow}
+            disabled={isAdding}
+            className="flex items-center justify-center w-full p-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg border border-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            type="button"
+          >
+            <Plus size={20} className="mr-2" />
+            <span className="font-medium">{isAdding ? 'Adicionando...' : 'Adicionar Pessoa'}</span>
+          </button>
+        </div>
+
+        <div className="hidden md:flex justify-end p-3 bg-gray-50">
+          <button
+            onClick={handleAddRow}
+            disabled={isAdding}
+            className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            type="button"
+          >
+            <Plus size={14} /> {isAdding ? 'Adicionando...' : 'Adicionar linha'}
+          </button>
         </div>
       </div>
+
+      {footerMessage && <div className="text-xs text-gray-500 mt-1">{footerMessage}</div>}
     </div>
   );
 };
+
+// Export sem memo para testar
+export const DynamicInputSection = DynamicInputSectionComponent;

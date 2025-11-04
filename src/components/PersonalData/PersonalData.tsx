@@ -1,111 +1,290 @@
-import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from '../common/FormInput/FormInput';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues } from 'react-hook-form';
-import FormSelect from '../common/FormSelect/FormSelect';
-import FormDate from '../common/FormDate/FormDate';
-import { Button } from '../ui/button';
-import { toast } from '@/utils/toast';
+import { PostPersonalData, usePersonalData } from '@/services/queries/forms/index';
 import { useTabStore } from '@/store/tabStore';
-import { Nationality, Birthplace, raceOptions, genderOptions, YesOrNo } from '@/utils/optionsMock';
-import { Card, CardHeader, CardContent, CardTitle } from '../ui/card';
-
-const schema = z.object({
-  username: z.string().min(1, 'Nome completo é obrigatório'),
-  email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
-  cpf: z.string().min(1, 'CPF é obrigatório'),
-  rg: z.string().min(1, 'RG é obrigatório'),
-  nationality: z.string().min(1, 'Nacionalidade é obrigatória'),
-  birthplace: z.string().min(1, 'Naturalidade é obrigatória'),
-  race: z.string().min(1, 'Raça/Cor é obrigatória'),
-  phone: z.string().min(1, 'phone é obrigatório'),
-  gender: z.string().min(1, 'Gênero é obrigatório'),
-  cpfScholarship: z.string().optional(),
-  dateBirth: z
-    .date({
-      required_error: 'Data de nascimento é obrigatória',
-      invalid_type_error: 'Formato inválido de data',
-    })
-    .refine((date) => date !== null, { message: 'Data de nascimento é obrigatória' }),
-  deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
-  educacenso: z.string().optional(),
-});
+import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { getBirthplaceOptions, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';
+import { TabNavigation } from '@/components/TabNavigation/TabNavigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import FormDate from '../common/FormDate/FormDate';
+import FormInput from '../common/FormInput/FormInput';
+import FormSelect from '../common/FormSelect/FormSelect';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { personalDataSchema, PersonalDataType } from './type/formData';
 
 export const PersonalData = ({ label }: { label: string }) => {
-  const methods = useForm({
-    mode: 'onSubmit',
-    resolver: zodResolver(schema),
+  const { setFormData, formData } = useScholarshipFormStore();
+  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+  const { resetSpecificTab } = useTabStore();
+  const { mutate: FormSubmit } = PostPersonalData();
+  const { id: StudentId } = useParams<{ id: string }>();
+  const { data } = usePersonalData(Number(StudentId));
+  const [hasLoadedFromAPI, setHasLoadedFromAPI] = useState(false);
+
+  const methods = useForm<PersonalDataType>({
+    resolver: zodResolver(personalDataSchema),
     defaultValues: {
-      username: '',
+      fullName: '',
       email: '',
       cpf: '',
       rg: '',
       nationality: '',
       birthplace: '',
       race: '',
-      cpfScholarship: '',
       phone: '',
-      dateBirth: '',
       gender: '',
+      dateBirth: undefined,
       deficiency: '',
+      cpfScholarship: '',
       educacenso: '',
+      ...(formData.personal_data as Partial<PersonalDataType>),
     },
   });
+
   const { errors } = methods.formState;
+  const { watch } = methods;
+  const selectedNationality = watch('nationality');
 
-  const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+  const watchedValues = watch();
 
-  const onSubmit = async (data: FieldValues) => {
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        const hasAnyValue = Object.values(watchedValues).some(
+          value => value !== '' && value !== undefined && value !== null
+        );
+
+        if (hasAnyValue) {
+          setFormData('personal_data', watchedValues);
+        }
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
+
+  const birthplaceOptions = selectedNationality
+    ? getBirthplaceOptions(selectedNationality)
+    : [];
+
+  useEffect(() => {
+    if (data && !hasLoadedFromAPI) {
+      const formData = {
+        ...methods.getValues(),
+        ...(data as Partial<PersonalDataType>),
+      };
+
+      if (formData.dateBirth && typeof formData.dateBirth === 'string') {
+        if (formData.dateBirth.includes('/')) {
+        } else {
+          const parts = formData.dateBirth.split('T')[0].split('-');
+          if (parts.length === 3) {
+            const [year, month, day] = parts;
+            formData.dateBirth = `${day}/${month}/${year}`;
+          } else {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { dateBirth, ...formDataWithoutDate } = formData;
+            methods.reset(formDataWithoutDate);
+            setHasLoadedFromAPI(true);
+            return;
+          }
+        }
+      }
+
+      const hasAllRequiredFields =
+        formData.rg &&
+        formData.nationality &&
+        formData.birthplace &&
+        formData.race;
+
+      if (!hasAllRequiredFields) {
+        resetSpecificTab('personal_data');
+      }
+
+      methods.reset(formData);
+      setHasLoadedFromAPI(true);
+    }
+  }, [data, methods, hasLoadedFromAPI, resetSpecificTab]);
+
+  useEffect(() => {
+    if (formData.personal_data) {
+      const storeData = formData.personal_data;
+      const currentValues = methods.getValues();
+
+      if (storeData.dateBirth && typeof storeData.dateBirth === 'string') {
+        if (!storeData.dateBirth.includes('/')) {
+          const parts = storeData.dateBirth.split('T')[0].split('-');
+          if (parts.length === 3) {
+            const [year, month, day] = parts;
+            storeData.dateBirth = `${day}/${month}/${year}`;
+          } else {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { dateBirth, ...storeDataWithoutDate } = storeData;
+            methods.reset({
+              ...currentValues,
+              ...storeDataWithoutDate,
+            });
+            return;
+          }
+        }
+      }
+
+      methods.reset({
+        ...currentValues,
+        ...storeData,
+      });
+    }
+  }, [formData.personal_data, methods]);
+
+  useEffect(() => {
+    if (selectedNationality) {
+      const currentBirthplace = methods.getValues('birthplace');
+      const newOptions = getBirthplaceOptions(selectedNationality);
+
+      if (currentBirthplace && !newOptions.some(option => option.value === currentBirthplace)) {
+        methods.setValue('birthplace', '');
+      }
+    }
+  }, [selectedNationality, methods]);
+
+  useEffect(() => {
+    const { completedTabs } = useTabStore.getState();
+
+    const hasAllRequiredFields =
+      watchedValues.fullName &&
+      watchedValues.cpf &&
+      watchedValues.rg &&
+      watchedValues.nationality &&
+      watchedValues.birthplace &&
+      watchedValues.race &&
+      watchedValues.phone &&
+      watchedValues.gender &&
+      watchedValues.dateBirth;
+
+    if (completedTabs.includes('personal_data') && !hasAllRequiredFields) {
+      resetSpecificTab('personal_data');
+    }
+  }, [watchedValues, resetSpecificTab]);
+
+  const onSubmit = async (formValues: PersonalDataType) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
-    toast.success('Sucesso!', 'Dados enviados com sucesso!');
-    setSelectedTab('parents_data');
 
-    console.log('Dados do formulário:', data);
+    const hasAllRequiredFields =
+      formValues.fullName &&
+      formValues.cpf &&
+      formValues.rg &&
+      formValues.nationality &&
+      formValues.birthplace &&
+      formValues.race &&
+      formValues.phone &&
+      formValues.gender &&
+      formValues.dateBirth;
+
+    if (!hasAllRequiredFields) {
+      return;
+    }
+
+    try {
+      setFormData('personal_data', formValues);
+
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('personal_data', StudentId);
+
+      setSelectedTab('parents_data');
+
+      const formatDateToISO = (date: Date | string | undefined): string => {
+        if (!date) return '';
+
+        if (date instanceof Date) {
+          return date.toISOString();
+        }
+
+        if (typeof date === 'string') {
+          if (date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+            return date;
+          }
+
+          const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+          const match = date.match(dateRegex);
+          if (match) {
+            const [, day, month, year] = match;
+            const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            if (!isNaN(dateObj.getTime())) {
+              return dateObj.toISOString();
+            }
+          }
+
+          const dateObj = new Date(date);
+          if (!isNaN(dateObj.getTime())) {
+            return dateObj.toISOString();
+          }
+
+          return date;
+        }
+
+        return '';
+      };
+
+      const payload = {
+        userId: Number(StudentId),
+        fullName: formValues.fullName,
+        email: formValues.email,
+        cpf: formValues.cpf,
+        rg: formValues.rg ?? '',
+        nationality: formValues.nationality ?? '',
+        birthplace: formValues.birthplace ?? '',
+        race: formValues.race ?? '',
+        cpfScholarship: formValues.cpfScholarship ?? '',
+        phone: formValues.phone,
+        gender: formValues.gender,
+        dateBirth: formatDateToISO(formValues.dateBirth),
+        deficiency: formValues.deficiency,
+        educasenso: formValues.educacenso ?? '',
+      };
+
+      FormSubmit(payload);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">{label}</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
+            {label}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="max-w-6xl mx-auto bg-white p-6">
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 <FormInput
-                  {...methods.register('username')}
-                  name="username"
-                  label="Nome completo"
+                  name="fullName"
+                  label="Nome completo do(a) candidato(a)"
                   required
-                  error={errors.username?.message}
+                  error={errors.fullName?.message}
                 />
                 <FormDate
                   name="dateBirth"
-                  label="Data de Nascimento"
+                  label="Data de Nascimento do(a) candidato(a)"
                   required
                   error={errors.dateBirth?.message}
                 />
+                <FormInput name="cpf" label="CPF do(a) candidato(a)" mask="cpf" required error={errors.cpf?.message} />
                 <FormInput
-                  {...methods.register('cpf')}
-                  name="cpf"
-                  label="CPF"
-                  mask="cpf"
-                  required
-                  error={errors.cpf?.message}
-                />
-                <FormInput
-                  {...methods.register('rg')}
                   name="rg"
-                  label="RG do candidato(a)"
+                  label="RG do candidato(a) do(a) candidato(a)"
                   mask="rg"
                   error={errors.rg?.message}
                 />
                 <FormSelect
                   name="nationality"
-                  label="Nacionalidade"
+                  label="Nacionalidade do(a) candidato(a)"
                   required
                   description="Selecione uma das opções abaixo."
                   options={Nationality}
@@ -113,11 +292,15 @@ export const PersonalData = ({ label }: { label: string }) => {
                 />
                 <FormSelect
                   name="birthplace"
-                  label="Naturalidade"
+                  label="Naturalidade do(a) candidato(a)"
                   required
-                  description="Selecione uma das opções abaixo."
-                  options={Birthplace}
+                  description={selectedNationality
+                    ? `Selecione uma das opções de ${Nationality.find(n => n.value === selectedNationality)?.label || 'naturalidade'}.`
+                    : "Primeiro selecione a nacionalidade."
+                  }
+                  options={birthplaceOptions}
                   error={errors.birthplace?.message}
+                  disabled={!selectedNationality}
                 />
                 <FormSelect
                   name="race"
@@ -129,7 +312,7 @@ export const PersonalData = ({ label }: { label: string }) => {
                 />
                 <FormSelect
                   name="gender"
-                  label="Escolha seu Gênero"
+                  label="Escolha o Gênero do(a) candidato(a)"
                   required
                   description="Selecione uma das opções abaixo."
                   options={genderOptions}
@@ -144,7 +327,6 @@ export const PersonalData = ({ label }: { label: string }) => {
                   error={errors.deficiency?.message}
                 />
                 <FormInput
-                  {...methods.register('email')}
                   name="email"
                   label="E-mail"
                   type="email"
@@ -152,30 +334,29 @@ export const PersonalData = ({ label }: { label: string }) => {
                   error={errors.email?.message}
                 />
                 <FormInput
-                  {...methods.register('phone')}
                   name="phone"
                   label="Celular"
                   mask="phone"
                   required
                   error={errors.phone?.message}
                 />
+
                 <FormInput
-                  {...methods.register('cpfScholarship')}
-                  name="cpfScholarship"
-                  label="CPF do(a) candidato(a) bolsista"
-                  mask="cpf"
-                />
-                <FormInput
-                  {...methods.register('educacenso')}
                   name="educacenso"
                   label="Número Educacenso"
                   description="Caso não possua, deixe em branco."
                 />
               </div>
-              <div className="flex justify-end w-full">
+              <div className="flex justify-between items-center w-full mt-4 gap-4">
+                <div className="flex-shrink-0">
+                  <TabNavigation
+                    currentTab="personal_data"
+                  />
+                </div>
+
                 <Button
                   type="submit"
-                  className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
                 >
                   Salvar e continuar
                 </Button>

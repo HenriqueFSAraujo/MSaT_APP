@@ -1,41 +1,65 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { routeRoles } from '@/Auth/Login/Routes/routeRoles';
+import { Layout } from '@/components/Layout/Layout';
 import Login from '@/pages/Login/Login';
-import Users from '@/pages/Users/Users';
-import StudentForm from '@/pages/StudentForm/StudentForm';
-import { Header } from '@/components/Header/Header';
-import { Logins } from '@/utils/logins';
 import { NotFoundPage } from '@/pages/NotFound/NotFoundPage';
+import SocioeconomicReport from '@/pages/SocioeconomicReport/SocioeconomicReport';
+import StudentForm from '@/pages/StudentForm/StudentForm';
+import StudentPortal from '@/pages/StudentPortal/StudentPortal';
+import FormValidation from '@/pages/FormValidation';
+import Users from '@/pages/Users/Users';
+import { useAuthStore } from '@/store/useAuthStore';
+import type { ReactElement } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-const AppRoutes = () => {
-  const userName = localStorage.getItem('nameUser');
+interface PrivateRouteProps {
+  element: ReactElement;
+  allowedRoles: string[];
+}
 
-  const isAuthenticated = () => {
-    return Logins.some((login) => login.name === userName);
-  };
+const PrivateRoute = ({ element, allowedRoles }: PrivateRouteProps) => {
+  const { token, role } = useAuthStore();
 
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/';
 
+  return token && allowedRoles.includes(role) ? element : <Navigate to="/" />;
+};
+
+export const AppRoutes = () => {
   return (
-    <>
-      {!isLoginPage && isAuthenticated() && <Header shouldRender={true} />}
-
+    <Layout>
       <Routes>
         <Route path="/" element={<Login />} />
+
         <Route
-          path="/students-form"
-          element={isAuthenticated() ? <StudentForm /> : <Navigate to="/" />}
+          path="/dashboard-users"
+          element={<PrivateRoute element={<Users />} allowedRoles={routeRoles.admin} />}
         />
+
         <Route
-          path="/dashboard-Users"
-          element={isAuthenticated() ? <Users /> : <Navigate to="/" />}
+          path="/socioeconomic-report/:id"
+          element={
+            <PrivateRoute element={<SocioeconomicReport />} allowedRoles={routeRoles.admin} />
+          }
+        />
+
+        <Route
+          path="/form-validation/:id"
+          element={
+            <PrivateRoute element={<FormValidation />} allowedRoles={routeRoles.admin} />
+          }
+        />
+
+        <Route
+          path="/student-portal/:id"
+          element={<PrivateRoute element={<StudentPortal />} allowedRoles={routeRoles.users} />}
+        />
+
+        <Route
+          path="/students-form/:id"
+          element={<PrivateRoute element={<StudentForm />} allowedRoles={routeRoles.users} />}
         />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </>
+    </Layout>
   );
 };
-
-export default AppRoutes;

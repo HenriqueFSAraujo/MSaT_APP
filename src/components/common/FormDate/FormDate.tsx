@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon } from 'lucide-react';
-import { FieldError, Merge, FieldErrorsImpl, useFormContext } from 'react-hook-form';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { FieldError, FieldErrorsImpl, Merge, useFormContext } from 'react-hook-form';
 
 interface FormDateProps {
   name: string;
@@ -14,6 +14,7 @@ interface FormDateProps {
   required?: boolean;
   description?: string;
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
+  compact?: boolean;
 }
 
 const getErrorMessage = (
@@ -34,108 +35,351 @@ const getErrorMessage = (
   return 'Erro desconhecido';
 };
 
-const FormDate: React.FC<FormDateProps> = ({ name, label, required = false, error }) => {
+const FormDate: React.FC<FormDateProps> = ({
+  name,
+  label,
+  required = false,
+  error,
+  compact = false,
+}) => {
   const { control, setValue } = useFormContext();
   const [open, setOpen] = useState(false);
-  const [showYearSelector, setShowYearSelector] = useState(false);
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [view, setView] = useState<'calendar' | 'months' | 'years'>('calendar');
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [justSelected, setJustSelected] = useState(false);
+
   const minYear = 1900;
   const maxYear = new Date().getFullYear();
-  const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i).reverse();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const today = new Date();
+
+  const months = [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ];
+
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  const generateYears = () => {
+    const years = [];
+    for (let year = maxYear; year >= minYear; year--) {
+      years.push(year);
+    }
+    return years;
+  };
+
+  const handleYearSelect = (year: number) => {
+    setCurrentDate(new Date(year, currentDate.getMonth(), 1));
+    setView('months');
+  };
+
+  const handleMonthSelect = (monthIndex: number) => {
+    setCurrentDate(new Date(currentDate.getFullYear(), monthIndex, 1));
+    setView('calendar');
+  };
+
+  const navigateYear = (direction: 'prev' | 'next') => {
+    const newYear = currentDate.getFullYear() + (direction === 'next' ? 1 : -1);
+    if (newYear >= minYear && newYear <= maxYear) {
+      setCurrentDate(new Date(newYear, currentDate.getMonth(), 1));
+    }
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentDate);
+    if (direction === 'next') {
+      newDate.setMonth(newDate.getMonth() + 1);
+    } else {
+      newDate.setMonth(newDate.getMonth() - 1);
+    }
+    setCurrentDate(newDate);
+  };
+
+  const renderHeader = () => {
+    switch (view) {
+      case 'years':
+        return (
+          <div className="flex items-center justify-between p-4 bg-blue-500 text-white rounded-t-lg">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigateYear('prev')}
+              className="text-white hover:bg-blue-600 p-2 hover:text-white"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <span className="font-semibold text-lg">Selecione o Ano</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigateYear('next')}
+              className="text-white hover:bg-blue-600 p-2 hover:text-white"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
+        );
+
+      case 'months':
+        return (
+          <div className="flex items-center justify-between p-4 bg-blue-500 text-white rounded-t-lg">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setView('years')}
+              className="text-white hover:bg-blue-600 text-lg font-medium"
+            >
+              {currentDate.getFullYear()}
+            </Button>
+            <span className="font-semibold text-lg">Selecione o Mês</span>
+            <div className="w-10" />
+          </div>
+        );
+
+      default:
+        return (
+          <div className="flex items-center justify-between p-4 bg-blue-500 text-white rounded-t-lg">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigateMonth('prev')}
+              className="text-white hover:bg-blue-600 p-2"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setView('months')}
+                className="text-white hover:bg-blue-600 hover:text-white text-lg font-medium"
+              >
+                {months[currentDate.getMonth()]}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setView('years')}
+                className="text-white hover:bg-blue-600 hover:text-white text-lg font-medium"
+              >
+                {currentDate.getFullYear()}
+              </Button>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigateMonth('next')}
+              className="text-white hover:bg-blue-600 p-2"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
+        );
+    }
+  };
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => (
-        <FormItem className="flex flex-col">
-          <FormLabel
-            className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${fieldState.error ? 'text-red-500' : ''}`}
-          >
-            {label} {required && '*'}
-          </FormLabel>
-
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'ghost'}
-                className={`text-muted-foreground bg-transparent peer w-full border border-gray-300 rounded-lg px-4 py-3 hover:bg-transparent hover:text-muted text focus:border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm transition-all ${
-                  fieldState.error
-                    ? 'text-red-500 border-red-500 placeholder:text-current bg-primary-error hover:bg-primary-error hover:text-red-500'
-                    : ''
-                }`}
-              >
-                {field.value
-                  ? format(new Date(field.value), 'dd/MM/yyyy', { locale: ptBR })
-                  : 'clique para selecionar data'}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-64 p-2 shadow-lg rounded-lg flex flex-col items-center"
-              align="start"
-              side="top"
-            >
-              <div className="p-3 border-b bg-blue-300 flex items-center justify-between rounded-t-lg">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowYearSelector(!showYearSelector)}
-                  className="w-full"
-                >
-                  {currentYear}
-                </Button>
-              </div>
-
-              {showYearSelector && (
-                <div className="max-h-40 overflow-y-auto p-2 bg-white border-b">
-                  {years.map((year) => (
+      render={({ field, fieldState }) => {
+        const renderContent = () => {
+          switch (view) {
+            case 'years':
+              return (
+                <div className="grid grid-cols-3 gap-2 p-4 max-h-80 overflow-y-auto">
+                  {generateYears().map((year) => (
                     <Button
                       key={year}
                       variant="ghost"
-                      onClick={() => {
-                        setCurrentYear(year);
-                        setCurrentDate(new Date(year, currentDate.getMonth(), 1));
-                        setShowYearSelector(false);
-                      }}
-                      className={`w-full py-1 ${year === currentYear ? 'bg-blue-500 text-white' : ''}`}
+                      onClick={() => handleYearSelect(year)}
+                      className={`p-3 text-base hover:bg-blue-100 min-h-[50px] ${
+                        year === currentDate.getFullYear()
+                          ? 'bg-blue-500 text-white hover:bg-blue-600'
+                          : 'text-gray-700'
+                      }`}
                     >
                       {year}
                     </Button>
                   ))}
                 </div>
-              )}
+              );
 
-              <Calendar
-                mode="single"
-                selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => {
-                  setValue(name, date);
-                  setOpen(false);
-                }}
-                fromYear={minYear}
-                toYear={maxYear}
-                month={currentDate}
-                onMonthChange={(date) => {
-                  const newMonth = date.getMonth();
-                  const newYear = date.getFullYear();
+            case 'months':
+              return (
+                <div className="grid grid-cols-3 gap-3 p-6">
+                  {months.map((month, index) => (
+                    <Button
+                      key={month}
+                      variant="ghost"
+                      onClick={() => handleMonthSelect(index)}
+                      className={`p-4 text-base hover:bg-blue-100 min-h-[60px] ${
+                        index === currentDate.getMonth()
+                          ? 'bg-blue-500 text-white hover:bg-blue-600'
+                          : 'text-gray-700'
+                      }`}
+                    >
+                      {month}
+                    </Button>
+                  ))}
+                </div>
+              );
 
-                  setCurrentYear(newYear);
-                  setCurrentDate(new Date(newYear, newMonth, 1));
-                }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+            default:
+              return (
+                <div className="p-4">
+                  <Calendar
+                    mode="single"
+                    selected={field.value ? (typeof field.value === 'string'
+                      ? (field.value.includes('/')
+                          ? (() => {
+                              const [day, month, year] = field.value.split('/');
+                              return new Date(Number(year), Number(month) - 1, Number(day));
+                            })()
+                          : new Date(field.value))
+                      : field.value) : undefined}
+                    onSelect={(date) => {
+                      if (date) {
+                        setJustSelected(true);
+                        // Convert Date to string in DD/MM/YYYY format
+                        const dateString = format(date, 'dd/MM/yyyy', { locale: ptBR });
+                        setValue(name, dateString);
+                        setOpen(false);
+                        setTimeout(() => setJustSelected(false), 200);
+                      }
+                    }}
+                    month={currentDate}
+                    onMonthChange={setCurrentDate}
+                    fromYear={minYear}
+                    toYear={maxYear}
+                    disabled={(date) => date > today}
+                    locale={ptBR}
+                    initialFocus
+                    className="w-full"
+                    classNames={{
+                      months:
+                        'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full',
+                      month: 'space-y-4 w-full',
+                      caption: 'hidden',
+                      caption_label: 'hidden',
+                      nav: 'hidden',
+                      nav_button: 'hidden',
+                      nav_button_previous: 'hidden',
+                      nav_button_next: 'hidden',
+                      table: 'w-full border-collapse space-y-1',
+                      head_row: 'flex w-full',
+                      head_cell:
+                        'text-gray-600 rounded-md w-10 h-10 font-medium text-sm flex items-center justify-center',
+                      row: 'flex w-full mt-2',
+                      cell: 'text-center text-sm p-0 relative flex-1 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
+                      day: 'h-10 w-10 p-0 font-normal aria-selected:opacity-100 hover:bg-blue-100 rounded-md transition-colors flex items-center justify-center',
+                      day_selected:
+                        'bg-blue-500 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-500 focus:text-white',
+                      day_today: 'bg-blue-100 text-blue-700 font-semibold',
+                      day_outside: 'text-gray-400 opacity-50',
+                      day_disabled: 'text-gray-400 opacity-50',
+                      day_range_middle:
+                        'aria-selected:bg-accent aria-selected:text-accent-foreground',
+                      day_hidden: 'invisible',
+                    }}
+                    components={{
+                      IconLeft: () => null,
+                      IconRight: () => null,
+                    }}
+                    formatters={{
+                      formatWeekdayName: (date) => weekDays[date.getDay()],
+                    }}
+                  />
+                </div>
+              );
+          }
+        };
 
-          {fieldState.error && (
-            <FormMessage className="block text-red-500 text-xs mt-1">
-              {getErrorMessage(error)}
-            </FormMessage>
-          )}
-        </FormItem>
-      )}
+        return (
+          <FormItem className={`flex flex-col ${compact ? 'space-y-1' : 'space-y-2'}`}>
+            {label && (
+              <FormLabel
+                className={`ml-1 text-sm md:text-base font-medium text-gray-700 ${
+                  fieldState.error ? 'text-red-500' : ''
+                }`}
+              >
+                {label} {required && <span className="text-red-500">*</span>}
+              </FormLabel>
+            )}
+
+            <Popover
+              open={open}
+              onOpenChange={(isOpen) => {
+                setOpen(isOpen);
+                if (isOpen) {
+                  setView('calendar');
+                }
+              }}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onFocus={() => {
+                    if (!open && !justSelected) {
+                      setOpen(true);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setOpen(true);
+                    }
+                    if (e.key === 'Escape') {
+                      setOpen(false);
+                    }
+                  }}
+                  className={`text-left bg-transparent border border-gray-300 rounded-lg px-4 pr-12 hover:bg-transparent text-sm transition-all justify-between w-full min-h-[50px] ${
+                    compact ? 'py-3' : 'py-4'
+                  } ${
+                    fieldState.error
+                      ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-50 placeholder:text-current'
+                      : 'text-gray-700 placeholder:text-gray-500 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white'
+                  }`}
+                >
+                  <span className={`flex-1 ${field.value ? 'text-gray-900' : 'text-gray-500'} placeholder:text-gray-500`}>
+                    {field.value
+                      ? typeof field.value === 'string'
+                        ? (field.value.includes('/')
+                            ? field.value
+                            : format(new Date(field.value), 'dd/MM/yyyy', { locale: ptBR }))
+                        : format(field.value, 'dd/MM/yyyy', { locale: ptBR })
+                      : 'Selecione uma data'}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent
+                className="w-auto p-0 shadow-xl rounded-lg overflow-hidden min-w-[350px]"
+                align="center"
+                side="bottom"
+              >
+                {renderHeader()}
+                {renderContent()}
+              </PopoverContent>
+            </Popover>
+
+            {fieldState.error && (
+              <FormMessage className="text-red-500 text-xs mt-1">
+                {getErrorMessage(error)}
+              </FormMessage>
+            )}
+          </FormItem>
+        );
+      }}
     />
   );
 };

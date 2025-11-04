@@ -13,7 +13,7 @@ interface RadioButtonGroupProps {
   required?: boolean;
   className?: string;
   orientation?: 'vertical' | 'horizontal';
-  error?: string; // Adicionado para exibir erros
+  error?: string;
 }
 
 export const RadioButtonGroup = ({

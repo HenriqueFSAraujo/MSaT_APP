@@ -12,7 +12,7 @@ type RadioGroup = {
 
 export const radioGroups: RadioGroup[] = [
   {
-    name: 'propertyStatus',
+    name: 'situacaoImovel',
     label: 'Situação do Imóvel',
     required: true,
     options: [
@@ -24,7 +24,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'propertyType',
+    name: 'tipoImovel',
     label: 'Tipo do Imóvel',
     required: true,
     options: [
@@ -34,7 +34,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'buildingStructure',
+    name: 'estruturaFisica',
     label: 'Estrutura Física',
     required: true,
     options: [
@@ -44,7 +44,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'sewageSystem',
+    name: 'esgotoSanitario',
     label: 'Esgoto Sanitário',
     required: true,
     options: [
@@ -53,7 +53,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'electricitySupply',
+    name: 'fornecimentoEnergia',
     label: 'Fornecimento de Energia Elétrica',
     required: true,
     options: [
@@ -63,7 +63,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'waterSupply',
+    name: 'abastecimentoAgua',
     label: 'Abastecimento de Água',
     required: true,
     options: [
@@ -72,7 +72,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'chronicDiseasesInFamily',
+    name: 'doencaCronicaFamilia',
     label: 'Condições de saúde - Há casos de doenças crônicas na família?',
     required: true,
     options: [
@@ -81,7 +81,7 @@ export const radioGroups: RadioGroup[] = [
     ],
   },
   {
-    name: 'disabilitiesInFamily',
+    name: 'deficienciaFamilia',
     label: 'Condições de saúde - Há casos deficiencia na família?',
     required: true,
     options: [
