@@ -21,3 +21,6 @@ export * from './PropertyData';
 
 // Scholarship Process Info
 export * from './ScholarshipProcess';
+
+// Consent Terms
+export * from './ConsentTermsData';

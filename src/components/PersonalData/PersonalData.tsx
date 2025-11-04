@@ -47,31 +47,20 @@ export const PersonalData = ({ label }: { label: string }) => {
   const { watch } = methods;
   const selectedNationality = watch('nationality');
 
-  // Auto-save functionality
   const watchedValues = watch();
 
   useEffect(() => {
-    // Debounce auto-save to avoid too many saves
     const timeoutId = setTimeout(() => {
       if (watchedValues && Object.keys(watchedValues).length > 0) {
-        // Verificar se todos os campos obrigatórios estão preenchidos antes de salvar
-        const hasAllRequired =
-          watchedValues.fullName &&
-          watchedValues.cpf &&
-          watchedValues.rg &&
-          watchedValues.nationality &&
-          watchedValues.birthplace &&
-          watchedValues.race &&
-          watchedValues.phone &&
-          watchedValues.gender &&
-          watchedValues.dateBirth;
+        const hasAnyValue = Object.values(watchedValues).some(
+          value => value !== '' && value !== undefined && value !== null
+        );
 
-        // Só salvar se todos os campos obrigatórios estão preenchidos
-        if (hasAllRequired) {
+        if (hasAnyValue) {
           setFormData('personal_data', watchedValues);
         }
       }
-    }, 1000); // Save after 1 second of inactivity
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, [watchedValues, setFormData]);
@@ -88,18 +77,13 @@ export const PersonalData = ({ label }: { label: string }) => {
       };
 
       if (formData.dateBirth && typeof formData.dateBirth === 'string') {
-        // Se já está em formato DD/MM/YYYY, não precisa converter
         if (formData.dateBirth.includes('/')) {
-          // Já está no formato correto
         } else {
-          // Assumir que está em formato ISO (YYYY-MM-DD)
-          // Parse manualmente para evitar problemas de timezone
-          const parts = formData.dateBirth.split('T')[0].split('-'); // Pega só a parte da data
+          const parts = formData.dateBirth.split('T')[0].split('-');
           if (parts.length === 3) {
             const [year, month, day] = parts;
             formData.dateBirth = `${day}/${month}/${year}`;
           } else {
-            // Se não conseguir fazer parse, remover o campo
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { dateBirth, ...formDataWithoutDate } = formData;
             methods.reset(formDataWithoutDate);
@@ -109,14 +93,12 @@ export const PersonalData = ({ label }: { label: string }) => {
         }
       }
 
-      // Verificar se campos obrigatórios estão vazios após carregar da API
       const hasAllRequiredFields =
         formData.rg &&
         formData.nationality &&
         formData.birthplace &&
         formData.race;
 
-      // Se campos obrigatórios estão vazios, desmarcar a tab
       if (!hasAllRequiredFields) {
         resetSpecificTab('personal_data');
       }
@@ -132,15 +114,12 @@ export const PersonalData = ({ label }: { label: string }) => {
       const currentValues = methods.getValues();
 
       if (storeData.dateBirth && typeof storeData.dateBirth === 'string') {
-        // Se já está em formato DD/MM/YYYY, manter
         if (!storeData.dateBirth.includes('/')) {
-          // Se está em outro formato (ISO), converter para DD/MM/YYYY
           const parts = storeData.dateBirth.split('T')[0].split('-');
           if (parts.length === 3) {
             const [year, month, day] = parts;
             storeData.dateBirth = `${day}/${month}/${year}`;
           } else {
-            // Se não conseguir fazer parse, remover o campo
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { dateBirth, ...storeDataWithoutDate } = storeData;
             methods.reset({
@@ -170,11 +149,9 @@ export const PersonalData = ({ label }: { label: string }) => {
     }
   }, [selectedNationality, methods]);
 
-  // Monitorar se a tab deve ser desmarcada quando campos obrigatórios estão vazios
   useEffect(() => {
     const { completedTabs } = useTabStore.getState();
 
-    // Verificar se todos os campos obrigatórios estão preenchidos
     const hasAllRequiredFields =
       watchedValues.fullName &&
       watchedValues.cpf &&
@@ -186,7 +163,6 @@ export const PersonalData = ({ label }: { label: string }) => {
       watchedValues.gender &&
       watchedValues.dateBirth;
 
-    // Se a tab está marcada como completa mas não tem todos os campos, desmarcar
     if (completedTabs.includes('personal_data') && !hasAllRequiredFields) {
       resetSpecificTab('personal_data');
     }
@@ -196,7 +172,6 @@ export const PersonalData = ({ label }: { label: string }) => {
     const isValid = await methods.trigger();
     if (!isValid) return;
 
-    // Verificar se todos os campos obrigatórios estão preenchidos
     const hasAllRequiredFields =
       formValues.fullName &&
       formValues.cpf &&
@@ -220,43 +195,36 @@ export const PersonalData = ({ label }: { label: string }) => {
 
       setSelectedTab('parents_data');
 
-      // Converter dateBirth para formato ISO sempre
       const formatDateToISO = (date: Date | string | undefined): string => {
         if (!date) return '';
-        
-        // Se já for um objeto Date, converter diretamente
+
         if (date instanceof Date) {
           return date.toISOString();
         }
-        
+
         if (typeof date === 'string') {
-          // Se já estiver em formato ISO, retornar como está
           if (date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
             return date;
           }
-          
-          // Se estiver no formato DD/MM/YYYY (formato brasileiro)
+
           const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
           const match = date.match(dateRegex);
           if (match) {
             const [, day, month, year] = match;
-            // Criar Date no formato YYYY-MM-DD e converter para ISO
             const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             if (!isNaN(dateObj.getTime())) {
               return dateObj.toISOString();
             }
           }
-          
-          // Tentar converter string para Date diretamente (para outros formatos)
+
           const dateObj = new Date(date);
           if (!isNaN(dateObj.getTime())) {
             return dateObj.toISOString();
           }
-          
-          // Fallback: retornar a string original se não puder converter
+
           return date;
         }
-        
+
         return '';
       };
 

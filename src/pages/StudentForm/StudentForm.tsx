@@ -14,18 +14,20 @@ import { useTabStore } from '@/store/tabStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { useFormValidationStore } from '@/store/formValidationStore';
+import { AlertTriangle } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FamilyComposition } from '@/components/FamilyComposition/FamilyComposition';
 import { Home } from 'lucide-react';
-import { 
-  useScholarShipData, 
-  usePersonalData, 
-  useParentalData, 
-  useAddressData, 
+import {
+  useScholarShipData,
+  usePersonalData,
+  useParentalData,
+  useAddressData,
   useFamilyCompositionData,
-  usePropertyData
+  usePropertyData,
+  useConsentTerms
 } from '@/services/queries/forms';
 
 const StudentForm = () => {
@@ -33,14 +35,13 @@ const StudentForm = () => {
   const { id: StudentId } = useParams<{ id: string }>();
   const selectedTab = useTabStore((state) => state.selectedTab);
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
-  // Usar selector específico para garantir reatividade
   const completedTabs = useTabStore((state) => state.completedTabs);
+  const { formData } = useScholarshipFormStore();
   const [changePasswordModal, setChangePasswordModal] = useState(false);
   const { firstLogin } = useAuthStore();
   const navigate = useNavigate();
   const { reset } = useFormValidationStore();
 
-  // Buscar dados para verificar se já existem e marcar tabs como completas
   const userId = StudentId ? parseInt(StudentId, 10) : 0;
   const { data: scholarshipData } = useScholarShipData(userId, { enabled: !!userId });
   const { data: personalData } = usePersonalData(userId, { enabled: !!userId });
@@ -48,22 +49,18 @@ const StudentForm = () => {
   const { data: addressData } = useAddressData(userId, { enabled: !!userId });
   const { data: familyCompositionData } = useFamilyCompositionData(userId, { enabled: !!userId });
   const { data: propertyData } = usePropertyData(userId, { enabled: !!userId });
+  const { data: consentTermsData } = useConsentTerms(userId, { enabled: !!userId });
 
   useEffect(() => {
-    console.log(StudentId);
-
     if (firstLogin) {
       setChangePasswordModal(true);
     }
 
-    // Resetar normalmente quando entrar no formulário
-    // O dialog já foi mostrado na tela anterior (FormValidation) se necessário
     useScholarshipFormStore.getState().clearFormData();
     reset();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstLogin]);
 
-  // Configurar o userId no tabStore quando o ID mudar
   useEffect(() => {
     if (StudentId) {
       const { setCurrentUserId } = useTabStore.getState();
@@ -74,14 +71,12 @@ const StudentForm = () => {
     }
   }, [StudentId]);
 
-  // Verificar se há dados na API e marcar tabs como completas automaticamente
   useEffect(() => {
     if (!StudentId) return;
 
     const { markTabAsCompleted, completedTabs } = useTabStore.getState();
     const userIdStr = StudentId;
 
-    // Verificar se há dados e marcar as tabs como completas
     if (scholarshipData && !completedTabs.includes('scholarship_info')) {
       markTabAsCompleted('scholarship_info', userIdStr);
     }
@@ -100,7 +95,10 @@ const StudentForm = () => {
     if (propertyData && !completedTabs.includes('property_relations')) {
       markTabAsCompleted('property_relations', userIdStr);
     }
-  }, [StudentId, scholarshipData, personalData, parentalData, addressData, familyCompositionData, propertyData]);
+    if (consentTermsData && !completedTabs.includes('consent_terms')) {
+      markTabAsCompleted('consent_terms', userIdStr);
+    }
+  }, [StudentId, scholarshipData, personalData, parentalData, addressData, familyCompositionData, propertyData, consentTermsData]);
 
 
   const containerVariants = {
@@ -137,6 +135,29 @@ const StudentForm = () => {
     navigate(`/student-portal/${StudentId}`);
   };
 
+  const isTabStarted = (tabValue: string): boolean => {
+    if (!formData) return false;
+
+    switch (tabValue) {
+      case 'scholarship_info':
+        return formData.scholarship_info !== undefined;
+      case 'personal_data':
+        return formData.personal_data !== undefined;
+      case 'parents_data':
+        return formData.parents_data !== undefined;
+      case 'address_info':
+        return formData.address_info !== undefined;
+      case 'family_composition':
+        return formData.family_composition !== undefined;
+      case 'property_relations':
+        return formData.property_relations !== undefined;
+      case 'consent_terms':
+        return formData.consent_terms !== undefined;
+      default:
+        return false;
+    }
+  };
+
   return (
     <motion.div
       className="min-h-auto bg-background"
@@ -158,27 +179,31 @@ const StudentForm = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              {/* Versão para dispositivos móveis - Menu dropdown */}
               <div className="block sm:hidden p-4">
                 <select
                   value={selectedTab}
                   onChange={(e) => setSelectedTab(e.target.value)}
                   className="w-full p-3 bg-white border-2 border-gray-200 rounded-lg text-sm font-medium shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                 >
-                  {TABS.map((tab: Tab) => (
+                  {TABS.map((tab: Tab) => {
+                    const isCompleted = completedTabs.includes(tab.value);
+                    const isStarted = isTabStarted(tab.value);
+                    const isIncomplete = isStarted && !isCompleted;
+
+                    return (
                       <option
                         key={tab.value}
                         value={tab.value}
                         className=""
                       >
-                        {completedTabs.includes(tab.value) ? '✓ ' : ''}
+                        {isCompleted ? '✓ ' : isIncomplete ? '⚠ ' : ''}
                         {tab.label}
                       </option>
-                    ))}
+                    );
+                  })}
                 </select>
               </div>
 
-              {/* Versão para tablet e desktop */}
               <div className="hidden sm:block">
                 <TabsList className="w-full p-2 rounded-none bg-gradient-to-r from-slate-50 to-gray-50 border-b border-gray-200">
                   <div className="flex justify-start gap-2 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -189,6 +214,8 @@ const StudentForm = () => {
                     </div>
                     {TABS.map((tab: Tab, index) => {
                       const isCompleted = completedTabs.includes(tab.value);
+                      const isStarted = isTabStarted(tab.value);
+                      const isIncomplete = isStarted && !isCompleted;
 
                       return (
                         <motion.div
@@ -207,7 +234,9 @@ const StudentForm = () => {
                                 ? 'bg-gradient-to-r from-blue-500 to-blue-600 !text-white shadow-lg border-blue-500 transform scale-105'
                                 : isCompleted
                                   ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 hover:from-green-100 hover:to-emerald-100 cursor-pointer border-green-200 hover:shadow-md'
-                                  : 'bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 cursor-pointer border-gray-200 hover:border-blue-300 hover:shadow-sm'
+                                  : isIncomplete
+                                    ? 'bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 hover:from-orange-100 hover:to-amber-100 cursor-pointer border-orange-200 hover:shadow-md'
+                                    : 'bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 cursor-pointer border-gray-200 hover:border-blue-300 hover:shadow-sm'
                               }
                             `}
                             style={selectedTab === tab.value ? { color: 'white' } : {}}
@@ -217,6 +246,12 @@ const StudentForm = () => {
                                 className={`${selectedTab === tab.value ? 'text-white' : 'text-green-600'} font-bold`}
                                 style={selectedTab === tab.value ? { color: 'white' } : {}}
                               >✓</span>
+                            )}
+                            {isIncomplete && (
+                              <AlertTriangle
+                                className={`w-3 h-3 ${selectedTab === tab.value ? 'text-white' : 'text-orange-600'}`}
+                                style={selectedTab === tab.value ? { color: 'white' } : {}}
+                              />
                             )}
                             <span
                               className="truncate max-w-[100px] lg:max-w-[120px] font-medium"

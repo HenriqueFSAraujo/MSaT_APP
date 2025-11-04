@@ -13,7 +13,8 @@ import {
     useParentalData,
     useAddressData,
     useFamilyCompositionData,
-    usePropertyData
+    usePropertyData,
+    useConsentTerms
 } from '@/services/queries/forms';
 
 interface ApiScholarshipData {
@@ -34,24 +35,19 @@ const FormValidation = () => {
     const queryClient = useQueryClient();
     const { id } = useParams<{ id: string }>();
 
-    // Obter o studentId do parâmetro da URL de forma reativa
     const studentId = id || null;
     const userId = studentId ? parseInt(studentId, 10) : 0;
 
-    // Obter activeTab do store
     const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, validationStatus: savedValidationStatus, setValidationStatus: saveValidationStatus, hasChanges, reset } = useFormValidationStore();
     const [activeTab, setActiveTab] = useState<string>(savedActiveTab);
     const [validationStatus, setValidationStatus] = useState<Record<string, string>>(savedValidationStatus);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
-    // Garantir que quando o ID mudar, os dados sejam recarregados e o estado seja resetado
     useEffect(() => {
         if (userId && userId > 0) {
-            // Invalidar todas as queries relacionadas a este usuário para forçar recarregamento
             queryClient.invalidateQueries({
                 predicate: (query) => {
-                    // Invalidar queries que contêm dados de formulário deste userId
                     const queryKey = query.queryKey;
                     return (
                         (queryKey[0] === 'get-scholar-ship-data' && queryKey[1] === userId) ||
@@ -60,22 +56,19 @@ const FormValidation = () => {
                         (queryKey[0] === 'get-address-data' && queryKey[1] === userId) ||
                         (queryKey[0] === 'get-family-composition-data' && queryKey[1] === userId) ||
                         (queryKey[0] === 'get-property-data' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'get-consent-terms' && queryKey[1] === userId) ||
                         (queryKey[0] === 'documents-list' && queryKey[1] === userId)
                     );
                 }
             });
 
-            // Resetar status de validação quando mudar de usuário
             setValidationStatus({});
             saveValidationStatus({});
         }
     }, [userId, queryClient, saveValidationStatus]);
 
-    // Validar se os dados retornados correspondem ao userId atual
-    // Isso garante que dados em cache antigos não sejam exibidos
     useEffect(() => {
         if (userId && userId > 0) {
-            // Verificar se há queries antigas com IDs diferentes no cache
             const queriesToRemove = queryClient.getQueryCache().getAll().filter(query => {
                 const queryKey = query.queryKey;
                 const isFormQuery = (
@@ -85,6 +78,7 @@ const FormValidation = () => {
                     queryKey[0] === 'get-address-data' ||
                     queryKey[0] === 'get-family-composition-data' ||
                     queryKey[0] === 'get-property-data' ||
+                    queryKey[0] === 'get-consent-terms' ||
                     queryKey[0] === 'documents-list'
                 );
 
@@ -94,14 +88,12 @@ const FormValidation = () => {
                 return false;
             });
 
-            // Remover queries antigas se necessário
             queriesToRemove.forEach(query => {
                 queryClient.removeQueries({ queryKey: query.queryKey });
             });
         }
     }, [userId, queryClient]);
 
-    // Lazy loading: carregar apenas quando a aba for ativada
     const enabledMap: Record<string, boolean> = {
         'scholarship_info': activeTab === 'scholarship_info',
         'personal_data': activeTab === 'personal_data',
@@ -113,24 +105,23 @@ const FormValidation = () => {
         'consent_terms': activeTab === 'consent_terms',
     };
 
-    // Buscar dados reais via queries (só quando a aba for ativada)
     const { data: scholarshipData, isLoading: isLoadingScholarship } = useScholarShipData(userId, { enabled: enabledMap.scholarship_info });
     const { data: personalData, isLoading: isLoadingPersonal } = usePersonalData(userId, { enabled: enabledMap.personal_data });
     const { data: parentalData, isLoading: isLoadingParental } = useParentalData(userId, { enabled: enabledMap.parents_data });
     const { data: addressData, isLoading: isLoadingAddress } = useAddressData(userId, { enabled: enabledMap.address_info });
     const { data: familyCompositionData, isLoading: isLoadingFamily } = useFamilyCompositionData(userId, { enabled: enabledMap.family_composition });
     const { data: propertyData, isLoading: isLoadingProperty } = usePropertyData(userId, { enabled: enabledMap.property_relations });
+    const { data: consentTermsData, isLoading: isLoadingConsentTerms } = useConsentTerms(userId, { enabled: enabledMap.consent_terms });
 
-    // Verificar se está carregando a aba ativa
     const isLoadingActiveTab =
         (activeTab === 'scholarship_info' && isLoadingScholarship) ||
         (activeTab === 'personal_data' && isLoadingPersonal) ||
         (activeTab === 'parents_data' && isLoadingParental) ||
         (activeTab === 'address_info' && isLoadingAddress) ||
         (activeTab === 'family_composition' && isLoadingFamily) ||
-        (activeTab === 'property_relations' && isLoadingProperty);
+        (activeTab === 'property_relations' && isLoadingProperty) ||
+        (activeTab === 'consent_terms' && isLoadingConsentTerms);
 
-    // Função para mapear dados da API para o formato esperado
     const mapScholarshipData = (data: ApiScholarshipData | null | undefined) => {
         if (!data) return null;
         return {
@@ -149,11 +140,9 @@ const FormValidation = () => {
     };
 
 
-    // Função para processar composição familiar
     const processFamilyComposition = (data: unknown) => {
         if (!data) return null;
 
-        // Se a API retorna um array direto
         if (Array.isArray(data)) {
             return {
                 composicaoFamiliar: data,
@@ -163,23 +152,56 @@ const FormValidation = () => {
             };
         }
 
-        // Se já vem no formato correto
         return data;
     };
 
-    // Combinar dados reais da API com mapeamento quando necessário
-    const realFormData = {
-        scholarship_info: mapScholarshipData(scholarshipData),
-        personal_data: personalData || null, // API já retorna no formato correto
-        parents_data: parentalData || null, // API já retorna no formato correto
-        address_info: addressData || null, // API já retorna no formato correto
-        family_composition: processFamilyComposition(familyCompositionData), // Processa array da API
-        property_relations: propertyData || null,
-        required_documents: null, // Não precisa buscar aqui, RequiredDocumentsTab faz isso
-        consent_terms: null // Não há endpoint específico para termos de consentimento ainda
+    const mapConsentTermsData = (data: unknown) => {
+        if (!data) return null;
+
+        const apiData = data as {
+            nomeDeclarante?: string;
+            rgDeclarante?: string;
+            cpfDeclarante?: string;
+            nomeAluno?: string;
+            aceiteTermos?: boolean;
+        };
+
+        const formData = data as {
+            declaranteNome?: string;
+            declaranteRG?: string;
+            declaranteCPF?: string;
+            alunoNome?: string;
+            aceitaTermos?: boolean;
+        };
+
+        if (apiData.nomeDeclarante !== undefined) {
+            return {
+                declaranteNome: apiData.nomeDeclarante || '',
+                declaranteRG: apiData.rgDeclarante || '',
+                declaranteCPF: apiData.cpfDeclarante || '',
+                alunoNome: apiData.nomeAluno || '',
+                aceitaTermos: apiData.aceiteTermos || false,
+            };
+        }
+
+        if (formData.declaranteNome !== undefined) {
+            return data;
+        }
+
+        return null;
     };
 
-    // Dados de exemplo para teste (será substituído quando formData estiver funcionando)
+    const realFormData = {
+        scholarship_info: mapScholarshipData(scholarshipData),
+        personal_data: personalData || null,
+        parents_data: parentalData || null,
+        address_info: addressData || null,
+        family_composition: processFamilyComposition(familyCompositionData),
+        property_relations: propertyData || null,
+        required_documents: null,
+        consent_terms: mapConsentTermsData(consentTermsData)
+    };
+
     const mockFormData = {
         scholarship_info: {
             segmentYearToStudy: 'Educação Infantil',
@@ -286,9 +308,7 @@ const FormValidation = () => {
         }
     };
 
-    // Usar dados reais se disponíveis, caso contrário usar dados mockados como fallback
-    // IMPORTANTE: Só usar dados reais se o userId corresponder - garantir que não exibimos dados de outro usuário
-    const hasRealData = (userId > 0) && (scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData);
+    const hasRealData = (userId > 0) && (scholarshipData || personalData || parentalData || addressData || familyCompositionData || propertyData || consentTermsData);
     const displayFormData = hasRealData ? realFormData : mockFormData;
 
     const getValidationStatus = (section: string) => {
@@ -339,13 +359,10 @@ const FormValidation = () => {
 
     const handleEditForm = () => {
         if (studentId) {
-            // Verificar se há alterações ANTES de navegar
             if (hasChanges()) {
-                // Armazenar a navegação pendente e mostrar dialog
                 setPendingNavigation(`/students-form/${studentId}`);
                 setShowConfirmDialog(true);
             } else {
-                // Se não houver alterações, navegar normalmente
                 navigate(`/students-form/${studentId}`);
             }
         }
@@ -353,7 +370,6 @@ const FormValidation = () => {
 
     const handleConfirmReset = () => {
         if (pendingNavigation) {
-            // Resetar tudo e navegar
             useScholarshipFormStore.getState().clearFormData();
             reset();
             navigate(pendingNavigation);
@@ -410,7 +426,6 @@ const FormValidation = () => {
                 </div>
             </div>
 
-            {/* Dialog de confirmação para resetar alterações antes de navegar */}
             <DialogConfirmReset
                 open={showConfirmDialog}
                 onOpenChange={handleCancelReset}

@@ -2,20 +2,25 @@ import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { TabNavigation } from '@/components/TabNavigation/TabNavigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { formatCpf } from '@/utils/transformMasks';
-import FormInput from '../common/FormInput/FormInput';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Checkbox } from '../ui/checkbox';
 import { consentTermsSchema, ConsentTermsType } from './type/formData';
+import { useConsentTerms, PostConsentTerms } from '@/services/queries/forms';
 
 export const ConsentTerms = ({ label }: { label: string }) => {
     const { setFormData, formData } = useScholarshipFormStore();
-    const setSelectedTab = useTabStore((state) => state.setSelectedTab);
+    const { resetSpecificTab } = useTabStore();
     const { id: StudentId } = useParams<{ id: string }>();
+    const userId = StudentId ? parseInt(StudentId, 10) : 0;
+    const [hasLoadedFromAPI, setHasLoadedFromAPI] = useState(false);
+
+    const { data: consentTermsData } = useConsentTerms(userId, { enabled: !!userId });
+    const { mutate: FormSubmit } = PostConsentTerms();
 
     const methods = useForm<ConsentTermsType>({
         resolver: zodResolver(consentTermsSchema),
@@ -33,13 +38,60 @@ export const ConsentTerms = ({ label }: { label: string }) => {
     const { watch } = methods;
     const aceitaTermos = watch('aceitaTermos');
 
+    const watchedValues = watch();
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (watchedValues && Object.keys(watchedValues).length > 0) {
+                const hasAnyValue = Object.values(watchedValues).some(
+                    value => value !== '' && value !== undefined && value !== null && value !== false
+                );
+
+                if (hasAnyValue) {
+                    setFormData('consent_terms', watchedValues);
+                }
+            }
+        }, 1000);
+
+        return () => clearTimeout(timeoutId);
+    }, [watchedValues, setFormData]);
+
     const maskRG = (value: string) => {
         const numericValue = value.replace(/\D/g, '').slice(0, 9);
         return numericValue.replace(/(\d{6})(\d)/, '$1-$2');
     };
 
     useEffect(() => {
-        if (formData.consent_terms) {
+        if (consentTermsData && !hasLoadedFromAPI) {
+            const formDataFromAPI = {
+                declaranteNome: consentTermsData.nomeDeclarante || '',
+                declaranteRG: consentTermsData.rgDeclarante || '',
+                declaranteCPF: consentTermsData.cpfDeclarante || '',
+                alunoNome: consentTermsData.nomeAluno || '',
+                aceitaTermos: consentTermsData.aceiteTermos || false,
+            };
+
+            const hasAllRequiredFields =
+                formDataFromAPI.declaranteNome &&
+                formDataFromAPI.declaranteRG &&
+                formDataFromAPI.declaranteCPF &&
+                formDataFromAPI.alunoNome &&
+                formDataFromAPI.aceitaTermos;
+
+            if (!hasAllRequiredFields) {
+                resetSpecificTab('consent_terms');
+            }
+
+            methods.reset({
+                ...methods.getValues(),
+                ...formDataFromAPI,
+            });
+            setHasLoadedFromAPI(true);
+        }
+    }, [consentTermsData, methods, hasLoadedFromAPI, resetSpecificTab]);
+
+    useEffect(() => {
+        if (formData.consent_terms && !hasLoadedFromAPI) {
             const storeData = formData.consent_terms;
             const currentValues = methods.getValues();
 
@@ -48,36 +100,79 @@ export const ConsentTerms = ({ label }: { label: string }) => {
                 ...storeData,
             });
         }
-    }, [formData.consent_terms, methods]);
+    }, [formData.consent_terms, methods, hasLoadedFromAPI]);
 
     useEffect(() => {
         if (formData.personal_data) {
             const personalData = formData.personal_data;
+            const currentValues = methods.getValues();
 
-            if (personalData.fullName) {
+            if (personalData.fullName && !currentValues.declaranteNome) {
                 methods.setValue('declaranteNome', personalData.fullName);
+            }
+            if (personalData.fullName && !currentValues.alunoNome) {
                 methods.setValue('alunoNome', personalData.fullName);
             }
-
-            if (personalData.rg) {
+            if (personalData.rg && !currentValues.declaranteRG) {
                 methods.setValue('declaranteRG', personalData.rg);
             }
-
-            if (personalData.cpf) {
+            if (personalData.cpf && !currentValues.declaranteCPF) {
                 methods.setValue('declaranteCPF', personalData.cpf);
             }
         }
     }, [formData.personal_data, methods]);
 
+    useEffect(() => {
+        const { completedTabs } = useTabStore.getState();
+
+        const hasAllRequiredFields =
+            watchedValues.declaranteNome &&
+            watchedValues.declaranteRG &&
+            watchedValues.declaranteCPF &&
+            watchedValues.alunoNome &&
+            watchedValues.aceitaTermos;
+
+        if (completedTabs.includes('consent_terms') && !hasAllRequiredFields) {
+            resetSpecificTab('consent_terms');
+        }
+    }, [watchedValues, resetSpecificTab]);
+
     const onSubmit = async (formValues: ConsentTermsType) => {
         const isValid = await methods.trigger();
         if (!isValid) return;
+
+        const hasAllRequiredFields =
+            formValues.declaranteNome &&
+            formValues.declaranteRG &&
+            formValues.declaranteCPF &&
+            formValues.alunoNome &&
+            formValues.aceitaTermos;
+
+        if (!hasAllRequiredFields) {
+            return;
+        }
+
+        if (!userId) {
+            console.error('UserId não encontrado');
+            return;
+        }
 
         try {
             setFormData('consent_terms', formValues);
 
             const { markTabAsCompleted } = useTabStore.getState();
             markTabAsCompleted('consent_terms', StudentId || null);
+
+            const payload = {
+                nomeDeclarante: formValues.declaranteNome,
+                rgDeclarante: formValues.declaranteRG,
+                cpfDeclarante: formValues.declaranteCPF,
+                nomeAluno: formValues.alunoNome,
+                aceiteTermos: formValues.aceitaTermos,
+                userId: userId,
+            };
+
+            FormSubmit(payload);
 
             console.log('Processo finalizado com sucesso!');
 
@@ -98,7 +193,6 @@ export const ConsentTerms = ({ label }: { label: string }) => {
                     <div className="max-w-4xl mx-auto bg-white p-6">
                         <form onSubmit={methods.handleSubmit(onSubmit)}>
                             <div className="space-y-8">
-                                {/* Declaração 1 */}
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                                         Declaração 1
@@ -148,7 +242,6 @@ export const ConsentTerms = ({ label }: { label: string }) => {
                                                 expectativa de direito ao/a candidato(a) que porventura não seja beneficiado(a) com a bolsa de estudo.</span>
                                         </div>
 
-                                        {/* Indicador de preenchimento automático */}
                                         {formData.personal_data && (
                                             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
                                                 ℹ️ Os campos foram preenchidos automaticamente com os dados da aba "Dados Pessoais".
@@ -156,7 +249,6 @@ export const ConsentTerms = ({ label }: { label: string }) => {
                                             </div>
                                         )}
 
-                                        {/* Exibir erros dos campos inline */}
                                         <div className="mt-4 space-y-1">
                                             {errors.declaranteNome && (
                                                 <p className="text-sm text-red-500">Nome do declarante é obrigatório</p>
@@ -174,7 +266,6 @@ export const ConsentTerms = ({ label }: { label: string }) => {
                                     </div>
                                 </div>
 
-                                {/* Declaração 2 */}
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                                         Declaração 2
@@ -194,7 +285,6 @@ export const ConsentTerms = ({ label }: { label: string }) => {
                                         </p>
                                     </div>
 
-                                    {/* Checkbox obrigatório */}
                                     <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                                         <Checkbox
                                             id="aceitaTermos"

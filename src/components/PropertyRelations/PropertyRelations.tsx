@@ -29,35 +29,53 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     },
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, watch } = methods;
 
-  // Função para formatar valores monetários do servidor
+  const watchedValues = watch();
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.keys(watchedValues).length > 0) {
+        const hasAnyValue = Object.values(watchedValues).some(
+          value => {
+            if (Array.isArray(value)) {
+              return value.some(item =>
+                Object.values(item).some(v => v !== '' && v !== undefined && v !== null)
+              );
+            }
+            return value !== '' && value !== undefined && value !== null;
+          }
+        );
+
+        if (hasAnyValue) {
+          setFormData('property_relations', watchedValues);
+        }
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, setFormData]);
+
   const formatCurrencyFromServer = useCallback((value: string | number | null | undefined): string => {
     if (!value && value !== 0) return 'R$ 0,00';
 
-    // Se já está formatado, retorna como está
     if (typeof value === 'string' && value.includes('R$')) {
       return value;
     }
 
-    // Converte string ou número para número
     let numValue: number;
     if (typeof value === 'number') {
-      // Servidor envia em centavos, então divide por 100
       numValue = value / 100;
     } else {
-      // Remove qualquer caractere não numérico
       const cleanValue = String(value).replace(/\D/g, '');
 
       if (!cleanValue) return 'R$ 0,00';
 
-      // Trata como centavos (divide por 100)
       numValue = parseInt(cleanValue, 10) / 100;
     }
 
     if (isNaN(numValue)) return 'R$ 0,00';
 
-    // Formata como moeda brasileira
     return numValue.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -66,11 +84,9 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     });
   }, []);
 
-  // Função para aplicar máscaras aos dados do servidor
   const applyMasksToData = useCallback((serverData: Partial<PropertyRelationsInfo>): Partial<PropertyRelationsInfo> => {
     const maskedData = { ...serverData };
 
-    // Aplicar máscara de moeda para familiaresEscola
     if (maskedData.familiaresEscola) {
       maskedData.familiaresEscola = maskedData.familiaresEscola.map((item) => ({
         ...item,
@@ -78,7 +94,6 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       }));
     }
 
-    // Aplicar máscara de moeda para pessoasComDeficiencia
     if (maskedData.pessoasComDeficiencia) {
       maskedData.pessoasComDeficiencia = maskedData.pessoasComDeficiencia.map((item) => ({
         ...item,
@@ -86,7 +101,6 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       }));
     }
 
-    // Aplicar máscara de moeda para despesasMensais
     if (maskedData.despesasMensais) {
       maskedData.despesasMensais = maskedData.despesasMensais.map((item) => ({
         ...item,
@@ -94,7 +108,6 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       }));
     }
 
-    // Aplicar máscara de ano para veiculos
     if (maskedData.veiculos) {
       maskedData.veiculos = maskedData.veiculos.map((item) => ({
         ...item,
@@ -105,23 +118,20 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     return maskedData;
   }, [formatCurrencyFromServer]);
 
-  // Limpar cache antigo ao montar (uma vez por sessão)
   useEffect(() => {
     const hasClearedCache = sessionStorage.getItem('has-cleared-mask-cache');
     if (!hasClearedCache) {
-      // Limpar dados antigos que podem ter formatação errada
       const storageData = sessionStorage.getItem('scholarship-form');
       if (storageData) {
         try {
           const parsed = JSON.parse(storageData);
           if (parsed.state?.formData?.property_relations) {
-            // Remover dados antigos do cache
             delete parsed.state.formData.property_relations;
             sessionStorage.setItem('scholarship-form', JSON.stringify(parsed));
             sessionStorage.setItem('has-cleared-mask-cache', 'true');
           }
-        } catch {
-          // Ignorar erros
+        } catch (error) {
+          console.error('Error clearing cache:', error);
         }
       }
     }

@@ -23,5 +23,6 @@ export const Endpoints = {
     Family_Composition: '/composicao-familiar',
     Housing_Data: '/form-condicoes-habitacionais',
     Property_Data: '/bens-posses',
+    Consent_Terms: '/declaracoes',
   },
 } as const;
