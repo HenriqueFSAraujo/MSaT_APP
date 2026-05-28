@@ -3,6 +3,7 @@ import type { Role, SortField, SortOrder } from '@/store/useUsersPaginationStore
 import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCards';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
 import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
+import { DialogEditUser } from '@/components/common/DialogEditUser/DialogEditUser';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pagination } from '@/components/ui/pagination';
@@ -198,6 +199,18 @@ export default function UsuariosPage() {
   }, [firstLogin]);
 
   const [openModal, setOpenModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const handleOpenEditUser = (user: User) => {
+    setSelectedUser(user);
+    setOpenEditModal(true);
+  };
+
+  const handleEditModalChange = (open: boolean) => {
+    setOpenEditModal(open);
+    if (!open) setSelectedUser(null);
+  };
 
   const toggleStatus = (statusItem: string) => {
     const statusSet = new Set(status);
@@ -433,6 +446,7 @@ export default function UsuariosPage() {
                   setSort(field, order);
                   updateUrl({ sortField: field, sortOrder: order });
                 }}
+                onEditUser={handleOpenEditUser}
               />
               {filteredUsers.length > 0 && (
                 <motion.div
@@ -464,6 +478,11 @@ export default function UsuariosPage() {
       </motion.div>
 
       <DialogCreateUser open={openModal} onOpenChange={setOpenModal} />
+      <DialogEditUser
+        open={openEditModal}
+        onOpenChange={handleEditModalChange}
+        user={selectedUser}
+      />
       <DialogPerfilAction open={changePasswordModal} onOpenChange={setChangePasswordModal} />
     </motion.main>
   );

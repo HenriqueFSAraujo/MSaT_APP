@@ -13,7 +13,7 @@ import { User } from '@/services/queries/useGetUsers';
 import type { SortField, SortOrder } from '@/store/useUsersPaginationStore';
 import { formatCpf } from '@/utils/transformMasks';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUp, ArrowDown, ChevronDown, ClipboardList, FilePenLine, Eye } from 'lucide-react';
+import { ArrowUp, ArrowDown, ChevronDown, ClipboardList, FilePenLine, Eye, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogChangeStatusUser } from '../common/DialogChangeStatusUser/DialogChangeStatusUser';
@@ -28,6 +28,8 @@ interface UsersTableProps {
   sortField: SortField;
   sortOrder: SortOrder;
   onSortChange: (field: SortField, order: SortOrder) => void;
+  /** Callback chamado quando o admin clica no ícone de editar usuário (lápis). */
+  onEditUser?: (user: User) => void;
 }
 
 type handleStatusModalProps = {
@@ -90,6 +92,7 @@ export function UsersTable({
   sortField,
   sortOrder,
   onSortChange,
+  onEditUser,
 }: UsersTableProps) {
   const [UserStatus, setUserStatus] = useState(false);
   const [selectedUserID, setSelectedUserID] = useState<number | undefined>();
@@ -113,6 +116,20 @@ export function UsersTable({
     <TooltipAction text="Visualizar dados do formulário">
       <Button size="sm" variant="outline" className="p-2" onClick={() => navigate(`/form-validation/${user.userId}`)}>
         <Eye className="h-5 w-5" />
+      </Button>
+    </TooltipAction>
+  );
+
+  const EditButton = (user: User) => (
+    <TooltipAction text="Editar dados do usuário">
+      <Button
+        size="sm"
+        variant="outline"
+        className="p-2"
+        onClick={() => onEditUser?.(user)}
+        disabled={!onEditUser}
+      >
+        <Pencil className="h-5 w-5" />
       </Button>
     </TooltipAction>
   );
@@ -164,8 +181,8 @@ export function UsersTable({
     tap: { scale: 0.95 }
   };
 
-  // Add this check to see if all users are admins
-  const allUsersAreAdmin = users.every(user => user.roleName === 'ROLE_ADMIN');
+  // Coluna "Ações" agora aparece sempre (edição se aplica a admins e alunos).
+  // Botões específicos (visualizar formulário, gerar parecer) seguem visíveis só para alunos.
 
   return (
     <motion.div
@@ -233,9 +250,7 @@ export function UsersTable({
                 </PopoverContent>
               </Popover>
             </TableHead>
-            {!allUsersAreAdmin && (
-              <TableHead className="text-white">Ações</TableHead>
-            )}
+            <TableHead className="text-white">Ações</TableHead>
           </motion.tr>
         </TableHeader>
         <TableBody>
@@ -247,7 +262,7 @@ export function UsersTable({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   Nenhum usuário encontrado
                 </TableCell>
               </motion.tr>
@@ -308,19 +323,23 @@ export function UsersTable({
                       </Badge>
                     </motion.div>
                   </TableCell>
-                  {user.roleName !== 'ROLE_ADMIN' && (
-                    <TableCell className="flex align-center gap-2">
-                      <motion.div className="flex gap-2">
-
-                        <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                          {StudentButton(user)}
-                        </motion.div>
-                        <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-                          {OpinionButton(user)}
-                        </motion.div>
+                  <TableCell className="flex align-center gap-2">
+                    <motion.div className="flex gap-2">
+                      <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
+                        {EditButton(user)}
                       </motion.div>
-                    </TableCell>
-                  )}
+                      {user.roleName !== 'ROLE_ADMIN' && (
+                        <>
+                          <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
+                            {StudentButton(user)}
+                          </motion.div>
+                          <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
+                            {OpinionButton(user)}
+                          </motion.div>
+                        </>
+                      )}
+                    </motion.div>
+                  </TableCell>
                 </motion.tr>
               ))
             )}
