@@ -18,14 +18,23 @@ import { AlertCircle, UserPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 
-const userSchema = z.object({
-  fullName: z.string().min(1, 'O nome completo é obrigatório'),
-  cpf: z.string().min(1, 'O CPF é obrigatório'),
-  email: z.string().email('E-mail inválido'),
-  roleName: z.enum(['ROLE_ADMIN', 'ROLE_USER'], {
-    required_error: 'O perfil é obrigatório',
-  }),
-});
+const userSchema = z
+  .object({
+    fullName: z.string().min(1, 'O nome completo é obrigatório'),
+    cpf: z.string().min(1, 'O CPF é obrigatório'),
+    email: z.string().email('E-mail inválido'),
+    roleName: z.enum(['ROLE_ADMIN', 'ROLE_USER'], {
+      required_error: 'O perfil é obrigatório',
+    }),
+    tipoAluno: z.enum(['ESCOLA_PARTICULAR', 'ESCOLA_GRATUITA']).optional(),
+  })
+  .refine(
+    (data) => data.roleName !== 'ROLE_USER' || !!data.tipoAluno,
+    {
+      message: 'O tipo de aluno é obrigatório para o perfil Aluno',
+      path: ['tipoAluno'],
+    },
+  );
 
 type DialogCreateUserProps = {
   open: boolean;
@@ -42,6 +51,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
     cpf: '',
     email: '',
     isFirstLogin: true,
+    tipoAluno: '' as '' | 'ESCOLA_PARTICULAR' | 'ESCOLA_GRATUITA',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -54,7 +64,15 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
     if (field === 'cpf' && typeof value === 'string') {
       newValue = formatCpf(value);
     }
-    setFormData((prev) => ({ ...prev, [field]: newValue }));
+    setFormData((prev) => {
+      const next = { ...prev, [field]: newValue };
+      // Se o admin trocou o perfil para ADMIN, limpamos o tipoAluno (admin nao tem tipo).
+      // Espelha o comportamento do backend em UserInfoService.normalizeTipoAlunoForAdmin().
+      if (field === 'roleName' && value === 'ROLE_ADMIN') {
+        next.tipoAluno = '';
+      }
+      return next;
+    });
     setIsDirty(true);
   };
 
@@ -76,6 +94,9 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
         roleName: formData.roleName,
         email: formData.email,
         isFirstLogin: formData.isFirstLogin,
+        // Backend ignora tipoAluno quando ROLE_ADMIN (UserInfoService.normalizeTipoAlunoForAdmin),
+        // mas mandamos null explicito para deixar a intencao clara.
+        tipoAluno: formData.roleName === 'ROLE_USER' ? formData.tipoAluno || null : null,
       };
 
       createUser(payload, {
@@ -88,6 +109,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
             fullName: '',
             email: '',
             isFirstLogin: false,
+            tipoAluno: '',
           });
           setErrors({});
           setIsFormValid(false);
@@ -142,6 +164,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
         fullName: '',
         email: '',
         isFirstLogin: false,
+        tipoAluno: '',
       });
       setErrors({});
       setIsFormValid(false);
@@ -288,6 +311,52 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                   )}
                 </AnimatePresence>
               </motion.div>
+
+              {/* Tipo de Aluno: visivel apenas quando perfil = Aluno. Obrigatorio pelo backend. */}
+              <AnimatePresence>
+                {formData.roleName === 'ROLE_USER' && (
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <Label className="text-sm font-medium">Tipo de Aluno</Label>
+                    <motion.div whileHover={{ scale: 1.01 }}>
+                      <Select
+                        value={formData.tipoAluno}
+                        onValueChange={(value) => handleInputChange('tipoAluno', value)}
+                      >
+                        <SelectTrigger
+                          className={cn(
+                            errors.tipoAluno && 'border-red-500 focus-visible:ring-red-500',
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ESCOLA_PARTICULAR">Escola Particular</SelectItem>
+                          <SelectItem value="ESCOLA_GRATUITA">Escola Gratuita</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </motion.div>
+                    <AnimatePresence>
+                      {errors.tipoAluno && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="flex items-center gap-1 text-red-500 text-xs mt-1"
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          {errors.tipoAluno}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <motion.div className="flex justify-end gap-3 mt-8" variants={itemVariants}>
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

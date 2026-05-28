@@ -3,6 +3,8 @@ import { api } from '../api';
 import { Endpoints } from '../endpoints';
 import { toast } from '@/utils/toast';
 
+export type TipoAluno = 'ESCOLA_PARTICULAR' | 'ESCOLA_GRATUITA';
+
 export type CreateUserPayload = {
   id: string;
   name: string;
@@ -11,6 +13,11 @@ export type CreateUserPayload = {
   cpf: string;
   email: string;
   isFirstLogin: boolean;
+  /**
+   * Obrigatorio quando roleName = ROLE_USER. Deve ser omitido/null quando ROLE_ADMIN.
+   * Validacao espelhada no backend em UserInfoService.validateTipoAluno().
+   */
+  tipoAluno?: TipoAluno | null;
 };
 
 export function useCreateUser() {

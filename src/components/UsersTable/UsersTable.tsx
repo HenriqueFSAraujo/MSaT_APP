@@ -265,10 +265,32 @@ export function UsersTable({
                   <TableCell className="text-gray-800">{formatCpf(user.cpf || '')}</TableCell>
                   <TableCell className="text-gray-800">{user.email}</TableCell>
                   <TableCell>
-                    <motion.div whileHover="hover" variants={badgeVariants}>
+                    <motion.div
+                      whileHover="hover"
+                      variants={badgeVariants}
+                      className="flex flex-col items-start gap-1"
+                    >
                       <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-sm capitalize px-3 py-1 rounded-full font-medium">
                         {user.roleName === 'ROLE_ADMIN' ? 'Gestor' : 'Aluno'}
                       </Badge>
+                      {user.roleName === 'ROLE_USER' && (
+                        <Badge
+                          variant="outline"
+                          className={
+                            user.tipoAluno === 'ESCOLA_PARTICULAR'
+                              ? 'border-amber-200 bg-amber-50 text-amber-800 text-xs px-2 py-0.5 rounded-full font-normal'
+                              : user.tipoAluno === 'ESCOLA_GRATUITA'
+                                ? 'border-emerald-200 bg-emerald-50 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-normal'
+                                : 'border-gray-200 bg-gray-50 text-gray-500 text-xs px-2 py-0.5 rounded-full font-normal'
+                          }
+                        >
+                          {user.tipoAluno === 'ESCOLA_PARTICULAR'
+                            ? 'Particular'
+                            : user.tipoAluno === 'ESCOLA_GRATUITA'
+                              ? 'Gratuita'
+                              : 'Não classificado'}
+                        </Badge>
+                      )}
                     </motion.div>
                   </TableCell>
                   <TableCell

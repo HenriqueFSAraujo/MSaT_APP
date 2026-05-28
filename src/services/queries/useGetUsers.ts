@@ -2,14 +2,21 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../api';
 import { Endpoints } from '../endpoints';
 
+export type TipoAluno = 'ESCOLA_PARTICULAR' | 'ESCOLA_GRATUITA';
+
 export type User = {
   userId: number;
   name: string;
   roleName: string;
-  cpf: null;
-  email: null;
+  cpf: string | null;
+  email: string | null;
   active: boolean;
   firstLogin: boolean;
+  /**
+   * Null para admins ou alunos cadastrados antes da feature (migration V52).
+   * Vai vir preenchido para alunos novos com classificacao.
+   */
+  tipoAluno: TipoAluno | null;
 };
 
 export function useGetUsers() {
