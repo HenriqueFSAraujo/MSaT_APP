@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/utils/toast';
 import { FormValidationHeader } from '@/components/FormValidation/FormValidationHeader';
 import { FormValidationSidebar } from '@/components/FormValidation/FormValidationSidebar';
 import { FormValidationContent } from '@/components/FormValidation/FormValidationContent';
 import { useFormValidationStore } from '@/store/formValidationStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import { DialogConfirmReset } from '@/components/FormValidation/DialogConfirmReset';
+import { DialogAllFormsApproved } from '@/components/FormValidation/DialogAllFormsApproved';
 import {
     useScholarShipData,
     usePersonalData,
@@ -16,6 +19,13 @@ import {
     usePropertyData,
     useConsentTerms
 } from '@/services/queries/forms';
+import {
+    useFormValidationStatus,
+    useUpdateFormValidationStatus,
+    tabToSection,
+    statusToLegacy,
+    legacyToStatus,
+} from '@/services/queries/useFormValidationStatus';
 
 interface ApiScholarshipData {
     segmentoAno?: string;
@@ -38,11 +48,61 @@ const FormValidation = () => {
     const studentId = id || null;
     const userId = studentId ? parseInt(studentId, 10) : 0;
 
-    const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, validationStatus: savedValidationStatus, setValidationStatus: saveValidationStatus, hasChanges, reset } = useFormValidationStore();
+    const { activeTab: savedActiveTab, setActiveTab: saveActiveTab, hasChanges, reset } = useFormValidationStore();
     const [activeTab, setActiveTab] = useState<string>(savedActiveTab);
-    const [validationStatus, setValidationStatus] = useState<Record<string, string>>(savedValidationStatus);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+
+    // Modal de "todos os formulários aprovados — parecer pode ser gerado"
+    const [showAllApprovedModal, setShowAllApprovedModal] = useState(false);
+    // sessionStorage key para não reabrir o modal toda vez que admin entra na página
+    // após já ter dispensado uma vez nesta sessão.
+    const allApprovedDismissedKey = userId > 0 ? `all-approved-dismissed-${userId}` : '';
+
+    // Status de validação agora vem do backend (PUT /api/form-validation/{userId}/{section}).
+    // O Zustand store mantém apenas state de UX (tab ativa, seções expandidas, etc.).
+    const adminId = useAuthStore((state) => state.id);
+    const { data: validationSummary } = useFormValidationStatus(userId);
+    const { mutate: updateValidationStatus } = useUpdateFormValidationStatus();
+
+    // Mapa derivado: tab (lowercase) -> status legado ('pending'/'approved'/'rejected'),
+    // formato esperado pelo FormValidationContent e FormValidationSidebar.
+    const validationStatus = useMemo<Record<string, string>>(() => {
+        if (!validationSummary) return {};
+        const map: Record<string, string> = {};
+        for (const section of validationSummary.sections) {
+            const tab = section.section.toLowerCase();
+            map[tab] = statusToLegacy(section.status);
+        }
+        return map;
+    }, [validationSummary]);
+
+    // Regra de negocio: quando TODAS as 8 secoes estao APPROVED, abre o modal informando
+    // que o parecer pode ser gerado. Usa sessionStorage para nao reabrir caso o admin
+    // ja tenha dispensado nessa sessao (evita irritar com refresh).
+    useEffect(() => {
+        if (!validationSummary?.allApproved || !allApprovedDismissedKey) return;
+        const alreadyDismissed = sessionStorage.getItem(allApprovedDismissedKey) === 'true';
+        if (!alreadyDismissed) {
+            setShowAllApprovedModal(true);
+        }
+    }, [validationSummary?.allApproved, allApprovedDismissedKey]);
+
+    const handleAllApprovedModalChange = (open: boolean) => {
+        setShowAllApprovedModal(open);
+        if (!open && allApprovedDismissedKey) {
+            sessionStorage.setItem(allApprovedDismissedKey, 'true');
+        }
+    };
+
+    const handleGenerateOpinion = () => {
+        if (!studentId) return;
+        if (allApprovedDismissedKey) {
+            sessionStorage.setItem(allApprovedDismissedKey, 'true');
+        }
+        setShowAllApprovedModal(false);
+        navigate(`/socioeconomic-report/${studentId}`);
+    };
 
     useEffect(() => {
         if (userId && userId > 0) {
@@ -57,15 +117,13 @@ const FormValidation = () => {
                         (queryKey[0] === 'get-family-composition-data' && queryKey[1] === userId) ||
                         (queryKey[0] === 'get-property-data' && queryKey[1] === userId) ||
                         (queryKey[0] === 'get-consent-terms' && queryKey[1] === userId) ||
-                        (queryKey[0] === 'documents-list' && queryKey[1] === userId)
+                        (queryKey[0] === 'documents-list' && queryKey[1] === userId) ||
+                        (queryKey[0] === 'form-validation' && queryKey[1] === userId)
                     );
                 }
             });
-
-            setValidationStatus({});
-            saveValidationStatus({});
         }
-    }, [userId, queryClient, saveValidationStatus]);
+    }, [userId, queryClient]);
 
     useEffect(() => {
         if (userId && userId > 0) {
@@ -341,16 +399,23 @@ const FormValidation = () => {
         }
     };
 
+    /**
+     * Chama a API para persistir o status da seção. Cada clique em "Aprovar"/"Rejeitar"
+     * dispara um PUT — não há mais batch de save (era um TODO no flow antigo).
+     */
     const validateSection = (section: string, status: 'approved' | 'rejected') => {
-        setValidationStatus(prev => {
-            const updated = { ...prev, [section]: status };
-            saveValidationStatus(updated);
-            return updated;
+        if (!userId || userId <= 0) {
+            toast.error('ID do aluno inválido — não foi possível salvar.');
+            return;
+        }
+        updateValidationStatus({
+            userInfoId: userId,
+            section: tabToSection(section),
+            payload: {
+                status: legacyToStatus(status),
+                reviewerId: adminId || null,
+            },
         });
-    };
-
-    const handleSaveValidation = () => {
-        console.log('Salvando validação:', validationStatus);
     };
 
     const handleBack = () => {
@@ -394,7 +459,6 @@ const FormValidation = () => {
                 studentId={studentId}
                 onBack={handleBack}
                 onEditForm={handleEditForm}
-                onSaveValidation={handleSaveValidation}
             />
 
             <div className="flex flex-1 shadow-2xl rounded-lg pb-6 bg-white mt-4 min-h-0">
@@ -430,6 +494,12 @@ const FormValidation = () => {
                 open={showConfirmDialog}
                 onOpenChange={handleCancelReset}
                 onConfirm={handleConfirmReset}
+            />
+
+            <DialogAllFormsApproved
+                open={showAllApprovedModal}
+                onOpenChange={handleAllApprovedModalChange}
+                onGenerateOpinion={handleGenerateOpinion}
             />
         </div>
     );

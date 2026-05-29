@@ -25,4 +25,7 @@ export const Endpoints = {
     Property_Data: '/bens-posses',
     Consent_Terms: '/declaracoes',
   },
+  FormValidation: {
+    Base: '/form-validation',
+  },
 } as const;
