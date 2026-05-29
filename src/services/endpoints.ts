@@ -3,7 +3,7 @@ export const Endpoints = {
     List: '/users',
     Profile: '/users/profile',
     ResetPassword: `/users/reset-password`,
-    DisableUser: `/users/deactivate`,
+    ChangeStatus: `/users/status`,
     Parecer: '/parecer-socioeconomico',
     PDFParecer: '/gerar-parecer',
   },
