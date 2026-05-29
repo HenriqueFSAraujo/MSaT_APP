@@ -2,6 +2,7 @@ import { UsersFilters } from '@/components/UsersFilters/UsersFilters';
 import type { Role, SortField, SortOrder, TipoAlunoFilter } from '@/store/useUsersPaginationStore';
 import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCards';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
+import { TipoAlunoChart } from '@/components/TipoAlunoChart/TipoAlunoChart';
 import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
 import { DialogEditUser } from '@/components/common/DialogEditUser/DialogEditUser';
 import { DialogPerfilAction } from '@/components/common/DialogPerfilAction/DialogPerfilAction';
@@ -452,6 +453,16 @@ export default function UsuariosPage() {
 
             <motion.div variants={itemVariants}>
               <UsersMetricsCards metrics={metrics} />
+            </motion.div>
+
+            {/*
+              Dashboard de distribuição por tipo de aluno.
+              Usa a lista COMPLETA (normalizedUsers) — não a filtrada — para mostrar
+              a distribuição geral. Se usássemos filteredUsers, filtrar por "Particular"
+              faria o chart mostrar 100% Particular, o que não é útil.
+            */}
+            <motion.div variants={itemVariants} className="mb-4">
+              <TipoAlunoChart users={normalizedUsers} />
             </motion.div>
 
             <motion.div variants={itemVariants}>

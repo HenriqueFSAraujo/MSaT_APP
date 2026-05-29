@@ -11,7 +11,8 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom'],
           'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-label'],
           'vendor-utils': ['axios', 'framer-motion', 'react-router-dom', '@tanstack/react-query'],
-          'vendor-forms': ['react-hook-form', 'zod', '@hookform/resolvers']
+          'vendor-forms': ['react-hook-form', 'zod', '@hookform/resolvers'],
+          'vendor-charts': ['recharts']
         }
       }
     },

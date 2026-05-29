@@ -49,6 +49,7 @@
     "react-router-dom": "^6.26.2",
     "react-text-mask": "^5.5.0",
     "react-toast": "^1.0.3",
+    "recharts": "^3.8.1",
     "sonner": "^2.0.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
