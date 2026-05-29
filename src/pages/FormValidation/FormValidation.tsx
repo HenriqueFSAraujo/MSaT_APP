@@ -373,8 +373,15 @@ const FormValidation = () => {
         return validationStatus[section] || 'pending';
     };
 
-    const getValidationBadge = (section: string, isActive: boolean = false) => {
-        const status = getValidationStatus(section);
+    /**
+     * Renderiza o badge colorido baseado no status já resolvido.
+     *
+     * Recebe o status diretamente (não a section) — antes esta função fazia lookup do status
+     * a partir do nome da seção, o que causava o badge sempre mostrar "Pendente" porque o
+     * sidebar passava o STATUS como primeiro argumento (e o lookup falhava com a string de
+     * status no lugar de uma chave válida de validationStatus).
+     */
+    const getValidationBadge = (status: string, isActive: boolean = false) => {
         const baseClasses = "text-xs px-2 py-1 rounded-full font-medium";
 
         switch (status) {
