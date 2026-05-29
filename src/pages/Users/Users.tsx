@@ -1,5 +1,5 @@
 import { UsersFilters } from '@/components/UsersFilters/UsersFilters';
-import type { Role, SortField, SortOrder } from '@/store/useUsersPaginationStore';
+import type { Role, SortField, SortOrder, TipoAlunoFilter } from '@/store/useUsersPaginationStore';
 import { UsersMetricsCards } from '@/components/UsersMetricsCards/UsersMetricsCards';
 import { UsersTable } from '@/components/UsersTable/UsersTable';
 import { DialogCreateUser } from '@/components/common/DialogCreateUser/DialogCreateUser';
@@ -42,6 +42,7 @@ export default function UsuariosPage() {
     const role = (searchParams.get('role') || 'Aluno') as Role;
     const statusParam = searchParams.get('status');
     const status = statusParam ? statusParam.split(',') : ['ativo', 'inativo'];
+    const tipoAluno = (searchParams.get('tipoAluno') || 'TODOS') as TipoAlunoFilter;
     const sortField = (searchParams.get('sortField') || 'name') as SortField;
     const sortOrder = (searchParams.get('sortOrder') || 'asc') as SortOrder;
 
@@ -51,6 +52,7 @@ export default function UsuariosPage() {
     useUsersPaginationStore.getState().setSearchTerm(searchTerm);
     useUsersPaginationStore.getState().setRole(role);
     useUsersPaginationStore.getState().setStatus(status);
+    useUsersPaginationStore.getState().setTipoAluno(tipoAluno);
     useUsersPaginationStore.getState().setSort(sortField, sortOrder);
 
     // Resetar flag após um pequeno delay para permitir que o store atualize
@@ -87,6 +89,7 @@ export default function UsuariosPage() {
     searchTerm,
     role,
     status,
+    tipoAluno,
     sortField,
     sortOrder,
     setCurrentPage,
@@ -94,6 +97,7 @@ export default function UsuariosPage() {
     setSearchTerm,
     setRole,
     setStatus,
+    setTipoAluno,
     setSort,
     resetPagination,
   } = useUsersPaginationStore();
@@ -106,6 +110,7 @@ export default function UsuariosPage() {
       search: string;
       role: Role;
       status: string[];
+      tipoAluno: TipoAlunoFilter;
       sortField: SortField;
       sortOrder: SortOrder;
     }>
@@ -149,6 +154,14 @@ export default function UsuariosPage() {
         newParams.delete('status');
       } else {
         newParams.set('status', updates.status.join(','));
+      }
+    }
+
+    if (updates.tipoAluno !== undefined) {
+      if (updates.tipoAluno === 'TODOS') {
+        newParams.delete('tipoAluno');
+      } else {
+        newParams.set('tipoAluno', updates.tipoAluno);
       }
     }
 
@@ -227,8 +240,19 @@ export default function UsuariosPage() {
 
   const handleRoleChange = (newRole: Role) => {
     setRole(newRole);
+    // Quando troca para Gestor, zera o filtro de tipo (não se aplica)
+    const nextTipoAluno: TipoAlunoFilter = newRole === 'Aluno' ? tipoAluno : 'TODOS';
+    if (nextTipoAluno !== tipoAluno) {
+      setTipoAluno(nextTipoAluno);
+    }
     resetPagination();
-    updateUrl({ role: newRole, page: 1 });
+    updateUrl({ role: newRole, tipoAluno: nextTipoAluno, page: 1 });
+  };
+
+  const handleTipoAlunoChange = (newTipo: TipoAlunoFilter) => {
+    setTipoAluno(newTipo);
+    resetPagination();
+    updateUrl({ tipoAluno: newTipo, page: 1 });
   };
 
   const handleSearch = (term: string) => {
@@ -272,7 +296,16 @@ export default function UsuariosPage() {
       const matchesStatus =
         status.length === 0 || status.includes(user.active ? 'ativo' : 'inativo');
 
-      return matchesRole && matchesSearch && matchesStatus;
+      // Filtro por tipo de escola — só se aplica para alunos.
+      // Para admins (ou quando filtro é 'TODOS'), passa sempre.
+      const matchesTipoAluno =
+        tipoAluno === 'TODOS' ||
+        user.roleName !== 'ROLE_USER' ||
+        (tipoAluno === 'NAO_CLASSIFICADO'
+          ? user.tipoAluno == null
+          : user.tipoAluno === tipoAluno);
+
+      return matchesRole && matchesSearch && matchesStatus && matchesTipoAluno;
     });
 
     // Aplicar ordenação
@@ -299,7 +332,7 @@ export default function UsuariosPage() {
     });
 
     return filtered;
-  }, [normalizedUsers, role, searchTerm, status, sortField, sortOrder]);
+  }, [normalizedUsers, role, searchTerm, status, tipoAluno, sortField, sortOrder]);
 
   const paginatedUsers = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -331,6 +364,7 @@ export default function UsuariosPage() {
     const urlSearch = searchParams.get('search') || '';
     const urlRole = searchParams.get('role') || 'Aluno';
     const urlStatus = searchParams.get('status')?.split(',') || ['ativo', 'inativo'];
+    const urlTipoAluno = searchParams.get('tipoAluno') || 'TODOS';
     const urlSortField = searchParams.get('sortField') || 'name';
     const urlSortOrder = searchParams.get('sortOrder') || 'asc';
 
@@ -345,6 +379,7 @@ export default function UsuariosPage() {
       urlSearch !== searchTerm ||
       urlRole !== role ||
       !statusEqual ||
+      urlTipoAluno !== tipoAluno ||
       urlSortField !== sortField ||
       urlSortOrder !== sortOrder
     ) {
@@ -354,12 +389,13 @@ export default function UsuariosPage() {
         search: searchTerm,
         role,
         status,
+        tipoAluno,
         sortField,
         sortOrder,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, itemsPerPage, searchTerm, role, status, sortField, sortOrder]);
+  }, [currentPage, itemsPerPage, searchTerm, role, status, tipoAluno, sortField, sortOrder]);
 
   const metrics = useMemo(() => {
     const totalAlunos = filteredUsers.filter((user) => user.roleName === 'ROLE_USER').length;
@@ -425,6 +461,8 @@ export default function UsuariosPage() {
                 selectedRole={role}
                 onRoleChange={handleRoleChange}
                 onNewUser={handleNewUser}
+                selectedTipoAluno={tipoAluno}
+                onTipoAlunoChange={handleTipoAlunoChange}
               />
             </motion.div>
 

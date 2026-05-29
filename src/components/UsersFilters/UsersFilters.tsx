@@ -5,7 +5,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Plus, ChevronDown, Users } from 'lucide-react';
+import type { TipoAlunoFilter } from '@/store/useUsersPaginationStore';
+import { Plus, ChevronDown, Users, GraduationCap } from 'lucide-react';
 
 const roleOptions = ['ROLE_USER', 'ROLE_ADMIN'] as const;
 export type Role = 'Aluno' | 'Gestor' | 'Todos';
@@ -15,12 +16,29 @@ const apiRoleToUiRole: Record<(typeof roleOptions)[number], Role> = {
   ROLE_ADMIN: 'Gestor',
 };
 
+const tipoAlunoLabels: Record<TipoAlunoFilter, string> = {
+  TODOS: 'Todos os tipos',
+  ESCOLA_PARTICULAR: 'Escola Particular',
+  ESCOLA_GRATUITA: 'Escola Gratuita',
+  NAO_CLASSIFICADO: 'Não classificado',
+};
+
+const tipoAlunoOptions: TipoAlunoFilter[] = [
+  'TODOS',
+  'ESCOLA_PARTICULAR',
+  'ESCOLA_GRATUITA',
+  'NAO_CLASSIFICADO',
+];
+
 interface UsersFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   selectedRole: Role;
   onRoleChange: (role: Role) => void;
   onNewUser: () => void;
+  /** Filtro por tipo de escola (só exibido quando role = Aluno). */
+  selectedTipoAluno: TipoAlunoFilter;
+  onTipoAlunoChange: (tipo: TipoAlunoFilter) => void;
 }
 
 export function UsersFilters({
@@ -29,7 +47,12 @@ export function UsersFilters({
   selectedRole,
   onRoleChange,
   onNewUser,
+  selectedTipoAluno,
+  onTipoAlunoChange,
 }: UsersFiltersProps) {
+  // Filtro de tipo de escola só faz sentido para alunos. Para gestores/todos, oculta.
+  const showTipoAlunoFilter = selectedRole === 'Aluno';
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mb-4">
       <div className="relative w-full sm:w-[250px]">
@@ -83,6 +106,29 @@ export function UsersFilters({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {showTipoAlunoFilter && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="flex gap-1">
+              <GraduationCap className="w-4 h-4" />
+              {tipoAlunoLabels[selectedTipoAluno]}
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[200px]">
+            {tipoAlunoOptions.map((tipo) => (
+              <DropdownMenuItem
+                key={tipo}
+                className="cursor-pointer"
+                onClick={() => onTipoAlunoChange(tipo)}
+              >
+                {tipoAlunoLabels[tipo]}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       <Button variant="default" className="whitespace-nowrap" onClick={onNewUser}>
         <Plus className="mr-1" />
