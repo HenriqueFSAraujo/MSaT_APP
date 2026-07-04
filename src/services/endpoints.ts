@@ -25,4 +25,8 @@ export const Endpoints = {
     Property_Data: '/bens-posses',
     Consent_Terms: '/declaracoes',
   },
+  Schools: {
+    List: '/escolas',
+    ByType: '/escolas/tipo',
+  },
 } as const;

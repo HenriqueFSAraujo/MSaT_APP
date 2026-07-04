@@ -1,4 +1,5 @@
 import { PostPersonalData, usePersonalData } from '@/services/queries/forms/index';
+import { useGetSchoolsByType } from '@/services/queries/schools';
 import { useTabStore } from '@/store/tabStore';
 import { useScholarshipFormStore } from '@/store/useScholarshipFormStore';
 import { getBirthplaceOptions, genderOptions, Nationality, raceOptions, YesOrNo } from '@/utils/optionsMock';
@@ -7,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { RadioButtonGroup } from '../common/RadioButtonGroup/RadioButtonGroup';
 import FormDate from '../common/FormDate/FormDate';
 import FormInput from '../common/FormInput/FormInput';
 import FormSelect from '../common/FormSelect/FormSelect';
@@ -39,6 +41,8 @@ export const PersonalData = ({ label }: { label: string }) => {
       deficiency: '',
       cpfScholarship: '',
       educacenso: '',
+      tipoEscola: undefined,
+      escolaId: '',
       ...(formData.personal_data as Partial<PersonalDataType>),
     },
   });
@@ -46,6 +50,13 @@ export const PersonalData = ({ label }: { label: string }) => {
   const { errors } = methods.formState;
   const { watch } = methods;
   const selectedNationality = watch('nationality');
+  const selectedTipoEscola = watch('tipoEscola');
+
+  const { data: schools = [] } = useGetSchoolsByType(selectedTipoEscola);
+  const schoolOptions = schools.map((school) => ({
+    value: String(school.id),
+    label: school.nome,
+  }));
 
   const watchedValues = watch();
 
@@ -76,6 +87,10 @@ export const PersonalData = ({ label }: { label: string }) => {
         ...(data as Partial<PersonalDataType>),
       };
 
+      if (formData.escolaId !== undefined && formData.escolaId !== null) {
+        formData.escolaId = String(formData.escolaId);
+      }
+
       if (formData.dateBirth && typeof formData.dateBirth === 'string') {
         if (formData.dateBirth.includes('/')) {
         } else {
@@ -97,7 +112,9 @@ export const PersonalData = ({ label }: { label: string }) => {
         formData.rg &&
         formData.nationality &&
         formData.birthplace &&
-        formData.race;
+        formData.race &&
+        formData.tipoEscola &&
+        formData.escolaId;
 
       if (!hasAllRequiredFields) {
         resetSpecificTab('personal_data');
@@ -150,6 +167,16 @@ export const PersonalData = ({ label }: { label: string }) => {
   }, [selectedNationality, methods]);
 
   useEffect(() => {
+    if (selectedTipoEscola) {
+      const currentEscolaId = methods.getValues('escolaId');
+
+      if (currentEscolaId && !schoolOptions.some(option => option.value === currentEscolaId)) {
+        methods.setValue('escolaId', '');
+      }
+    }
+  }, [selectedTipoEscola, schoolOptions, methods]);
+
+  useEffect(() => {
     const { completedTabs } = useTabStore.getState();
 
     const hasAllRequiredFields =
@@ -161,7 +188,9 @@ export const PersonalData = ({ label }: { label: string }) => {
       watchedValues.race &&
       watchedValues.phone &&
       watchedValues.gender &&
-      watchedValues.dateBirth;
+      watchedValues.dateBirth &&
+      watchedValues.tipoEscola &&
+      watchedValues.escolaId;
 
     if (completedTabs.includes('personal_data') && !hasAllRequiredFields) {
       resetSpecificTab('personal_data');
@@ -181,7 +210,9 @@ export const PersonalData = ({ label }: { label: string }) => {
       formValues.race &&
       formValues.phone &&
       formValues.gender &&
-      formValues.dateBirth;
+      formValues.dateBirth &&
+      formValues.tipoEscola &&
+      formValues.escolaId;
 
     if (!hasAllRequiredFields) {
       return;
@@ -243,6 +274,7 @@ export const PersonalData = ({ label }: { label: string }) => {
         dateBirth: formatDateToISO(formValues.dateBirth),
         deficiency: formValues.deficiency,
         educasenso: formValues.educacenso ?? '',
+        escolaId: Number(formValues.escolaId),
       };
 
       FormSubmit(payload);
@@ -345,6 +377,32 @@ export const PersonalData = ({ label }: { label: string }) => {
                   name="educacenso"
                   label="Número Educacenso"
                   description="Caso não possua, deixe em branco."
+                />
+                <RadioButtonGroup
+                  name="tipoEscola"
+                  label="Tipo de escola do(a) candidato(a)"
+                  required
+                  orientation="horizontal"
+                  options={[
+                    { value: 'PARTICULAR', label: 'Particular' },
+                    { value: 'GRATUITA', label: 'Gratuita' },
+                  ]}
+                />
+                <FormSelect
+                  name="escolaId"
+                  label="Escola do(a) candidato(a)"
+                  required
+                  description={
+                    selectedTipoEscola
+                      ? 'Selecione uma das escolas cadastradas abaixo.'
+                      : 'Primeiro selecione o tipo de escola.'
+                  }
+                  options={schoolOptions}
+                  error={errors.escolaId?.message}
+                  openGuard={{
+                    blocked: !selectedTipoEscola,
+                    message: 'Selecione o tipo de escola (particular ou gratuita) antes de continuar.',
+                  }}
                 />
               </div>
               <div className="flex justify-between items-center w-full mt-4 gap-4">

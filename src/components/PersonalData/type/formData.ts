@@ -15,6 +15,10 @@ export const personalDataSchema = z.object({
   dateBirth: birthDateStringValidation,
   deficiency: z.string().min(1, 'Pessoa com deficiência é obrigatória'),
   educacenso: z.string().optional(),
+  tipoEscola: z.enum(['PARTICULAR', 'GRATUITA'], {
+    required_error: 'Selecione o tipo de escola',
+  }),
+  escolaId: z.string().nonempty('Selecione a escola'),
 });
 
 export type PersonalDataType = z.infer<typeof personalDataSchema>;

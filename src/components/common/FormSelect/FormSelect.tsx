@@ -9,6 +9,7 @@ import { FieldError, FieldErrorsImpl, Merge, useFormContext } from 'react-hook-f
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
+import { toast } from '@/utils/toast';
 
 interface FormSelectProps {
   name: string;
@@ -25,6 +26,10 @@ interface FormSelectProps {
     otherFieldName: string;
     otherPlaceholder?: string;
   };
+  openGuard?: {
+    blocked: boolean;
+    message: string;
+  };
 }
 
 const FormSelect = ({
@@ -36,10 +41,21 @@ const FormSelect = ({
   disabled = false,
   error,
   withOtherOption,
+  openGuard,
 }: FormSelectProps) => {
   const { control, trigger, watch, setValue } = useFormContext();
   const [showOtherField, setShowOtherField] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const selectedValue = watch(name);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (openGuard?.blocked && nextOpen) {
+      toast.error(openGuard.message);
+      setIsOpen(false);
+      return;
+    }
+    setIsOpen(nextOpen);
+  };
 
   useEffect(() => {
     if (withOtherOption && selectedValue === withOtherOption.otherValue) {
@@ -99,6 +115,7 @@ const FormSelect = ({
               value={field.value || ''}
               defaultValue={field.value || ''}
               disabled={disabled}
+              {...(openGuard ? { open: isOpen, onOpenChange: handleOpenChange } : {})}
             >
               <SelectTrigger
                 className={`peer w-full border outline-none focus:outline-none rounded-lg px-4 text-sm transition-all justify-between min-h-[50px] ${compact ? 'py-2' : 'py-3'} ${fieldState.error

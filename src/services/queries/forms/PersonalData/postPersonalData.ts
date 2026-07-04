@@ -18,6 +18,7 @@ type postPersonalDataPayload = {
     dateBirth: string
     deficiency: string
     educasenso: string
+    escolaId: number
 };
 
 

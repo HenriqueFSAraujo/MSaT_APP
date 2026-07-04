@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuthStore } from '@/store/useAuthStore';
-import { BookOpenText, LayoutDashboard, Menu, X } from 'lucide-react';
+import { BookOpenText, Building2, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +23,17 @@ export default function MobileMenu() {
       >
         <BookOpenText className="h-5 w-5" />
         Painel de usuários
+      </Button>
+      <Button
+        variant="ghost"
+        className="w-full flex justify-start gap-2 text-white"
+        onClick={() => {
+          navigate('/schools');
+          closeMenu();
+        }}
+      >
+        <Building2 className="h-5 w-5" />
+        Escolas
       </Button>
     </>
   );
