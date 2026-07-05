@@ -12,7 +12,7 @@ interface FormInputProps {
   type?: string;
   required?: boolean;
   error?: string;
-  mask?: 'cpf' | 'rg' | 'phone' | 'cep' | 'money';
+  mask?: 'cpf' | 'rg' | 'phone' | 'cep' | 'money' | 'cnpj';
   description?: string | React.ReactNode;
   withMarginTop?: boolean;
   disabled?: boolean;
@@ -25,6 +25,7 @@ const maskPatterns = {
   rg: [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   phone: ['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/],
   cep: [/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/],
+  cnpj: [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/],
   money: moneyMask,
 };
 

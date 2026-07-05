@@ -27,5 +27,8 @@ export const Endpoints = {
   },
   FormValidation: {
     Base: '/form-validation',
+  Schools: {
+    List: '/escolas',
+    ByType: '/escolas/tipo',
   },
 } as const;

@@ -9,6 +9,8 @@ import { Toaster } from 'sonner';
 const Login = lazy(() => import('@/pages/Login/Login'));
 const StudentPortal = lazy(() => import('@/pages/StudentPortal/StudentPortal'));
 const Users = lazy(() => import('@/pages/Users/Users'));
+const Schools = lazy(() => import('@/pages/Schools/Schools'));
+const SchoolForm = lazy(() => import('@/pages/Schools/SchoolForm'));
 const StudentForm = lazy(() => import('@/pages/StudentForm/StudentForm'));
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFound/NotFoundPage').then(module => ({ default: module.NotFoundPage }))
@@ -43,6 +45,18 @@ function App() {
           <Route
             path="/dashboard-users"
             element={<PrivateRoute element={<Users />} allowedRoles={routeRoles.admin} />}
+          />
+          <Route
+            path="/schools"
+            element={<PrivateRoute element={<Schools />} allowedRoles={routeRoles.admin} />}
+          />
+          <Route
+            path="/schools/new"
+            element={<PrivateRoute element={<SchoolForm />} allowedRoles={routeRoles.admin} />}
+          />
+          <Route
+            path="/schools/:id/edit"
+            element={<PrivateRoute element={<SchoolForm />} allowedRoles={routeRoles.admin} />}
           />
           <Route
             path="/socioeconomic-report/:id"
