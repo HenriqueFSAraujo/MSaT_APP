@@ -51,7 +51,7 @@ export function PostMultipleDocumentsData() {
 
         return api.post(endpoint, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': undefined, // Remove header padrão para multipart/form-data com boundary
           },
         }).catch(error => {
           console.error(`Erro ao enviar ${documentType}:`, {
