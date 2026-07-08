@@ -14,9 +14,9 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"],  // Adiciona os tipos do Node.js
+    "types": ["node"], 
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   }
 }
