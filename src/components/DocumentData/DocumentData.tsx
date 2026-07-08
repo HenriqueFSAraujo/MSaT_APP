@@ -156,7 +156,11 @@ export const DocumentData = ({ label }: { label: string }) => {
       }
 
       if (documentsToUpload.length === 0) {
-        toast.error('Erro', 'Nenhum documento válido para upload.');
+        // Todos os documentos obrigatórios já estavam salvos (validado acima em `hasError`)
+        // e nenhum arquivo novo foi selecionado nesta sessão — não há nada para enviar.
+        const { markTabAsCompleted } = useTabStore.getState();
+        markTabAsCompleted('required_documents', StudentId);
+        setSelectedTab('property_relations');
         return;
       }
 

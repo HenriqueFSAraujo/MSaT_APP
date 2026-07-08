@@ -6,7 +6,7 @@
     "checkJs": false,
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "strict": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
@@ -14,7 +14,6 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": "./",
     "types": ["node"],  // Adiciona os tipos do Node.js
     "paths": {
       "@/*": ["src/*"]

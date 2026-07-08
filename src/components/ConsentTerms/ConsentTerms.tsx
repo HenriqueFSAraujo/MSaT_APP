@@ -19,7 +19,8 @@ export const ConsentTerms = ({ label }: { label: string }) => {
     const userId = StudentId ? parseInt(StudentId, 10) : 0;
     const [hasLoadedFromAPI, setHasLoadedFromAPI] = useState(false);
 
-    const { data: consentTermsData } = useConsentTerms(userId, { enabled: !!userId });
+    const { data: consentTermsList } = useConsentTerms(userId, { enabled: !!userId });
+    const consentTermsData = Array.isArray(consentTermsList) ? consentTermsList[0] : consentTermsList;
     const { mutate: FormSubmit } = PostConsentTerms();
 
     const methods = useForm<ConsentTermsType>({
