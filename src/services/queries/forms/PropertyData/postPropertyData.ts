@@ -1,56 +1,54 @@
 import { toast } from '@/utils/toast';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
 
 type PropertyDataPayload = {
-    userInfoId: number,
-    veiculos?: Array<veiculoProps>,
-    familiaresEscola?: Array<familiaresEscolaProps>,
-    pessoasComDeficiencia?: Array<pessoasComDeficiencia>,
-    despesasMensais?: Array<despesasMensais>
+  userInfoId: number;
+  veiculos?: Array<veiculoProps>;
+  familiaresEscola?: Array<familiaresEscolaProps>;
+  pessoasComDeficiencia?: Array<pessoasComDeficiencia>;
+  despesasMensais?: Array<despesasMensais>;
 };
 
-
-// TODO: Tipar corretamente o payload
 type veiculoProps = {
-    marcaModelo: string
-    anoFabricacao: string
-    utilizacao: string
-}
+  marcaModelo: string;
+  anoFabricacao: string;
+  utilizacao: string;
+};
 
 type familiaresEscolaProps = {
-    nome: string
-    escola: string
-    valorMensal: string
-}
+  nome: string;
+  escola: string;
+  valorMensal: string;
+};
 
 type pessoasComDeficiencia = {
-    nome: string
-    tipoDeficiencia: string
-    despesaMensal: string
-}
+  nome: string;
+  tipoDeficiencia: string;
+  despesaMensal: string;
+};
 
 type despesasMensais = {
-    descricao: string
-    valor: string
-}
-
+  descricao: string;
+  valor: string;
+};
 
 export function PostPropertyData() {
-    return useMutation({
+  const queryClient = useQueryClient();
 
-        mutationFn: (payload: PropertyDataPayload) =>
-            api.post(Endpoints.Forms.Property_Data, payload),
+  return useMutation({
+    mutationFn: (payload: PropertyDataPayload) =>
+      api.post(Endpoints.Forms.Property_Data, payload),
 
-        onSuccess: () => {
-            toast.success('Relação de Bens confirmado!');
-        },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['get-property-data', variables.userInfoId] });
+      toast.success('Relacao de Bens confirmada!');
+    },
 
-        onError: (error) => {
-            toast.error('Verifique se todos os campos foram preenchidos corretamente.');
-            console.error(error)
-        },
-    });
+    onError: (error) => {
+      toast.error('Verifique se todos os campos foram preenchidos corretamente.');
+      console.error(error);
+    },
+  });
 }
-
