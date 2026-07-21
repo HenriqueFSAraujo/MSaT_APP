@@ -1,6 +1,6 @@
 import { api } from '@/services/api';
 import { toast } from '@/utils/toast';
-import { useMutation, useQuery, useQueries } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { Endpoints } from '@/services/endpoints';
 
 export type DocumentUploadPayload = {
@@ -21,12 +21,12 @@ export function PostDocumentData() {
 
       return api.post(endpoint, formData, {
         headers: {
-          'Content-Type': undefined, // Remove header padrão para multipart/form-data com boundary
+          'Content-Type': undefined,
         },
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       console.log(`Documento ${variables.documentType} enviado com sucesso!`);
     },
 
@@ -37,21 +37,24 @@ export function PostDocumentData() {
   });
 }
 
-// Mutation for uploading multiple documents
 export function PostMultipleDocumentsData() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ['post-multiple-documents-data'],
     mutationFn: async (documents: DocumentUploadPayload[]) => {
-      const uploadPromises = documents.map(({ file, userId, documentType }) => {
+      const uploadedDocuments = [];
+
+      for (const { file, userId, documentType } of documents) {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('userId', String(userId));
 
         const endpoint = `${Endpoints.Forms.Document_Data.upload}/${documentType}`;
 
-        return api.post(endpoint, formData, {
+        const response = await api.post(endpoint, formData, {
           headers: {
-            'Content-Type': undefined, // Remove header padrão para multipart/form-data com boundary
+            'Content-Type': undefined,
           },
         }).catch(error => {
           console.error(`Erro ao enviar ${documentType}:`, {
@@ -61,13 +64,18 @@ export function PostMultipleDocumentsData() {
           });
           throw error;
         });
-      });
 
-      return Promise.all(uploadPromises);
+        uploadedDocuments.push(response);
+      }
+
+      return uploadedDocuments;
     },
 
-    onSuccess: (data, variables) => {
-      toast.success(`${variables.length} documento(s) enviado(s) com sucesso!`);
+    onSuccess: (_data, variables) => {
+      const userIds = new Set(variables.map((document) => document.userId));
+      userIds.forEach((userId) => {
+        queryClient.invalidateQueries({ queryKey: ['documents-list', userId] });
+      });
     },
 
     onError: (error) => {
@@ -77,12 +85,10 @@ export function PostMultipleDocumentsData() {
   });
 }
 
-// Tipo para o documento retornado pela API
 export type DocumentResponse = {
   id: number;
   nomeArquivo: string;
   conteudoBase64: string;
-  // Campos opcionais que podem vir da API
   userId?: number;
   documentType?: string;
   fileName?: string;
@@ -91,7 +97,6 @@ export type DocumentResponse = {
   mimeType?: string;
 };
 
-// Query para buscar lista de documentos de um tipo específico
 export function useDocumentsList(userId: number, documentType: string) {
   return useQuery({
     queryKey: ['documents-list', userId, documentType],
@@ -105,7 +110,6 @@ export function useDocumentsList(userId: number, documentType: string) {
   });
 }
 
-// Hook para buscar todos os tipos de documentos
 export function useAllDocumentsList(userId: number, documentTypes: string[]) {
   const results = useQueries({
     queries: documentTypes.map(docType => ({
@@ -115,29 +119,22 @@ export function useAllDocumentsList(userId: number, documentTypes: string[]) {
           const endpoint = `${Endpoints.Forms.Document_Data.download}/${docType}?userId=${userId}`;
           const response = await api.get<DocumentResponse[]>(endpoint);
 
-          // Adicionar o documentType a cada documento retornado
-          const documentsWithType = (response.data || []).map(doc => ({
+          return (response.data || []).map(doc => ({
             ...doc,
-            documentType: docType
+            documentType: doc.documentType || docType,
           }));
-
-          return documentsWithType;
         } catch {
-          // Se não houver documentos desse tipo, retornar array vazio
           return [];
         }
       },
       enabled: !!userId,
-      retry: false, // Não retentar se falhar (pode ser que não exista documento desse tipo)
-      staleTime: Infinity, // Nunca considerar dados como "stale" (obsoletos) automaticamente
-      gcTime: 30 * 60 * 1000, // Manter em cache por 30 minutos
-      refetchOnWindowFocus: false, // Não refazer requisição ao focar na janela
-      refetchOnMount: false, // Não refazer requisição ao montar componente se já tem dados em cache
-      refetchOnReconnect: false, // Não refazer requisição ao reconectar
+      retry: false,
+      staleTime: 0,
+      refetchOnMount: 'always' as const,
+      refetchOnReconnect: true,
     })),
   });
 
-  // Combinar todos os resultados em um único array
   const allDocuments = results.reduce<DocumentResponse[]>((acc, result) => {
     if (result.data) {
       return [...acc, ...result.data];
@@ -160,7 +157,6 @@ export function useAllDocumentsList(userId: number, documentTypes: string[]) {
   };
 }
 
-// Função para visualizar um documento específico (abrir em nova aba)
 export function useViewDocument() {
   return useMutation({
     mutationKey: ['view-document'],
@@ -170,32 +166,27 @@ export function useViewDocument() {
       const response = await api.get<DocumentResponse[]>(endpoint);
       const documents = response.data;
 
-      // Se não houver documentos, lançar erro
       if (!documents || documents.length === 0) {
         throw new Error('Nenhum documento encontrado');
       }
 
-      // Encontrar o documento específico pelo ID
       const doc = documents.find(d => d.id === documentId);
 
       if (!doc) {
-        throw new Error('Documento não encontrado');
+        throw new Error('Documento nao encontrado');
       }
 
-      // Converter base64 para blob
       const byteCharacters = atob(doc.conteudoBase64);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const blob = new Blob([byteArray], { type: doc.mimeType || 'application/pdf' });
 
-      // Criar URL e abrir em nova aba
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
 
-      // Limpar URL após um tempo (para permitir o carregamento)
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
       }, 1000);
