@@ -3,9 +3,9 @@ import { birthDateStringValidation } from '@/utils/dateValidations';
 
 export const personalDataSchema = z.object({
   fullName: z.string().nonempty('Nome completo é obrigatório'),
-  email: z.string().email('E-mail inválido').min(1, 'E-mail é obrigatório'),
+  email: z.union([z.string().email('E-mail inválido'), z.literal('')]),
   cpf: z.string().min(1, 'CPF é obrigatório'),
-  rg: z.string().min(1, 'RG é obrigatório'),
+  rg: z.string().optional(),
   nationality: z.string().min(1, 'Nacionalidade é obrigatória'),
   birthplace: z.string().min(1, 'Naturalidade é obrigatória'),
   race: z.string().min(1, 'Raça/Cor é obrigatória'),

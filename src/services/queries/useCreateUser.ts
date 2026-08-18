@@ -11,7 +11,7 @@ export type CreateUserPayload = {
   userName: string;
   roleName: string;
   cpf: string;
-  email: string;
+  email: string | null;
   isFirstLogin: boolean;
   /**
    * Obrigatorio quando roleName = ROLE_USER. Deve ser omitido/null quando ROLE_ADMIN.

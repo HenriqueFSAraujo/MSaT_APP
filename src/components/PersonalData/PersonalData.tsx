@@ -20,7 +20,7 @@ export const PersonalData = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
   const { resetSpecificTab } = useTabStore();
-  const { mutate: FormSubmit } = PostPersonalData();
+  const { mutateAsync: FormSubmit } = PostPersonalData();
   const { id: StudentId } = useParams<{ id: string }>();
   const { data } = usePersonalData(Number(StudentId));
   const [hasLoadedFromAPI, setHasLoadedFromAPI] = useState(false);
@@ -92,8 +92,7 @@ export const PersonalData = ({ label }: { label: string }) => {
       }
 
       if (formData.dateBirth && typeof formData.dateBirth === 'string') {
-        if (formData.dateBirth.includes('/')) {
-        } else {
+        if (!formData.dateBirth.includes('/')) {
           const parts = formData.dateBirth.split('T')[0].split('-');
           if (parts.length === 3) {
             const [year, month, day] = parts;
@@ -109,7 +108,6 @@ export const PersonalData = ({ label }: { label: string }) => {
       }
 
       const hasAllRequiredFields =
-        formData.rg &&
         formData.nationality &&
         formData.birthplace &&
         formData.race &&
@@ -182,7 +180,6 @@ export const PersonalData = ({ label }: { label: string }) => {
     const hasAllRequiredFields =
       watchedValues.fullName &&
       watchedValues.cpf &&
-      watchedValues.rg &&
       watchedValues.nationality &&
       watchedValues.birthplace &&
       watchedValues.race &&
@@ -204,7 +201,6 @@ export const PersonalData = ({ label }: { label: string }) => {
     const hasAllRequiredFields =
       formValues.fullName &&
       formValues.cpf &&
-      formValues.rg &&
       formValues.nationality &&
       formValues.birthplace &&
       formValues.race &&
@@ -220,11 +216,6 @@ export const PersonalData = ({ label }: { label: string }) => {
 
     try {
       setFormData('personal_data', formValues);
-
-      const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('personal_data', StudentId);
-
-      setSelectedTab('parents_data');
 
       const formatDateToISO = (date: Date | string | undefined): string => {
         if (!date) return '';
@@ -277,7 +268,10 @@ export const PersonalData = ({ label }: { label: string }) => {
         escolaId: Number(formValues.escolaId),
       };
 
-      FormSubmit(payload);
+      await FormSubmit(payload);
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('personal_data', StudentId);
+      setSelectedTab('parents_data');
     } catch (error) {
       console.error(error);
     }
@@ -362,7 +356,6 @@ export const PersonalData = ({ label }: { label: string }) => {
                   name="email"
                   label="E-mail"
                   type="email"
-                  required
                   error={errors.email?.message}
                 />
                 <FormInput

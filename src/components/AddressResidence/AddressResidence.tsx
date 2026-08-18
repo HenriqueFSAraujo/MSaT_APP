@@ -16,7 +16,7 @@ import { AddressInfo, addressInfoSchema } from './type/formData';
 
 export const AddressResidence = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
-  const { mutate: FormSubmit } = PostAddressData();
+  const { mutateAsync: FormSubmit } = PostAddressData();
   const { id: StudentId } = useParams<{ id: string }>();
   const { data } = useAddressData(Number(StudentId));
   const methods = useForm({
@@ -114,11 +114,6 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
     try {
       setFormData('address_info', data);
-      const { markTabAsCompleted } = useTabStore.getState();
-      markTabAsCompleted('address_info', StudentId);
-
-      setSelectedTab('family_composition');
-
       const payload = {
         userId: Number(StudentId),
         zipCode: data.zipCode,
@@ -141,7 +136,11 @@ export const AddressResidence = ({ label }: { label: string }) => {
         weeklyFrequency: data.afterSchoolActivities === 'Sim' ? data.weeklyFrequency : undefined,
       };
 
-      FormSubmit(payload);
+      await FormSubmit(payload);
+
+      const { markTabAsCompleted } = useTabStore.getState();
+      markTabAsCompleted('address_info', StudentId);
+      setSelectedTab('family_composition');
     } catch (error) {
       console.error(error);
     }

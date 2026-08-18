@@ -1,5 +1,5 @@
 import { toast } from '@/utils/toast';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../api';
 import { Endpoints } from '../../../endpoints';
 
@@ -25,12 +25,15 @@ type AddressDataPayload = {
 };
 
 export function PostAddressData() {
+    const queryClient = useQueryClient();
+
     return useMutation({
 
         mutationFn: (payload: AddressDataPayload) =>
             api.post(Endpoints.Forms.Address_Data, payload),
 
-        onSuccess: () => {
+        onSuccess: (_response, payload) => {
+            queryClient.invalidateQueries({ queryKey: ['get-address-data', payload.userId] });
             toast.success('Endereço confirmado!');
         },
 

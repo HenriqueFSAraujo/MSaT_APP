@@ -1,7 +1,7 @@
 import { api } from '@/services/api';
 import { Endpoints } from '@/services/endpoints';
 import { toast } from '@/utils/toast';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type postPersonalDataPayload = {
     userId: number
@@ -23,12 +23,15 @@ type postPersonalDataPayload = {
 
 
 export function PostPersonalData() {
+    const queryClient = useQueryClient();
+
     return  useMutation({
         mutationKey: ['send-personal-data'],
         mutationFn: (payload: postPersonalDataPayload) =>
             api.post(Endpoints.Forms.Personal_Data, payload),
 
-        onSuccess: () => {
+        onSuccess: (_response, payload) => {
+            queryClient.invalidateQueries({ queryKey: ['get-personal-data', payload.userId] });
             toast.success('Processo de Bolsa confirmado!');
         },
 

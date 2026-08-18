@@ -22,7 +22,7 @@ const userSchema = z
   .object({
     fullName: z.string().min(1, 'O nome completo é obrigatório'),
     cpf: z.string().min(1, 'O CPF é obrigatório'),
-    email: z.string().email('E-mail inválido'),
+    email: z.union([z.string().email('E-mail inválido'), z.literal('')]),
     roleName: z.enum(['ROLE_ADMIN', 'ROLE_USER'], {
       required_error: 'O perfil é obrigatório',
     }),
@@ -92,7 +92,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
         userName: formData.cpf,
         cpf: formData.cpf.replace(/\D/g, ''),
         roleName: formData.roleName,
-        email: formData.email,
+        email: formData.email || null,
         isFirstLogin: formData.isFirstLogin,
         // Backend ignora tipoAluno quando ROLE_ADMIN (UserInfoService.normalizeTipoAlunoForAdmin),
         // mas mandamos null explicito para deixar a intencao clara.
@@ -245,7 +245,7 @@ export const DialogCreateUser = ({ open, onOpenChange }: DialogCreateUserProps) 
                   <Label className="text-sm font-medium">
                     {field === 'fullName' && 'Nome Completo'}
                     {field === 'cpf' && getCpfLabel()}
-                    {field === 'email' && 'E-mail'}
+                    {field === 'email' && 'E-mail (opcional)'}
                   </Label>
                   <motion.div whileHover={{ scale: 1.01 }}>
                     <Input
