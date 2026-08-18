@@ -13,7 +13,7 @@ import { dynamicSections, fieldMasksMap } from './form.ds';
 import { type PropertyRelationsInfo, PropertyRelationsSchema } from './type/formData';
 
 export const PropertyRelations = ({ label }: { label: string }) => {
-  const { mutate: FormSubmit } = PostPropertyData();
+  const { mutateAsync: FormSubmit, isPending } = PostPropertyData();
   const { id: StudentId } = useParams<{ id: string }>();
   const { data } = usePropertyData(Number(StudentId));
   const { setFormData, formData } = useScholarshipFormStore();
@@ -186,7 +186,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
       setFormData('property_relations', data);
 
       const payload = formatPayload(data, Number(StudentId));
-      FormSubmit(payload);
+      await FormSubmit(payload);
 
       toast.success('Sucesso!', 'salva com sucesso!');
     } catch (error) {
@@ -225,9 +225,10 @@ export const PropertyRelations = ({ label }: { label: string }) => {
             <div className="flex justify-end pt-6">
               <Button
                 type="submit"
+                disabled={isPending}
                 className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
               >
-                Salvar e continuar
+                {isPending ? 'Salvando...' : 'Salvar e continuar'}
               </Button>
             </div>
           </form>

@@ -11,6 +11,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { InputFileProps } from './type.ds';
 
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
 export const InputFile = ({
   name,
   id = `file-input-${name}`,
@@ -28,6 +30,8 @@ export const InputFile = ({
   const {
     register,
     setValue,
+    setError,
+    clearErrors,
     watch,
     formState: { errors },
   } = useFormContext();
@@ -38,6 +42,20 @@ export const InputFile = ({
     const newFiles = Array.from(e.target.files || []);
 
     if (newFiles.length === 0) return;
+
+    const invalidFile = newFiles.find(file => {
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      return file.size > MAX_FILE_SIZE_BYTES || !isPdf;
+    });
+
+    if (invalidFile) {
+      setError(name, {
+        type: 'manual',
+        message: 'Envie apenas PDFs de ate 5MB cada.',
+      });
+      e.target.value = '';
+      return;
+    }
 
     // Limita a 5 arquivos
     const filesToAdd = newFiles.slice(0, 5);
@@ -64,6 +82,7 @@ export const InputFile = ({
       },
       { shouldValidate: true }
     );
+    clearErrors(name);
 
     // Reseta o input para permitir adicionar o mesmo arquivo novamente se necessário
     e.target.value = '';
