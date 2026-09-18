@@ -11,7 +11,7 @@ export const dynamicSections = [
     title: 'Relação de Veículos:',
     columns: ['Marca/Modelo', 'Ano de Fabricação', 'Utilização'],
     fields: ['marcaModelo', 'anoFabricacao', 'utilizacao'],
-    required: true,
+    required: false,
     footerMessage:
       '* Informe todos os veículos da família. Caso não possua veículos, deixe uma linha em branco.',
   },
@@ -20,7 +20,7 @@ export const dynamicSections = [
     title: 'Familiares em outras escolas particulares:',
     columns: ['Nome', 'Escola', 'Valor da Mensal'],
     fields: ['nome', 'escola', 'valorMensal'],
-    required: true,
+    required: false,
     footerMessage:
       '* Informe apenas familiares que estudam em escolas particulares. Caso não se aplique, deixe em branco.',
   },
@@ -29,7 +29,7 @@ export const dynamicSections = [
     title: 'Pessoas com deficiência:',
     columns: ['Nome', 'Tipo de Deficiência', 'Despesa Mensal'],
     fields: ['nome', 'tipoDeficiencia', 'despesaMensal'],
-    required: true,
+    required: false,
     footerMessage:
       '* Informe todas as pessoas com deficiência da família e suas respectivas despesas médicas/terapêuticas.',
   },
@@ -39,7 +39,7 @@ export const dynamicSections = [
     title: 'Despesas mensais básicas:',
     columns: ['Discriminação da Despesa', 'Valores em Reais'],
     fields: ['descricao', 'valor'],
-    required: true,
+    required: false,
     footerMessage:
       '* Preencha todas as despesas mensais básicas da família. Valores devem ser informados em reais (R$).',
   },

@@ -147,26 +147,43 @@ export const PropertyRelations = ({ label }: { label: string }) => {
     }
   }, [data, methods, applyMasksToData]);
 
-  const unmaskDigits = (value: string) => value.replace(/\D/g, '');
+  const unmaskDigits = (value?: string) => (value ?? '').replace(/\D/g, '');
+
+  const isEmptyValue = (value?: string) => {
+    const normalizedValue = (value ?? '').trim();
+    if (!normalizedValue) return true;
+
+    if (normalizedValue.includes('R$')) {
+      return Number(unmaskDigits(normalizedValue)) === 0;
+    }
+
+    return false;
+  };
+
+  const hasAnyFilledValue = <T extends Record<string, string | undefined>>(item: T) =>
+    Object.values(item).some((value) => !isEmptyValue(value));
 
   const formatPayload = (data: PropertyRelationsInfo, userId: number) => {
     return {
       userInfoId: userId,
-      familiaresEscola: data.familiaresEscola.map((item) => ({
-        ...item,
+      familiaresEscola: data.familiaresEscola.filter(hasAnyFilledValue).map((item) => ({
+        nome: item.nome ?? '',
+        escola: item.escola ?? '',
         valorMensal: unmaskDigits(item.valorMensal),
       })),
-      pessoasComDeficiencia: data.pessoasComDeficiencia.map((item) => ({
-        ...item,
+      pessoasComDeficiencia: data.pessoasComDeficiencia.filter(hasAnyFilledValue).map((item) => ({
+        nome: item.nome ?? '',
+        tipoDeficiencia: item.tipoDeficiencia ?? '',
         despesaMensal: unmaskDigits(item.despesaMensal),
       })),
-      despesasMensais: data.despesasMensais.map((item) => ({
-        ...item,
+      despesasMensais: data.despesasMensais.filter(hasAnyFilledValue).map((item) => ({
+        descricao: item.descricao ?? '',
         valor: unmaskDigits(item.valor),
       })),
-      veiculos: data.veiculos.map((item) => ({
-        ...item,
+      veiculos: data.veiculos.filter(hasAnyFilledValue).map((item) => ({
+        marcaModelo: item.marcaModelo ?? '',
         anoFabricacao: item.anoFabricacao ? item.anoFabricacao.replace(/\D/g, '').slice(0, 4) : '',
+        utilizacao: item.utilizacao ?? '',
       })),
     };
   };
@@ -215,6 +232,7 @@ export const PropertyRelations = ({ label }: { label: string }) => {
                     fieldNames={section.fields}
                     namePrefix={section.key}
                     required={section.required}
+                    validateFields={false}
                     fieldMasks={getMasksForSection(section.fields)}
                     footerMessage={section.footerMessage}
                   />

@@ -277,7 +277,7 @@ export function ScholarshipProcessInfo() {
             <div className='space-y-4'>
               <FormSelect
                 name="segmentYearToStudy"
-                label="Segmento a cursar em 2025:"
+                label="Segmento a cursar em 2027:"
                 required
                 options={[
                   { value: 'Educação Infantil', label: 'Educação Infantil' },

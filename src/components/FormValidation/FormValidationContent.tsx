@@ -307,7 +307,7 @@ export const FormValidationContent = ({
                                     <div className="space-y-4">
                                         <h3 className="text-lg font-medium text-gray-800 mb-4">Informações Acadêmicas</h3>
                                         <FieldDisplay
-                                            label="Segmento a cursar em 2025"
+                                            label="Segmento a cursar em 2027"
                                             value={formDataTyped.scholarship_info.segmentYearToStudy}
                                         />
                                         <FieldDisplay

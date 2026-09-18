@@ -16,7 +16,7 @@ import { AddressInfo, addressInfoSchema } from './type/formData';
 
 export const AddressResidence = ({ label }: { label: string }) => {
   const { setFormData, formData } = useScholarshipFormStore();
-  const { mutateAsync: FormSubmit } = PostAddressData();
+  const { mutateAsync: FormSubmit, isPending } = PostAddressData();
   const { id: StudentId } = useParams<{ id: string }>();
   const { data } = useAddressData(Number(StudentId));
   const methods = useForm({
@@ -113,7 +113,6 @@ export const AddressResidence = ({ label }: { label: string }) => {
     }
 
     try {
-      setFormData('address_info', data);
       const payload = {
         userId: Number(StudentId),
         zipCode: data.zipCode,
@@ -138,8 +137,10 @@ export const AddressResidence = ({ label }: { label: string }) => {
 
       await FormSubmit(payload);
 
+      setFormData('address_info', data);
       const { markTabAsCompleted } = useTabStore.getState();
       markTabAsCompleted('address_info', StudentId);
+
       setSelectedTab('family_composition');
     } catch (error) {
       console.error(error);
@@ -323,9 +324,10 @@ export const AddressResidence = ({ label }: { label: string }) => {
             <div className="flex justify-end w-full">
               <Button
                 type="submit"
+                disabled={isPending}
                 className="mt-4 w-35 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-colors"
               >
-                Salvar e continuar
+                {isPending ? 'Salvando...' : 'Salvar e continuar'}
               </Button>
             </div>
           </form>

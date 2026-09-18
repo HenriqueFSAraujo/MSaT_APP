@@ -31,6 +31,7 @@ type DynamicInputSectionProps = {
     fieldToSum: string;
     label: string;
   };
+  validateFields?: boolean;
   onRemoveRow?: (index: number) => void;
 };
 
@@ -46,6 +47,7 @@ const DynamicInputSectionComponent = ({
   dateFields = [],
   selectFields = [],
   showTotalRow,
+  validateFields = true,
   onRemoveRow,
 }: DynamicInputSectionProps) => {
   const {
@@ -184,6 +186,8 @@ const DynamicInputSectionComponent = ({
     const { onBlur, ...registerProps } = register(path, {
       required: required ? 'Campo obrigatório' : false,
       validate: (val: string) => {
+        if (!validateFields) return true;
+
         if (mask === 'year') {
           if (!val) return true;
           if (!/^\d{1,4}$/.test(val)) return 'Apenas números são permitidos';
@@ -282,7 +286,7 @@ const DynamicInputSectionComponent = ({
         )}
       </div>
     );
-  }, [register, required, setValue]);
+  }, [register, required, setValue, validateFields]);
 
   const renderField = useCallback((
     fieldName: string,
