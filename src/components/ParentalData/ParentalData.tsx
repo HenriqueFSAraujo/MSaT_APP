@@ -107,28 +107,24 @@ export const ParentalDataForm = ({ label }: { label: string }) => {
                 <FormInput
                   name="parent1FullName"
                   label="Nome completo do genitor 1"
-                  required
                   error={errors.parent1FullName?.message}
                 />
                 <FormInput
                   name="parent1Cpf"
                   label="CPF do genitor 1"
                   mask="cpf"
-                  required
                   error={errors.parent1Cpf?.message}
                 />
                 <FormInput
                   name="parent1Phone"
                   label="Telefone de contato do genitor 1"
                   mask="phone"
-                  required
                   type="parent1Phone"
                   error={errors.parent1Phone?.message}
                 />
                 <FormSelect
                   name="parent1MaritalStatus"
                   label="Estado cívil do genitor 1"
-                  required
                   description="Selecione uma das opções abaixo."
                   options={maritalStatusOptions}
                   error={errors.parent1MaritalStatus?.message}

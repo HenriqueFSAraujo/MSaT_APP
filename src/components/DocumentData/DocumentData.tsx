@@ -1,7 +1,6 @@
 import { useForm, FormProvider, FieldValues } from 'react-hook-form';
 import { InputFile } from '../common/InputFile/InputFile';
-import { AlertCircle, CheckCircle2, Download, Eye, FileText } from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircle2, Download, Eye, FileText } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { DOCUMENT_GROUPS, FormValues } from './form.ds';
@@ -10,18 +9,11 @@ import { useTabStore } from '@/store/tabStore';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '../ui/card';
 import { PostMultipleDocumentsData, DocumentUploadPayload, useAllDocumentsList, useViewDocument } from '@/services/queries/forms/DocumentData';
 
-const REQUIRED_DOCUMENTS = [
-  'singleRegistryRegistration',
-  'maritalStatus',
-  'identityDocuments',
-];
-
 // Todos os tipos de documentos disponíveis
 const ALL_DOCUMENT_TYPES = DOCUMENT_GROUPS.flat().map(doc => doc.name);
 
 export const DocumentData = ({ label }: { label: string }) => {
   const { id: StudentId } = useParams<{ id: string }>();
-  const [submitted, setSubmitted] = useState(false);
 
   const { mutate: uploadDocuments, isPending: isUploading } = PostMultipleDocumentsData();
   const { data: documentsList, refetch: refetchDocuments } = useAllDocumentsList(
@@ -77,52 +69,8 @@ export const DocumentData = ({ label }: { label: string }) => {
     return hasFiles || hasFile;
   };
 
-  const isRequiredAndEmpty = (fieldName: keyof FormValues) => {
-    // Se já existem documentos salvos para este campo, não é obrigatório
-    const savedDocuments = getDocumentsByType(fieldName);
-    if (savedDocuments.length > 0) return false;
-
-    const value = formValues[fieldName];
-    if (typeof value === 'string') return REQUIRED_DOCUMENTS.includes(fieldName);
-
-    const hasFiles = value?.files && value.files.length > 0;
-    const hasFile = value?.file?.value instanceof File;
-    const hasValidOption = value?.option?.value && value.option.value !== 'none';
-
-    return (
-      REQUIRED_DOCUMENTS.includes(fieldName) &&
-      !hasFiles &&
-      !hasFile &&
-      !hasValidOption
-    );
-  };
-
-
   const onSubmit = async (data: FieldValues) => {
     try {
-      setSubmitted(true);
-
-      const hasError = REQUIRED_DOCUMENTS.some((fieldName) => {
-        // Se já existem documentos salvos para este campo, não há erro
-        const savedDocuments = getDocumentsByType(fieldName);
-        if (savedDocuments.length > 0) return false;
-
-        const fieldData = data[fieldName];
-
-        if (!fieldData) return true;
-
-        const hasFiles = fieldData.files && fieldData.files.length > 0;
-        const hasValidFile = fieldData.file?.value instanceof File;
-        const hasValidOption = fieldData.option?.value && fieldData.option.value !== 'none';
-
-        return !(hasFiles || hasValidFile || hasValidOption);
-      });
-
-      if (hasError) {
-        toast.error('Documentos incompletos', 'Por favor, complete todos os campos obrigatórios.');
-        return;
-      }
-
       if (!StudentId) {
         toast.error('Erro', 'ID do aluno não encontrado. Atualize a página e tente novamente.');
         return;
@@ -155,26 +103,23 @@ export const DocumentData = ({ label }: { label: string }) => {
         }
       }
 
-      if (documentsToUpload.length === 0) {
-        // Todos os documentos obrigatórios já estavam salvos (validado acima em `hasError`)
-        // e nenhum arquivo novo foi selecionado nesta sessão — não há nada para enviar.
+      const completeStep = () => {
         const { markTabAsCompleted } = useTabStore.getState();
         markTabAsCompleted('required_documents', StudentId);
         setSelectedTab('property_relations');
+      };
+
+      if (documentsToUpload.length === 0) {
+        toast.success('Etapa concluída', 'Você pode continuar sem enviar documentos.');
+        completeStep();
         return;
       }
 
       uploadDocuments(documentsToUpload, {
         onSuccess: () => {
           toast.success('Sucesso!', 'Documentos enviados com sucesso!');
-
-          const { markTabAsCompleted } = useTabStore.getState();
-          markTabAsCompleted('required_documents', StudentId);
-
-          // Refetch documentos após upload bem-sucedido
           refetchDocuments();
-
-          setSelectedTab('property_relations');
+          completeStep();
         },
         onError: () => {
           toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
@@ -184,10 +129,6 @@ export const DocumentData = ({ label }: { label: string }) => {
       console.error('Erro no processamento:', error);
       toast.error('Erro no envio', 'Ocorreu um erro ao processar os documentos. Tente novamente.');
     }
-  };
-
-  const isError = (name: string): boolean => {
-    return submitted && isRequiredAndEmpty(name as keyof FormValues);
   };
 
   // Função para visualizar documento
@@ -233,27 +174,14 @@ export const DocumentData = ({ label }: { label: string }) => {
                           key={name}
                           className={`border-2 rounded-lg p-4 transition-colors ${hasValidFile(name as keyof FormValues)
                             ? 'border-green-300 bg-green-50'
-                            : submitted && isRequiredAndEmpty(name as keyof FormValues)
-                              ? 'border-red-300 bg-red-50'
-                              : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
+                            : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
                             }`}
                         >
                           {/* Cabeçalho mantido igual */}
                           <div className="flex justify-between items-center mb-3">
-                            <h3
-                              className={`font-medium text-gray-800 ${isError(name as string) ? 'text-red-500' : ''}`}
-                            >
-                              {label}
-                              {REQUIRED_DOCUMENTS.includes(name) && (
-                                <span className={`ml-1 ${isError(name as string) ? 'text-red-500' : ''}`}>
-                                  *
-                                </span>
-                              )}
-                            </h3>
+                            <h3 className="font-medium text-gray-800">{label}</h3>
                             {hasValidFile(name as keyof FormValues) ? (
                               <CheckCircle2 className="h-5 w-5 text-green-500" />
-                            ) : submitted && isRequiredAndEmpty(name as keyof FormValues) ? (
-                              <AlertCircle className="h-5 w-5 text-red-500" />
                             ) : null}
                           </div>
 
@@ -304,9 +232,6 @@ export const DocumentData = ({ label }: { label: string }) => {
                             </div>
                           )}
 
-                          {submitted && isRequiredAndEmpty(name as keyof FormValues) && (
-                            <p className="text-xs text-red-500 mt-2">Documento obrigatório</p>
-                          )}
                         </div>
                       )
                     )}

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const optionalField = z.string().optional();
+const requiredField = z.string().min(1, 'Campo obrigatório');
 
 export const PropertyRelationsSchema = z.object({
   veiculos: z
@@ -33,10 +34,11 @@ export const PropertyRelationsSchema = z.object({
   despesasMensais: z
     .array(
       z.object({
-        descricao: optionalField,
-        valor: optionalField,
+        descricao: requiredField,
+        valor: requiredField,
       })
     )
+    .min(1, 'Informe ao menos uma despesa mensal')
     .default([]),
 });
 

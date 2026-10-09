@@ -39,7 +39,7 @@ export const dynamicSections = [
     title: 'Despesas mensais básicas:',
     columns: ['Discriminação da Despesa', 'Valores em Reais'],
     fields: ['descricao', 'valor'],
-    required: false,
+    required: true,
     footerMessage:
       '* Preencha todas as despesas mensais básicas da família. Valores devem ser informados em reais (R$).',
   },

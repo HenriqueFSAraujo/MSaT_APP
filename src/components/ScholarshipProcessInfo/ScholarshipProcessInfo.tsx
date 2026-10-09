@@ -237,7 +237,7 @@ export function ScholarshipProcessInfo() {
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl font-semibold text-gray-700 text-center mx-6 mb-4">
-          Processo Seletivo de Bolsa de Estudo - 2026
+          Processo Seletivo de Bolsa de Estudo - 2027
         </CardTitle>
         <CardDescription className="text-md text-muted-foreground text-center">
           Prezados pais/responsáveis legais,
@@ -260,7 +260,7 @@ export function ScholarshipProcessInfo() {
                   Nos campos de documentação obrigatória (marcados com *) no Formulário Socioeconômico
                   do Candidato à Bolsa de Estudo não serão aceitos documentos repetidos ou folhas em
                   branco. Caso isso aconteça, o processo não será analisado, acarretando o indeferimento
-                  da renovação/ concessão da Bolsa de Estudo para o ano letivo de 2026.
+                  da renovação/ concessão da Bolsa de Estudo para o ano letivo de 2026/2027.
                 </li>
                 <li>
                   Formulário Socioeconômico do Candidato à Bolsa de Estudo preenchido parcialmente,
@@ -269,7 +269,7 @@ export function ScholarshipProcessInfo() {
                 </li>
                 <li>
                   Nenhum documento será recebido após a data limite estabelecida, salvo se solicitado
-                  pela Comissão de Bolsa de Estudo 2026 da Unidade Educacional.
+                  pela Comissão de Bolsa de Estudo 2026/2027 da Unidade Educacional.
                 </li>
               </ul>
             </div>
@@ -301,7 +301,7 @@ export function ScholarshipProcessInfo() {
             <div className="space-y-4">
               <div>
                 <Label className="font-bold">
-                  Deseja participar do Processo Seletivo de Bolsa de Estudo ano letivo 2026?*
+                  Deseja participar do Processo Seletivo de Bolsa de Estudo ano letivo 2027?*
                 </Label>
                 <RadioGroup
                   value={watch('wantsToParticipate') || ''}
@@ -324,7 +324,7 @@ export function ScholarshipProcessInfo() {
 
               <div>
                 <Label className="font-bold">
-                  O(A) candidato(a) foi contemplado com bolsa de estudo no ano letivo de 2025 nesta
+                  O(A) candidato(a) foi contemplado com bolsa de estudo no ano letivo de 2026 nesta
                   unidade escolar?*
                 </Label>
                 <RadioGroup
@@ -348,7 +348,7 @@ export function ScholarshipProcessInfo() {
 
               {hadScholarshipLastYear === 'sim' && (
                 <div>
-                  <Label className="font-bold">Percentual de bolsa de estudo concedido em 2025:*</Label>
+                  <Label className="font-bold">Percentual de bolsa de estudo concedido em 2026/2027:*</Label>
                   <RadioGroup
                     value={watch('previousScholarshipPercentage') || ''}
                     onValueChange={(value) => setValue('previousScholarshipPercentage', value as '50' | '100')}
@@ -372,7 +372,7 @@ export function ScholarshipProcessInfo() {
               <div className="mt-6">
                 <p className="mb-4">
                   No link abaixo consta o Edital de Divulgação do Processo Seletivo de
-                  Renovação/Concessão da Bolsa de Estudo para o ano letivo de 2026, elaborado em
+                  Renovação/Concessão da Bolsa de Estudo para o ano letivo de 2026/2027, elaborado em
                   conformidade com a Lei Complementar nº187/2021 e o Decreto nº 11.791/2023. Solicitamos
                   uma leitura completa das informações.
                 </p>

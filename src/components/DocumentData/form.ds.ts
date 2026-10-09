@@ -42,7 +42,6 @@ type DocumentOption = {
   openLink?: string;
   downloadLabel?: string;
   downloadLink?: string;
-  required?: boolean;
   options?: {
     value: string;
     label: string;
@@ -57,19 +56,16 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
       label: 'Cadastro do CAD. único',
       linkLabel: 'Disponível no link',
       openLink: 'https://meucadunico.cidadania.gov.br/meu_cadunico',
-      required: true,
     },
     {
       name: 'maritalStatus',
       label: 'Estado Civil',
       desc: 'Apresentar documento que comprove o estado civil de todos os membros do grupo familiar maiores de 18 (dezoito) anos de idade',
-      required: true,
     },
     {
       name: 'identityDocuments',
       label: 'Documentos de Identificação',
       desc: 'Apresentar um documento de identificação do(a) candidato(a) e de todos os membros do grupo familiar',
-      required: true,
     },
   ],
   [
@@ -94,7 +90,6 @@ export const DOCUMENT_GROUPS: DocumentOption[][] = [
       name: 'workContract',
       label: 'Carteira de trabalho digital',
       desc: 'CTPS digital ou documento equivalente comprovando vínculo empregatício de todos os membros do grupo familiar maiores de 16 (dezesseis) anos de idade',
-      required: true,
     },
     {
       name: 'bankingRelationsReport',

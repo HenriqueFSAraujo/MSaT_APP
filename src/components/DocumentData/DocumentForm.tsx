@@ -4,7 +4,6 @@ import { DOCUMENT_GROUPS } from './form.ds';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/utils/toast';
 import { useTabStore } from '@/store/tabStore';
-import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
 
 export const DocumentForm = () => {
@@ -12,27 +11,13 @@ export const DocumentForm = () => {
     mode: 'onChange',
   });
 
-  const { handleSubmit, watch } = methods;
+  const { handleSubmit } = methods;
   const setSelectedTab = useTabStore((state) => state.setSelectedTab);
-  const formValues = watch();
-
-  // Calcula o progresso baseado nos documentos obrigatórios
-  const calculateProgress = () => {
-    const requiredDocs = DOCUMENT_GROUPS.flat().filter((doc) => doc.required);
-    if (requiredDocs.length === 0) return 0;
-
-    const completedDocs = requiredDocs.filter((doc) => {
-      const value = formValues[doc.name];
-      return value && Object.keys(value).length > 0;
-    });
-
-    return (completedDocs.length / requiredDocs.length) * 100;
-  };
 
   const onSubmit = async (data: unknown) => {
     try {
       console.log('Form data:', data);
-      toast.success('Sucesso!', 'Documentos enviados com sucesso!');
+      toast.success('Etapa concluída', 'Você pode continuar sem enviar documentos.');
       setSelectedTab('housing_conditions');
     } catch (error) {
       console.error('Erro no processamento:', error);
@@ -45,30 +30,19 @@ export const DocumentForm = () => {
       <div className="w-full max-w-[1200px] mx-auto p-6">
         <div className="space-y-6">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Documentação Necessária</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">Documentos Complementares</h2>
             <p className="text-gray-600 mt-1">
-              Por favor, envie todos os documentos necessários. Documentos marcados com * são
-              obrigatórios.
+              Você pode enviar os documentos disponíveis para complementar suas informações.
             </p>
           </div>
 
           <Card className="p-6">
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-800">Documentos Requeridos</h3>
+                <h3 className="text-lg font-medium text-gray-800">Lista de documentos</h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Selecione o tipo de documento e faça o upload dos arquivos correspondentes
                 </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Progresso</span>
-                  <span className="text-gray-900 font-medium">
-                    {Math.round(calculateProgress())}%
-                  </span>
-                </div>
-                <Progress value={calculateProgress()} className="h-2" />
               </div>
 
               <div className="space-y-4">
@@ -85,7 +59,7 @@ export const DocumentForm = () => {
 
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-600">
-              Certifique-se de que todos os documentos estão legíveis e atualizados
+              Verifique se os documentos enviados estão legíveis e atualizados
             </p>
             <Button
               type="submit"

@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
-import { ChangeEvent } from 'react';
-import { CheckCircle2, UploadCloud, X, ExternalLink, Download } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Download } from 'lucide-react';
+import FileDropzone from '@/components/DragAndDrop';
 import {
   Select,
   SelectContent,
@@ -10,8 +10,6 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { InputFileProps } from './type.ds';
-
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const InputFile = ({
   name,
@@ -30,101 +28,48 @@ export const InputFile = ({
   const {
     register,
     setValue,
-    setError,
     clearErrors,
+    getValues,
     watch,
     formState: { errors },
   } = useFormContext();
 
   const currentValue = watch(name);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newFiles = Array.from(e.target.files || []);
-
-    if (newFiles.length === 0) return;
-
-    const invalidFile = newFiles.find(file => {
-      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-      return file.size > MAX_FILE_SIZE_BYTES || !isPdf;
-    });
-
-    if (invalidFile) {
-      setError(name, {
-        type: 'manual',
-        message: 'Envie apenas PDFs de ate 5MB cada.',
-      });
-      e.target.value = '';
-      return;
-    }
-
-    // Limita a 5 arquivos
-    const filesToAdd = newFiles.slice(0, 5);
-
-    // Obtém arquivos existentes
-    const existingFiles = currentValue?.files || [];
-
-    // Combina com os novos arquivos, mantendo o limite de 5
-    const allFiles = [...existingFiles, ...filesToAdd].slice(0, 5);
+  const handleFilesChange = (files: File[]) => {
+    const value = getValues(name);
+    const currentData = typeof value === 'object' && value !== null ? value : {};
+    const uploadedFiles = files.map((file) => ({
+      value: file,
+      mimeType: file.type,
+    }));
 
     setValue(
       name,
       {
-        ...currentValue,
-        files: allFiles.map(file => ({
-          value: file,
-          mimeType: file.type,
-        })),
-        // Mantém compatibilidade com versão antiga
-        file: allFiles.length > 0 ? {
-          value: allFiles[0],
-          mimeType: allFiles[0].type,
-        } : undefined,
+        ...currentData,
+        files: uploadedFiles,
+        file: uploadedFiles[0],
       },
-      { shouldValidate: true }
+      { shouldValidate: true },
     );
-    clearErrors(name);
-
-    // Reseta o input para permitir adicionar o mesmo arquivo novamente se necessário
-    e.target.value = '';
-  };
-
-  const handleRemoveFile = (indexToRemove: number) => {
-    const currentFiles = currentValue?.files || [];
-    const updatedFiles = currentFiles.filter((_item: { value: File; mimeType: string }, index: number) => index !== indexToRemove);
-
-    setValue(
-      name,
-      {
-        ...currentValue,
-        files: updatedFiles,
-        // Mantém compatibilidade com versão antiga
-        file: updatedFiles.length > 0 ? updatedFiles[0] : undefined,
-      },
-      { shouldValidate: true }
-    );
+    if (files.length > 0) clearErrors(name);
   };
 
   const handleOptionChange = (value: string) => {
+    const currentData = typeof currentValue === 'object' && currentValue !== null
+      ? currentValue
+      : {};
     const newValue = {
-      ...currentValue,
+      ...currentData,
       option: {
         type: value === 'none' ? 'none' : 'option',
         value: value,
       },
+      ...(value === 'none' ? { files: [], file: undefined } : {}),
     };
 
     setValue(name, newValue, { shouldValidate: true });
-
-    if (value === 'none' && currentValue?.file) {
-      setValue(
-        name,
-        {
-          ...newValue,
-          file: null,
-        },
-        { shouldValidate: true }
-      );
-    }
   };
 
   const getCurrentOption = () => {
@@ -221,7 +166,6 @@ export const InputFile = ({
               return true;
             }
           })}
-          onChange={handleFileChange}
           disabled={isFileInputDisabled()}
         />
 
@@ -230,58 +174,17 @@ export const InputFile = ({
             <div className="w-full p-4 border border-gray-200 bg-gray-50 rounded-md text-center text-gray-500 text-sm">
               Documento não é necessário
             </div>
-          ) : currentValue?.files && currentValue.files.length > 0 ? (
-            <div className="space-y-2">
-              {currentValue.files.map((fileItem: { value: File; mimeType: string }, index: number) => (
-                <div key={index} className="w-full p-3 border border-green-200 bg-green-50 rounded-md">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
-                          {fileItem.value.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {(fileItem.value.size / 1024).toFixed(2)} KB
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveFile(index)}
-                      className="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {currentValue.files.length < 5 && shouldShowFileInput() && (
-                <label
-                  htmlFor={id}
-                  className="flex items-center justify-center w-full p-3 border border-dashed border-gray-300 rounded-md cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors text-sm text-gray-600"
-                >
-                  <UploadCloud className="w-4 h-4 mr-2" />
-                  Adicionar mais documentos ({currentValue.files.length}/5)
-                </label>
-              )}
-            </div>
           ) : shouldShowFileInput() ? (
-            <label
-              htmlFor={id}
-              className={`flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-md cursor-pointer transition-colors ${isFileInputDisabled()
-                ? 'bg-gray-50 cursor-not-allowed border-gray-300'
-                : errors[name]
-                  ? 'border-red-500 bg-red-50 hover:border-red-600'
-                  : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
-                }`}
-            >
-              <UploadCloud className={`w-6 h-6 mb-2 ${errors[name] ? 'text-red-500' : 'text-gray-400'}`} />
-              <p className={`text-sm mb-1 ${errors[name] ? 'text-red-600' : 'text-gray-600'}`}>
-                Clique para enviar ou arraste
-              </p>
-              <p className="text-xs text-gray-500">{accept.split(',').join(', ')} (Max. 5 documentos, 5MB cada)</p>
-            </label>
+            <FileDropzone
+              className="w-full"
+              label="Arraste os arquivos do Explorador de Arquivos para este campo"
+              allowedExtensions={accept.split(',')}
+              maxSizeMB={5}
+              maxFiles={5}
+              multiple
+              disabled={isFileInputDisabled()}
+              onFilesChange={handleFilesChange}
+            />
           ) : (
             <div className={`w-full p-4 border rounded-md text-center text-sm ${errors[name]
               ? 'border-red-300 bg-red-50 text-red-600'

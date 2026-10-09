@@ -102,7 +102,7 @@ export const dynamicSections: DynamicSection[] = [
       'estadoCivil',
       'salarioBruto',
     ],
-    required: true,
+    required: false,
     footerMessage:
       '* Preencha os dados de todos os membros da família. As linhas em branco não serão salvas.',
     showTotalRow: {

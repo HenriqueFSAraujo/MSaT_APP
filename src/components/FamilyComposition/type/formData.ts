@@ -31,103 +31,10 @@ export const DespesaMensalSchema = z.object({
 });
 
 export const FamilyCompositionSchema = z.object({
-  composicaoFamiliar: z.array(FamilyMemberSchema),
+  composicaoFamiliar: z.array(FamilyMemberSchema).optional().default([]),
   familiaresEscola: z.array(FamiliarEscolaSchema).optional().default([]),
   pessoasComDeficiencia: z.array(PessoaComDeficienciaSchema).optional().default([]),
   despesasMensais: z.array(DespesaMensalSchema).optional().default([]),
-}).superRefine((data, ctx) => {
-  // Função auxiliar para verificar se uma linha está completamente vazia
-  const isRowEmpty = (member: z.infer<typeof FamilyMemberSchema>) => {
-    const nome = member.nomeCompleto?.trim() || '';
-    const escolaridade = member.escolaridade?.trim() || '';
-    const grauParentesco = member.grauParentesco?.trim() || '';
-    const dataNascimento = member.dataNascimento?.trim() || '';
-    const profissaoAtiva = member.profissaoAtiva?.trim() || '';
-    const estadoCivil = member.estadoCivil?.trim() || '';
-    const salario = member.salarioBruto?.trim() || '';
-
-    return !nome && !escolaridade && !grauParentesco && !dataNascimento &&
-           !profissaoAtiva && !estadoCivil && (!salario || salario === 'R$ 0,00');
-  };
-
-  // Validar cada linha
-  data.composicaoFamiliar.forEach((member, index) => {
-    // Se a linha está vazia, não valida
-    if (isRowEmpty(member)) {
-      return;
-    }
-
-    // Se tem pelo menos um campo preenchido, validar todos os campos obrigatórios
-    if (!member.nomeCompleto?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Campo obrigatório',
-        path: ['composicaoFamiliar', index, 'nomeCompleto'],
-      });
-    }
-
-    if (!member.escolaridade?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Campo obrigatório',
-        path: ['composicaoFamiliar', index, 'escolaridade'],
-      });
-    } else if (member.escolaridade === 'outros' && !member.escolaridade_other?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Especifique a escolaridade',
-        path: ['composicaoFamiliar', index, 'escolaridade_other'],
-      });
-    }
-
-    if (!member.grauParentesco?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Campo obrigatório',
-        path: ['composicaoFamiliar', index, 'grauParentesco'],
-      });
-    } else if (member.grauParentesco === 'Outros' && !member.grauParentesco_other?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Especifique o grau de parentesco',
-        path: ['composicaoFamiliar', index, 'grauParentesco_other'],
-      });
-    }
-
-    if (!member.dataNascimento?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Campo obrigatório',
-        path: ['composicaoFamiliar', index, 'dataNascimento'],
-      });
-    }
-
-    if (!member.profissaoAtiva?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Campo obrigatório',
-        path: ['composicaoFamiliar', index, 'profissaoAtiva'],
-      });
-    }
-
-    if (!member.estadoCivil?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Campo obrigatório',
-        path: ['composicaoFamiliar', index, 'estadoCivil'],
-      });
-    }
-  });
-
-  // Validar se pelo menos uma linha foi preenchida
-  const hasAtLeastOneFilledRow = data.composicaoFamiliar.some(member => !isRowEmpty(member));
-  if (!hasAtLeastOneFilledRow) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'É necessário preencher pelo menos um membro da família',
-      path: ['composicaoFamiliar'],
-    });
-  }
 });
 
 // Define the type for a family member with index signature to allow string indexing
