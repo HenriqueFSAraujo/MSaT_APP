@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react';
+import { Minus } from 'lucide-react';
 import { formatBytes, useFileDrop } from '../hooks/useFileDrop';
 import type { UseFileDropOptions } from '../hooks/useFileDrop';
+import { Button } from './ui/button';
 
 export interface FileDropzoneProps extends UseFileDropOptions {
   label?: string;
@@ -88,7 +90,7 @@ export function FileDropzone({
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {file.name} <small style={{ color: '#6b7280' }}>({formatBytes(file.size)})</small>
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -96,17 +98,13 @@ export function FileDropzone({
                 }}
                 aria-label={`Remover ${file.name}`}
                 disabled={disabled}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: disabled ? 'not-allowed' : 'pointer',
-                  padding: '4px 8px',
-                  color: '#6b7280',
-                  fontSize: 14,
-                }}
+                title={`Remover ${file.name}`}
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
               >
-                Remover
-              </button>
+                <Minus className="h-4 w-4" aria-hidden="true" />
+              </Button>
             </li>
           ))}
         </ul>
